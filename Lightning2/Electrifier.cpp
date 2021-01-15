@@ -1,17 +1,19 @@
 #include "Electrifier.h"
 
+#include <algorithm>
+
 ////
 // PUBLIC:
 ////
 
 void Electrifier::InitParameters(float maxSegLength, float chaosProportionToLength)
 {	
-	chaosProportion = min(
-		max(chaosProportionToLength, 0.f),
+	chaosProportion = std::min(
+		std::max(chaosProportionToLength, 0.f),
 		MAX_CHAOS_PROPORTION
 	);
 
-	maxLength = max(maxSegLength, MIN_SEGMENT_LENGTH);	
+	maxLength = std::max(maxSegLength, MIN_SEGMENT_LENGTH);	
 }
 
 void Electrifier::Run()
@@ -67,27 +69,27 @@ void Electrifier::ResetSegmentVectors()
 
 void Electrifier::SwapSegmentsVectors()
 {
-	currentSegments = currentSegments == &segmentsA ? &segmentsB : &segmentsA;
-	nextSegments    = nextSegments    == &segmentsA ? &segmentsB : &segmentsA;
+	currentSegments = (currentSegments == &segmentsA) ? &segmentsB : &segmentsA;
+	nextSegments    = (nextSegments    == &segmentsA) ? &segmentsB : &segmentsA;
 }
 
 std::vector<Segment> Electrifier::JitterSegment(Segment& seed, float extent)
 {
 	//1. get a random vector
-	XMFLOAT3 randvec = randomNormalisedVector();
+	MyFloat3 randvec = randomNormalisedVector();
 
 	//2. get the normalised cross product of the current segment's dir vector, and a random vector
-	XMFLOAT3 offset = crossProduct(randvec, seed.GetDirection());
+	MyFloat3 offset = crossProduct(randvec, seed.GetDirection());
 	offset = normalised(offset);
 	//3. multiply that by by chaos factor
 	offset = offset * extent;
 
 	//4. get new point
-	XMFLOAT3 newPt = seed.GetMidpoint() + offset;
+	MyFloat3 newPt = seed.GetMidpoint() + offset;
 
 	//5. two resulting segments
-	Segment topSeg(seed.GetStartPt(), newPt);
-	Segment bottomSeg(newPt, seed.GetEndPt());
+	Segment topSeg(seed.GetStartPoint(), newPt);
+	Segment bottomSeg(newPt, seed.GetEndPoint());
 
 	std::vector<Segment> res = { topSeg, bottomSeg };
 

@@ -1,5 +1,7 @@
 #include "JitterForkGenerator.h"
 
+#include <algorithm>
+
 JitterForkGenerator::JitterForkGenerator(Segment seedSegment)
 	:
 	originalSeed(seedSegment)
@@ -13,8 +15,8 @@ JitterForkGenerator::JitterForkGenerator(Segment seedSegment)
 void JitterForkGenerator::InitParameters(size_t its, float chaosProportionToLength, float forkProbability, float forkProbabilityScaleDown)
 {
 	iterations        = its;
-	chaosProportion   = min(
-		                  max(chaosProportionToLength, 0.f),
+	chaosProportion   = std::min(
+		                  std::max(chaosProportionToLength, 0.f),
 		                  MAX_CHAOS_PROPORTION
 	                    );
 	forkProb          = forkProbability;
@@ -63,17 +65,17 @@ void JitterForkGenerator::ResetSegmentVectors()
 
 void JitterForkGenerator::SwapSegmentsVectors()
 {
-	currentSegments = currentSegments == &segmentsA ? &segmentsB : &segmentsA;
-	nextSegments    = nextSegments    == &segmentsA ? &segmentsB : &segmentsA;
+	currentSegments = (currentSegments == &segmentsA) ? &segmentsB : &segmentsA;
+	nextSegments    = (nextSegments    == &segmentsA) ? &segmentsB : &segmentsA;
 }
 
 std::vector<Segment> JitterForkGenerator::JitterAndFork(Segment& seed, float forkProbNow)
 {
 	//1. get a random vector
-	XMFLOAT3 randvec = randomNormalisedVector();
+	MyFloat3 randvec = randomNormalisedVector();
 
 	//2. get the normalised cross product: segment direction X random vector
-	XMFLOAT3 offset = crossProduct(randvec, seed.GetDirection());
+	MyFloat3 offset = crossProduct(randvec, seed.GetDirection());
 	offset = normalised(offset);
 
 	//3. multiply that by by chaos factor
@@ -81,11 +83,11 @@ std::vector<Segment> JitterForkGenerator::JitterAndFork(Segment& seed, float for
 	offset = offset * chaos;
 
 	//4. get new point
-	XMFLOAT3 offsetPoint = seed.GetMidpoint() + offset;
+	MyFloat3 offsetPoint = seed.GetMidpoint() + offset;
 
 	//5. two resulting segments
-	Segment topSeg(seed.GetStartPt(), offsetPoint);
-	Segment bottomSeg(offsetPoint, seed.GetEndPt());
+	Segment topSeg(seed.GetStartPoint(), offsetPoint);
+	Segment bottomSeg(offsetPoint, seed.GetEndPoint());
 
 	std::vector<Segment> res = { topSeg, bottomSeg };
 

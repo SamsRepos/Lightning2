@@ -47,8 +47,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	//Generators:
 	Segment seed = Segment(
-		XMFLOAT3(0.f, 100.f, 0.f),
-		XMFLOAT3(0.f, 0.f, 0.f)
+		MyFloat3(0.f, 100.f, 0.f),
+		MyFloat3(0.f, 0.f, 0.f)
 	);
 
 	jfg = new JitterForkGenerator(seed);
@@ -328,8 +328,16 @@ void App1::UpdateLineMesh(std::vector<Segment>& segs, LineMesh* mesh)
 	for (Segment& seg : segs)
 	{
 		mesh->AddLine(
-			seg.GetStartPt(),
-			seg.GetEndPt(),
+			XMFLOAT3(
+				seg.GetStartPoint().x,
+				seg.GetStartPoint().y,
+				seg.GetStartPoint().z
+			),
+			XMFLOAT3(
+				seg.GetEndPoint().x,
+				seg.GetEndPoint().y,
+				seg.GetEndPoint().z
+			),
 			0
 		);
 	}

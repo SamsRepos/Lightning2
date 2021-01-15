@@ -1,7 +1,9 @@
-#include "MyVectorUtils.h"
+#include "MyFloat3.h"
 
+#include <math.h>
+#include <random>
 
-float magnitude(const XMFLOAT3& vector)
+float magnitude(const MyFloat3& vector)
 {
 	return sqrt(
 		vector.x * vector.x
@@ -12,69 +14,69 @@ float magnitude(const XMFLOAT3& vector)
 	);
 }
 
-XMFLOAT3 normalised(XMFLOAT3& vector)
+MyFloat3 normalised(MyFloat3& vector)
 {
 	return vector / magnitude(vector);
 }
 
-XMFLOAT3 crossProduct(const XMFLOAT3& u, const XMFLOAT3& v)
+MyFloat3 crossProduct(const MyFloat3& u, const MyFloat3& v)
 {
-	XMFLOAT3 res;
+	MyFloat3 res;
 	res.x = (u.y * v.z) - (u.z * v.y);
 	res.y = (u.z * v.x) - (u.x * v.z);
 	res.z = (u.x * v.y) - (u.y * v.x);
 	return res;
 }
 
-XMFLOAT3 operator+(const XMFLOAT3& a, const XMFLOAT3& b)
+MyFloat3 operator+(const MyFloat3& a, const MyFloat3& b)
 {
-	XMFLOAT3 res;
+	MyFloat3 res;
 	res.x = a.x + b.x;
 	res.y = a.y + b.y;
 	res.z = a.z + b.z;
 	return res;
 }
 
-XMFLOAT3 operator-(const XMFLOAT3& minuend, const XMFLOAT3& subtrahend)
+MyFloat3 operator-(const MyFloat3& minuend, const MyFloat3& subtrahend)
 {
-	XMFLOAT3 res;
+	MyFloat3 res;
 	res.x = minuend.x - subtrahend.x;
 	res.y = minuend.y - subtrahend.y;
 	res.z = minuend.z - subtrahend.z;
 	return res;
 }
 
-XMFLOAT3 operator*(const XMFLOAT3& vector, const float scale)
+MyFloat3 operator*(const MyFloat3& vector, const float scale)
 {
-	XMFLOAT3 res;
+	MyFloat3 res;
 	res.x = vector.x * scale;
 	res.y = vector.y * scale;
 	res.z = vector.z * scale;
 	return res;
 }
 
-XMFLOAT3 operator/(const XMFLOAT3& vector, const float denominator)
+MyFloat3 operator/(const MyFloat3& vector, const float denominator)
 {
-	XMFLOAT3 res;
+	MyFloat3 res;
 	res.x = vector.x / denominator;
 	res.y = vector.y / denominator;
 	res.z = vector.z / denominator;
 	return res;
 }
 
-XMFLOAT3 randomNormalisedVector(int resolution)
+MyFloat3 randomNormalisedVector(int resolution)
 {
 	int halfResolution = resolution / 2;
-	XMFLOAT3 res = XMFLOAT3(
-		(rand() % resolution) - halfResolution,
-		(rand() % resolution) - halfResolution,
-		(rand() % resolution) - halfResolution
-	);
+	MyFloat3 res;
 	
+	res.x = (rand() % resolution) - halfResolution;
+	res.y = (rand() % resolution) - halfResolution;
+	res.z = (rand() % resolution) - halfResolution;
+		
 	return normalised(res);
 }
 
-XMFLOAT3 randomNormalisedVector()
+MyFloat3 randomNormalisedVector()
 {
 	return randomNormalisedVector(DEFAULT_RANDOM_VECTOR_RESOLUTION);
 }

@@ -1,8 +1,8 @@
 #include "Segment.h"
 
+#include <math.h>
 
-
-Segment::Segment(XMFLOAT3 startPoint, XMFLOAT3 endPoint)
+Segment::Segment(MyFloat3 startPoint, MyFloat3 endPoint)
 	:
 	startPoint(startPoint),
 	endPoint(endPoint)
@@ -11,7 +11,7 @@ Segment::Segment(XMFLOAT3 startPoint, XMFLOAT3 endPoint)
 
 float Segment::GetLength()
 { 
-	XMFLOAT3 direction = GetDirection();
+	MyFloat3 direction = GetDirection();
 	return sqrt(
 		direction.x * direction.x +
 		direction.y * direction.y +

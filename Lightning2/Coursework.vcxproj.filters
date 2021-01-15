@@ -57,11 +57,11 @@
     <ClCompile Include="RandFloatGen.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="MyVectorUtils.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Electrifier.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyFloat3.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,11 +86,11 @@
     <ClInclude Include="RandFloatGen.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="MyVectorUtils.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Electrifier.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyFloat3.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
