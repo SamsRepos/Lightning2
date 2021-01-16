@@ -8,8 +8,8 @@
 class JitterForkGenerator
 {	
 public:
-	JitterForkGenerator(Segment seedSegment);
 	void InitParameters(
+		Segment seedSegment,
 		size_t iterations,
 		float chaosProportionToLength,
 		float forkProbability,

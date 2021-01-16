@@ -2,18 +2,19 @@
 
 #include <algorithm>
 
-JitterForkGenerator::JitterForkGenerator(Segment seedSegment)
-	:
-	originalSeed(seedSegment)
-{	
-}
-
 ////
 // PUBLIC:
 ////
 
-void JitterForkGenerator::InitParameters(size_t its, float chaosProportionToLength, float forkProbability, float forkProbabilityScaleDown)
+void JitterForkGenerator::InitParameters(
+	Segment seedSegment,
+	size_t its,
+	float chaosProportionToLength,
+	float forkProbability,
+	float forkProbabilityScaleDown
+)
 {
+	originalSeed      = seedSegment;
 	iterations        = its;
 	chaosProportion   = std::min(
 		                  std::max(chaosProportionToLength, 0.f),

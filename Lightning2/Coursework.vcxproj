@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App1.cpp" />
+    <ClCompile Include="BoxMullerGen.cpp" />
     <ClCompile Include="JitterForkGenerator.cpp" />
     <ClCompile Include="LightShader.cpp" />
     <ClCompile Include="LineMesh.cpp" />
@@ -179,9 +180,11 @@
     <ClCompile Include="RandFloatGen.cpp" />
     <ClCompile Include="Electrifier.cpp" />
     <ClCompile Include="Segment.cpp" />
+    <ClCompile Include="StreamerGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App1.h" />
+    <ClInclude Include="BoxMullerGen.h" />
     <ClInclude Include="JitterForkGenerator.h" />
     <ClInclude Include="LightShader.h" />
     <ClInclude Include="LineMesh.h" />
@@ -190,6 +193,7 @@
     <ClInclude Include="RandFloatGen.h" />
     <ClInclude Include="Electrifier.h" />
     <ClInclude Include="Segment.h" />
+    <ClInclude Include="StreamerGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="light_ps.hlsl">

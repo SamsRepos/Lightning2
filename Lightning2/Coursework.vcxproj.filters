@@ -31,6 +31,18 @@
     <Filter Include="Header Files\Utils">
       <UniqueIdentifier>{45430063-93d1-47bf-8180-9c3c0286df84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GeometryGenerators">
+      <UniqueIdentifier>{7acfd3b3-2181-408b-add9-cd41fec919fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GeometryGenerators">
+      <UniqueIdentifier>{181d0a1c-4a3f-40b5-a4fe-d17f9a444d77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GeometryTransformers">
+      <UniqueIdentifier>{041165f1-0e0b-4942-a933-4b878a17ed86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GeometryTransformers">
+      <UniqueIdentifier>{4165753b-6cf4-4b98-9a7d-063be5bfc5e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App1.cpp">
@@ -48,19 +60,25 @@
     <ClCompile Include="LineMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="JitterForkGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Segment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RandFloatGen.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Electrifier.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MyFloat3.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="JitterForkGenerator.cpp">
+      <Filter>Source Files\GeometryGenerators</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamerGenerator.cpp">
+      <Filter>Source Files\GeometryGenerators</Filter>
+    </ClCompile>
+    <ClCompile Include="Electrifier.cpp">
+      <Filter>Source Files\GeometryTransformers</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxMullerGen.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,19 +95,25 @@
     <ClInclude Include="LineMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="JitterForkGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Segment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RandFloatGen.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Electrifier.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MyFloat3.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="JitterForkGenerator.h">
+      <Filter>Header Files\GeometryGenerators</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamerGenerator.h">
+      <Filter>Header Files\GeometryGenerators</Filter>
+    </ClInclude>
+    <ClInclude Include="Electrifier.h">
+      <Filter>Header Files\GeometryTransformers</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxMullerGen.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>

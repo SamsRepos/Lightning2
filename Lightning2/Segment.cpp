@@ -2,10 +2,12 @@
 
 #include <math.h>
 
-Segment::Segment(MyFloat3 startPoint, MyFloat3 endPoint)
+Segment::Segment(MyFloat3 startPoint, MyFloat3 endPoint, float diameter, float minDiameter)
 	:
 	startPoint(startPoint),
-	endPoint(endPoint)
+	endPoint(endPoint),
+	diameter(diameter),
+	minDiameter(minDiameter)
 {
 }
 
