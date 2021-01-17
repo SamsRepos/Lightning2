@@ -34,6 +34,10 @@ public:
 
 	inline void SetParent(Segment* _parent) { parent = _parent; };
 	inline void AddChild(Segment* child) { children.push_back(child); };
+	inline std::vector<Segment*>* GetChildren() { return &children; };
+
+	inline void SetNumDescendants(size_t num) { numDescendants = num; };
+	inline size_t GetNumDescendants() { return numDescendants; };
 	
 private:
 	MyFloat3 startPoint, endPoint;
@@ -42,7 +46,7 @@ private:
 	Segment* parent = NULL;
 	std::vector<Segment*> children;
 
-	int numDescendants;
+	size_t numDescendants;
 	SegmentStatuses status;
 };
 

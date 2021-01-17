@@ -81,6 +81,9 @@
     <ClCompile Include="BoxMullerGen.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="PathIdentifier.cpp">
+      <Filter>Source Files\GeometryTransformers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App1.h">
@@ -118,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="MyClamp.h">
       <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="PathIdentifier.h">
+      <Filter>Header Files\GeometryTransformers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
