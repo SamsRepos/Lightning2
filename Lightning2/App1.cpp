@@ -46,22 +46,37 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	lineMesh = new LineMesh(renderer->getDevice(), renderer->getDeviceContext());
 
 	//Generators:
+	//Jitter-fork generator
+#if JITTER_FORK_METHOD_ACTIVE
 	Segment seed = Segment(
 		MyFloat3(0.f, 100.f, 0.f),
 		MyFloat3(0.f, 0.f, 0.f)
 	);
 
-	jfg = new JitterForkGenerator(seed);
-
-	jfg->InitParameters(
+	jfg.InitParameters(
+		seed,
 		10,    //its
 		.1f,   //chaos proportion
 		.7f,   //forkProbability
 		.6f    //forkProbabilityScaleDown
 	);
-	jfg->Run();
+	jfg.Run();
+	UpdateLineMesh(jfg.GetOutput(), lineMesh);
+#endif
 
-	UpdateLineMesh(jfg->GetOutput(), lineMesh);
+	//Streamer generator:
+#if STREAMER_METHOD_ACTIVE
+	sg.InitParameters(
+		MyFloat3(0.f, 100.f, 0.f), //start point
+		MyFloat3(0.f, -1.f, 0.f),  //init direction
+		500.f, //voltage
+		10.f, //pressure
+		0.5f, //pressure gradient
+		100   //max num segments
+	);
+	sg.Run();
+	UpdateLineMesh(sg.GetOutput(), lineMesh);		
+#endif
 
 	//Post-generation stages:
 	electrifier = new Electrifier();
@@ -127,10 +142,8 @@ bool App1::render()
 
 	if (viewLine)
 	{
-		for (int i = 0; i < lineMesh->GetLineCount(); i++)
+		for (int i = 0; i < linesToRender; i++)
 		{
-			
-						
 			lineShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, NULL, light, LIGHTNING_WHITE);
 
 			lineMesh->sendData(renderer->getDeviceContext(), i);
@@ -165,6 +178,7 @@ void App1::Gui()
 	
 	ImGui::Text("*************************************");
 	
+#if JITTER_FORK_METHOD_ACTIVE
 	if (ImGui::CollapsingHeader("JITTER + FORK GENERATOR"))
 	{
 		//init these static values to defaults defined above:
@@ -182,7 +196,7 @@ void App1::Gui()
 
 		if (changeNow)
 		{
-			jfg->InitParameters(
+			jfg.InitParameters(
 				iterations,
 				chaosProportion,
 				forkProb,
@@ -192,8 +206,8 @@ void App1::Gui()
 
 		if (ImGui::Button("RUN JFG AND REBUILD LINE MESH"))
 		{
-			jfg->Run();
-			UpdateLineMesh(jfg->GetOutput(), lineMesh);
+			jfg.Run();
+			UpdateLineMesh(jfg.GetOutput(), lineMesh);
 		}
 
 		if (ImGui::CollapsingHeader("ELECTRIFIER"))
@@ -215,9 +229,9 @@ void App1::Gui()
 
 			if (ImGui::Button("RUN JFG, RUN E, AND REBUILD LINE MESH"))
 			{
-				jfg->Run();
+				jfg.Run();
 				electrifier->SetInput(
-					&(jfg->GetOutput())
+					&(jfg.GetOutput())
 				);
 				electrifier->Run();
 				UpdateLineMesh(electrifier->GetOutput(), lineMesh);
@@ -226,87 +240,23 @@ void App1::Gui()
 			if (ImGui::Button("RUN E, AND REBUILD LINE MESH"))
 			{
 				electrifier->SetInput(
-					&(jfg->GetOutput())
+					&(jfg.GetOutput())
 				);
 				electrifier->Run();
 				UpdateLineMesh(electrifier->GetOutput(), lineMesh);
 			}
 		}
 	}
-
-	//fast update for zappy effect:
-	//JFG ONLY
-	{
-		static bool updating = false;
-		static float frameDuration = .1f;
-		static float currentTime = 0.f;
+#endif
 	
-		ImGui::Checkbox("UPDATING JFG", &updating);
 
-		if (updating)
-		{
-			ImGui::SliderFloat("FRAME DURATION", &frameDuration, 0.01f, 0.1f);
+	ImGui::SliderInt(
+		"Debug lines to render",
+		&linesToRender,
+		0,
+		lineMesh->GetLineCount()
+	);
 
-			currentTime += timer->getTime();
-			if (currentTime > frameDuration)
-			{
-				currentTime = 0.f;
-				jfg->Run();
-				UpdateLineMesh(jfg->GetOutput(), lineMesh);
-			}
-		}
-	}
-	//JFG+E
-	{
-		static bool updating = false;
-		static float frameDuration = .1f;
-		static float currentTime = 0.f;
-
-		ImGui::Checkbox("UPDATING JFG+E", &updating);
-
-		if (updating)
-		{
-			ImGui::SliderFloat("FRAME DURATION", &frameDuration, 0.01f, 0.1f);
-
-			currentTime += timer->getTime();
-			if (currentTime > frameDuration)
-			{
-				currentTime = 0.f;
-				jfg->Run();
-				electrifier->SetInput(
-					&(jfg->GetOutput())
-				);
-				electrifier->Run();
-				UpdateLineMesh(electrifier->GetOutput(), lineMesh);
-			}
-		}
-	}
-	//E only
-	{
-		static bool updating = false;
-		static float frameDuration = .1f;
-		static float currentTime = 0.f;
-
-		ImGui::Checkbox("UPDATING E ONLY", &updating);
-
-		if (updating)
-		{
-			ImGui::SliderFloat("FRAME DURATION", &frameDuration, 0.01f, 0.1f);
-
-			currentTime += timer->getTime();
-			if (currentTime > frameDuration)
-			{
-				currentTime = 0.f;
-				electrifier->SetInput(
-					&(jfg->GetOutput())
-				);
-				electrifier->Run();
-				UpdateLineMesh(electrifier->GetOutput(), lineMesh);
-			}
-		}
-	}
-
-	
 	// Render UI
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
@@ -337,6 +287,27 @@ void App1::UpdateLineMesh(std::vector<Segment>& segs, LineMesh* mesh)
 				seg.GetEndPoint().x,
 				seg.GetEndPoint().y,
 				seg.GetEndPoint().z
+			),
+			0
+		);
+	}
+}
+
+void App1::UpdateLineMesh(std::vector<Segment*>& segs, LineMesh* mesh)
+{
+	mesh->Clear();
+	for (Segment* seg : segs)
+	{
+		mesh->AddLine(
+			XMFLOAT3(
+				seg->GetStartPoint().x,
+				seg->GetStartPoint().y,
+				seg->GetStartPoint().z
+			),
+			XMFLOAT3(
+				seg->GetEndPoint().x,
+				seg->GetEndPoint().y,
+				seg->GetEndPoint().z
 			),
 			0
 		);

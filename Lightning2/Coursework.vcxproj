@@ -189,6 +189,7 @@
     <ClInclude Include="LightShader.h" />
     <ClInclude Include="LineMesh.h" />
     <ClInclude Include="LineShader.h" />
+    <ClInclude Include="MyClamp.h" />
     <ClInclude Include="MyFloat3.h" />
     <ClInclude Include="RandFloatGen.h" />
     <ClInclude Include="Electrifier.h" />

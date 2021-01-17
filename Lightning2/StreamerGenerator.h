@@ -5,7 +5,7 @@
 #include "Segment.h"
 #include "BoxMullerGen.h"
 
-const float INIT_VOLTAGE_CONST = 0.00000001f;
+const float INIT_VOLTAGE_CONST = 0.0001f;
 
 const float DIAMETER_TO_LENGTH_MEAN   = 11.f;
 const float DIAMETER_TO_LENGTH_STDDEV = 4.f;
@@ -24,7 +24,7 @@ public:
 		float _initVoltage,
 		float _initPressure,
 		float _pressureGradient,
-		size_t _numSegmentsLimit
+		size_t _maxNumSegments
 	);
 	void Run();
 	inline std::vector<Segment*>& GetOutput() { return output; };
@@ -45,7 +45,7 @@ private:
 	float initVoltage;
 	float initPressure;
 	float pressureGradient;
-	size_t numSegmentsLimit;
+	size_t maxNumSegments;
 	size_t numSegments;
 
 	BoxMullerGen diameterToLengthGaussianGen;

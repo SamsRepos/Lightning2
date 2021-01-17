@@ -8,13 +8,22 @@
 class JitterForkGenerator
 {	
 public:
+	JitterForkGenerator();
+
 	void InitParameters(
-		Segment seedSegment,
-		size_t iterations,
+		const Segment& seedSegment,
+		size_t its,
 		float chaosProportionToLength,
 		float forkProbability,
 		float forkProbabilityScaleDown
-	);	
+	);
+	void InitParameters(
+		size_t its,
+		float chaosProportionToLength,
+		float forkProbability,
+		float forkProbabilityScaleDown
+	);
+
 	void Run();
 	inline std::vector<Segment>& GetOutput() { return *currentSegments; };	
 

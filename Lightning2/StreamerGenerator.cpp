@@ -19,15 +19,15 @@ void StreamerGenerator::InitParameters(
 	float _initVoltage,
 	float _initPressure,
 	float _pressureGradient,
-	size_t _numSegmentsLimit
+	size_t _maxNumSegments
 )
 {
 	startPoint       = _startPoint;
-	initDirection    = normalised(_initDirection);
+	initDirection    = Normalised(_initDirection);
 	initVoltage      = _initVoltage;
 	initPressure     = _initPressure;
 	pressureGradient = _pressureGradient;
-	numSegmentsLimit = _numSegmentsLimit;
+	maxNumSegments   = _maxNumSegments;
 }
 
 void StreamerGenerator::Run()
@@ -77,10 +77,19 @@ Segment* StreamerGenerator::BuildSegment(Segment* parent)
 
 void StreamerGenerator::CreateChildren(Segment* parent)
 {
-	if (parent->GetDiameter() > parent->GetMinDiameter())
+	if(
+		(parent->GetDiameter() > parent->GetMinDiameter()) &&
+		((numSegments + 2) < maxNumSegments)
+	)
 	{
 		Segment* childA = BuildSegment(parent);
 		Segment* childB = BuildSegment(parent);
+
+		childA->SetParent(parent);
+		parent->AddChild(childA);
+
+		childB->SetParent(parent);
+		parent->AddChild(childB);
 
 		output.push_back(childA);
 		output.push_back(childB);
@@ -88,6 +97,11 @@ void StreamerGenerator::CreateChildren(Segment* parent)
 		//calculate directionas
 		//use these to set desired end-point
 
-		need to think through order of this
+		numSegments += 2;
+
+		CreateChildren(childA);
+		CreateChildren(childB);
+
+		//TODO fix: this is going to be one-sided due to recursion, if max segment limit is hit
 	}
 }

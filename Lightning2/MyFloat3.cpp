@@ -3,7 +3,7 @@
 #include <math.h>
 #include <random>
 
-float magnitude(const MyFloat3& vector)
+float Magnitude(const MyFloat3& vector)
 {
 	return sqrt(
 		vector.x * vector.x
@@ -14,12 +14,12 @@ float magnitude(const MyFloat3& vector)
 	);
 }
 
-MyFloat3 normalised(MyFloat3& vector)
+MyFloat3 Normalised(MyFloat3& vector)
 {
-	return vector / magnitude(vector);
+	return vector / Magnitude(vector);
 }
 
-MyFloat3 crossProduct(const MyFloat3& u, const MyFloat3& v)
+MyFloat3 CrossProduct(const MyFloat3& u, const MyFloat3& v)
 {
 	MyFloat3 res;
 	res.x = (u.y * v.z) - (u.z * v.y);
@@ -64,7 +64,7 @@ MyFloat3 operator/(const MyFloat3& vector, const float denominator)
 	return res;
 }
 
-MyFloat3 randomNormalisedVector(int resolution)
+MyFloat3 RandomNormalisedVector(int resolution)
 {
 	int halfResolution = resolution / 2;
 	MyFloat3 res;
@@ -73,10 +73,10 @@ MyFloat3 randomNormalisedVector(int resolution)
 	res.y = (rand() % resolution) - halfResolution;
 	res.z = (rand() % resolution) - halfResolution;
 		
-	return normalised(res);
+	return Normalised(res);
 }
 
-MyFloat3 randomNormalisedVector()
+MyFloat3 RandomNormalisedVector()
 {
-	return randomNormalisedVector(DEFAULT_RANDOM_VECTOR_RESOLUTION);
+	return RandomNormalisedVector(DEFAULT_RANDOM_VECTOR_RESOLUTION);
 }

@@ -2,24 +2,37 @@
 
 #include <algorithm>
 
+#include "MyClamp.h"
+
 ////
 // PUBLIC:
 ////
 
+JitterForkGenerator::JitterForkGenerator()
+{
+}
+
 void JitterForkGenerator::InitParameters(
-	Segment seedSegment,
+	const Segment& seedSegment,
 	size_t its,
 	float chaosProportionToLength,
 	float forkProbability,
 	float forkProbabilityScaleDown
 )
 {
-	originalSeed      = seedSegment;
+	originalSeed = seedSegment;
+	InitParameters(its, chaosProportionToLength, forkProbability, forkProbabilityScaleDown);
+}
+
+void JitterForkGenerator::InitParameters(
+	size_t its,
+	float chaosProportionToLength,
+	float forkProbability,
+	float forkProbabilityScaleDown
+)
+{
 	iterations        = its;
-	chaosProportion   = std::min(
-		                  std::max(chaosProportionToLength, 0.f),
-		                  MAX_CHAOS_PROPORTION
-	                    );
+	chaosProportion   = MyClamp(chaosProportionToLength, 0.f, 1.f);
 	forkProb          = forkProbability;
 	forkProbScaleDown = forkProbabilityScaleDown;
 }
@@ -73,11 +86,11 @@ void JitterForkGenerator::SwapSegmentsVectors()
 std::vector<Segment> JitterForkGenerator::JitterAndFork(Segment& seed, float forkProbNow)
 {
 	//1. get a random vector
-	MyFloat3 randvec = randomNormalisedVector();
+	MyFloat3 randvec = RandomNormalisedVector();
 
 	//2. get the normalised cross product: segment direction X random vector
-	MyFloat3 offset = crossProduct(randvec, seed.GetDirection());
-	offset = normalised(offset);
+	MyFloat3 offset = CrossProduct(randvec, seed.GetDirection());
+	offset = Normalised(offset);
 
 	//3. multiply that by by chaos factor
 	float chaos = seed.GetLength() * chaosProportion;

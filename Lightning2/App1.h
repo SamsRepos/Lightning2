@@ -15,6 +15,7 @@
 #include "PlaneMesh.h"
 
 #include "JitterForkGenerator.h"
+#include "StreamerGenerator.h"
 
 #include "Electrifier.h"
 
@@ -25,6 +26,8 @@ const XMFLOAT4 LIGHTNING_WHITE  = XMFLOAT4(1.f, 1.f, 1.f, 1.f);
 const XMFLOAT4 LIGHTNING_YELLOW = XMFLOAT4(1.f, .749f, .122f, 1.f);
 const XMFLOAT4 LIGHTNING_BLUE   = XMFLOAT4(.45f, .35f, 1.f, 1.f);
 
+#define JITTER_FORK_METHOD_ACTIVE 0
+#define STREAMER_METHOD_ACTIVE    1
 
 class App1 : public BaseApplication
 {
@@ -42,6 +45,7 @@ private:
 	bool GuiSliderFloat(bool* changeFlag, const char* msg, float* f, float min, float max);
 
 	void UpdateLineMesh(std::vector<Segment>& segs, LineMesh* mesh);
+	void UpdateLineMesh(std::vector<Segment*>& segs, LineMesh* mesh);
 
 	//Shaders:
 	LightShader* lightShader;
@@ -57,8 +61,17 @@ private:
 	XMMATRIX planeMatrix;
 
 	//Generator modules:
-	JitterForkGenerator* jfg;
+#if JITTER_FORK_METHOD_ACTIVE
+	JitterForkGenerator jfg;
+#endif
+#if STREAMER_METHOD_ACTIVE
+	StreamerGenerator sg;
+#endif
+
 	Electrifier* electrifier;
+
+	//debug stuff:
+	int linesToRender;
 };
 
 #endif

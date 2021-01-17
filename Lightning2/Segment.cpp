@@ -12,7 +12,7 @@ Segment::Segment(MyFloat3 startPoint, MyFloat3 endPoint, float diameter, float m
 }
 
 float Segment::GetLength()
-{ 
+{
 	MyFloat3 direction = GetDirection();
 	return sqrt(
 		direction.x * direction.x +

@@ -25,10 +25,10 @@
 	typedef XMFLOAT3 MyFloat3;
 #endif
 
-float magnitude(const MyFloat3& vector);
-MyFloat3 normalised(MyFloat3& vector);
+float Magnitude(const MyFloat3& vector);
+MyFloat3 Normalised(MyFloat3& vector);
 
-MyFloat3 crossProduct(const MyFloat3& u, const MyFloat3& v);
+MyFloat3 CrossProduct(const MyFloat3& u, const MyFloat3& v);
 MyFloat3 operator+(const MyFloat3& a, const MyFloat3& b);
 MyFloat3 operator-(const MyFloat3& minuend, const MyFloat3& subtrahend);
 
@@ -36,5 +36,5 @@ MyFloat3 operator*(const MyFloat3& vector, const float scale);
 MyFloat3 operator/(const MyFloat3& vector, const float denominator);
 
 #define DEFAULT_RANDOM_VECTOR_RESOLUTION 1000
-MyFloat3 randomNormalisedVector(int resolution);
-MyFloat3 randomNormalisedVector();
+MyFloat3 RandomNormalisedVector(int resolution);
+MyFloat3 RandomNormalisedVector();
