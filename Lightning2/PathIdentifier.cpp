@@ -1,5 +1,9 @@
 #include "PathIdentifier.h"
 
+////
+// PUBLIC:
+////
+
 void PathIdentifier::Run()
 {
 	Segment* root = segments->front();
@@ -7,6 +11,10 @@ void PathIdentifier::Run()
 	DescendantCounterRecurs(root);
 	StatusSetterRecurs(root);
 }
+
+////
+// PRIVATE:
+////
 
 void PathIdentifier::DescendantCounterRecurs(Segment* currentSegment)
 {

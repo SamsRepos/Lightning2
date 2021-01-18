@@ -84,6 +84,9 @@
     <ClCompile Include="PathIdentifier.cpp">
       <Filter>Source Files\GeometryTransformers</Filter>
     </ClCompile>
+    <ClCompile Include="DiameterTransformer.cpp">
+      <Filter>Source Files\GeometryTransformers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App1.h">
@@ -127,6 +130,9 @@
     </ClInclude>
     <ClInclude Include="MyMath.h">
       <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DiameterTransformer.h">
+      <Filter>Header Files\GeometryTransformers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

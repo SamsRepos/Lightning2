@@ -257,10 +257,10 @@ void App1::Gui()
 	
 #if STREAMER_METHOD_ACTIVE
 	
-	static float streamerVoltage = 7000;
+	static float streamerVoltage         = 7000;
 	static float streamerInitialPressure = 35.f;
 	static float streamerPressurGradient = 0.5f;
-	static int streamerMaxLayers = 10;
+	static int   streamerMaxLayers       = 10;
 
 	ImGui::SliderFloat("Streamer voltage", &streamerVoltage, 10.f, 10000.f);
 	ImGui::SliderFloat("Streamer init pressure", &streamerInitialPressure, 1.f, 100.f);

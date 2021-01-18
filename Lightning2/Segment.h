@@ -29,6 +29,7 @@ public:
 	inline MyFloat3 GetEndPoint() { return endPoint; };
 	inline MyFloat3 GetDirection() { return endPoint - startPoint; };
 	inline MyFloat3 GetMidpoint() { return startPoint + (GetDirection()*.5f); };
+	inline void SetDiameter(float _diameter) { diameter = _diameter; };
 	inline float GetDiameter() const { return diameter; };
 	inline float GetMinDiameter() const { return minDiameter; };
 	float GetLength();
