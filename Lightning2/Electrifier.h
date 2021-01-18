@@ -30,4 +30,3 @@ private:
 	std::vector<Segment>* currentSegments;
 	std::vector<Segment>* nextSegments;
 };
-

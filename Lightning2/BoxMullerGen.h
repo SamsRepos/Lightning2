@@ -4,8 +4,6 @@
 
 #include "RandFloatGen.h"
 
-const float PI = 3.14159265359f;
-
 class BoxMullerGen
 {
 public:

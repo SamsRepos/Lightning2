@@ -19,14 +19,15 @@
 			z = _z;
 		}
 
+		float Magnitude();
+		MyFloat3 Normalised();
+
 	};
 #else
 	#include "DXF.h"
 	typedef XMFLOAT3 MyFloat3;
 #endif
 
-float Magnitude(const MyFloat3& vector);
-MyFloat3 Normalised(MyFloat3& vector);
 
 MyFloat3 CrossProduct(const MyFloat3& u, const MyFloat3& v);
 MyFloat3 operator+(const MyFloat3& a, const MyFloat3& b);
@@ -38,3 +39,5 @@ MyFloat3 operator/(const MyFloat3& vector, const float denominator);
 #define DEFAULT_RANDOM_VECTOR_RESOLUTION 1000
 MyFloat3 RandomNormalisedVector(int resolution);
 MyFloat3 RandomNormalisedVector();
+
+MyFloat3 RandomPerpendicularUnitVector(const MyFloat3& inputVec);

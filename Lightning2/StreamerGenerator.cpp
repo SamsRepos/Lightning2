@@ -1,5 +1,6 @@
 #include "StreamerGenerator.h"
 
+#include "MyMath.h"
 
 //#include <algorithm>
 
@@ -19,15 +20,15 @@ void StreamerGenerator::InitParameters(
 	float _initVoltage,
 	float _initPressure,
 	float _pressureGradient,
-	size_t _maxNumSegments
+	size_t _maxNumLayers
 )
 {
 	startPoint       = _startPoint;
-	initDirection    = Normalised(_initDirection);
+	initDirection    = _initDirection.Normalised();
 	initVoltage      = _initVoltage;
 	initPressure     = _initPressure;
 	pressureGradient = _pressureGradient;
-	maxNumSegments   = _maxNumSegments;
+	maxNumLayers     = _maxNumLayers;
 }
 
 void StreamerGenerator::Run()
@@ -47,7 +48,7 @@ void StreamerGenerator::Run()
 
 	output.push_back(rootSegment);
 
-	CreateChildren(rootSegment);
+	CreateChildren(rootSegment, 0);
 }
 
 ////
@@ -57,51 +58,84 @@ void StreamerGenerator::Run()
 void StreamerGenerator::InitAlgorithm()
 {
 	output.clear();
-	numSegments = 0;	
+	numLayers = 0;	
 }
 
-Segment* StreamerGenerator::BuildSegment(Segment* parent)
+void StreamerGenerator::CreateChildren(Segment* parent, size_t parentLayerNum)
+{
+	size_t thisLayerNum = parentLayerNum + 1;
+
+	if(
+		(parent->GetDiameter() > parent->GetMinDiameter()) &&
+		thisLayerNum < maxNumLayers
+	)
+	{
+		Segment* childA = CreateSegment(parent);
+		Segment* childB = CreateSegment(parent);
+		
+		FixEndPoints(childA, childB);
+				
+		CreateChildren(childA, thisLayerNum);
+		CreateChildren(childB, thisLayerNum);
+
+		//TODO fix: this is going to be one-sided due to recursion, if max segment limit is hit
+	}
+}
+
+Segment* StreamerGenerator::CreateSegment(Segment* parent)
 {
 	MyFloat3 startPoint = parent->GetEndPoint();
 
 	float minDiameter = PressureToMinDiameter(CalculateLocalPressure(startPoint.y));
-	float diameter    = CalculateDiameter(parent, minDiameter);
+	float diameter = CalculateDiameter(parent, minDiameter);
 
-	return new Segment(
+	MyFloat3 direction = parent->GetDirection().Normalised() * DiameterToLength(diameter);
+	MyFloat3 endPoint = startPoint + direction;
+
+	Segment* newSegment = new Segment(
 		startPoint,
-		startPoint + initDirection * DiameterToLength(diameter),
+		endPoint,
 		diameter,
 		minDiameter
 	);
+
+	newSegment->SetParent(parent);
+	parent->AddChild(newSegment);
+
+	output.push_back(newSegment);
+	
+	return newSegment;
 }
 
-void StreamerGenerator::CreateChildren(Segment* parent)
+void StreamerGenerator::FixEndPoints(Segment* segA, Segment* segB)
 {
-	if(
-		(parent->GetDiameter() > parent->GetMinDiameter()) &&
-		((numSegments + 2) < maxNumSegments)
-	)
-	{
-		Segment* childA = BuildSegment(parent);
-		Segment* childB = BuildSegment(parent);
+	float angleA = DegToRad(35.f);
+	float angleB = DegToRad(35.f);
 
-		childA->SetParent(parent);
-		parent->AddChild(childA);
+	FixEndPoint(segA, angleA);
+	FixEndPoint(segB, angleB);
 
-		childB->SetParent(parent);
-		parent->AddChild(childB);
+}
 
-		output.push_back(childA);
-		output.push_back(childB);
+void StreamerGenerator::FixEndPoint(Segment* seg, float angle)
+{
+	float length = seg->GetLength();
 
-		//calculate directionas
-		//use these to set desired end-point
+	//1. bring back end point to Lcos(angle) from the start point
+	seg->SetEndPoint(
+		seg->GetStartPoint() +
+		(
+			seg->GetDirection().Normalised() *  // direction normalised
+			length * cos(angle)                 // magnitude
+		)
+	);
 
-		numSegments += 2;
-
-		CreateChildren(childA);
-		CreateChildren(childB);
-
-		//TODO fix: this is going to be one-sided due to recursion, if max segment limit is hit
-	}
+	//2. move out end point by Lsin(angle) in a random direction, perpendicular to direction
+	seg->SetEndPoint(
+		seg->GetEndPoint() +
+		(
+			RandomPerpendicularUnitVector(seg->GetDirection()) * // direction normalised
+			length * sin(angle)                                  // magnitude
+		)
+	);
 }

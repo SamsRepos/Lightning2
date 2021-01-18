@@ -85,28 +85,20 @@ void JitterForkGenerator::SwapSegmentsVectors()
 
 std::vector<Segment> JitterForkGenerator::JitterAndFork(Segment& seed, float forkProbNow)
 {
-	//1. get a random vector
-	MyFloat3 randvec = RandomNormalisedVector();
-
-	//2. get the normalised cross product: segment direction X random vector
-	MyFloat3 offset = CrossProduct(randvec, seed.GetDirection());
-	offset = Normalised(offset);
-
-	//3. multiply that by by chaos factor
+	// 1. Get offset point
+	MyFloat3 offset = RandomPerpendicularUnitVector(seed.GetDirection());
 	float chaos = seed.GetLength() * chaosProportion;
 	offset = offset * chaos;
-
-	//4. get new point
 	MyFloat3 offsetPoint = seed.GetMidpoint() + offset;
 
-	//5. two resulting segments
+	// 2. Generate two new segments
 	Segment topSeg(seed.GetStartPoint(), offsetPoint);
 	Segment bottomSeg(offsetPoint, seed.GetEndPoint());
 
 	std::vector<Segment> res = { topSeg, bottomSeg };
 
-	//6. fork maybe
-	if (randFloatGen.GetRandFloat(1.f) < forkProbNow)
+	// 3. Maybe fork
+	if(randFloatGen.GetRandFloat(1.f) < forkProbNow)
 	{
 		res.push_back(
 			Segment(

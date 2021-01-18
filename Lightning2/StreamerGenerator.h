@@ -24,7 +24,7 @@ public:
 		float _initVoltage,
 		float _initPressure,
 		float _pressureGradient,
-		size_t _maxNumSegments
+		size_t _maxNumLayers
 	);
 	void Run();
 	inline std::vector<Segment*>& GetOutput() { return output; };
@@ -32,21 +32,24 @@ public:
 private:
 	void InitAlgorithm();
 
-	Segment* BuildSegment(Segment* parent);
-	void CreateChildren(Segment* parent);
-	
+	void CreateChildren(Segment* parent, size_t parentLayer);
+	Segment* CreateSegment(Segment* parent);
+	void FixEndPoints(Segment* segA, Segment* segB);
+
 	inline float DiameterToLength(const float& diameter) { return diameter * diameterToLengthGaussianGen.GetSample(); };
 	inline float CalculateLocalPressure(const float& y) { return initPressure + (pressureGradient *  (y - startPoint.y)); };
 	inline float PressureToMinDiameter(const float& pressure) { return MINIMUM_DIAMATER_COEFFICIENT * (1.f / pressure); };
 	inline float CalculateDiameter(Segment* parent, const float& thisMinDiameter) { return SQRT_A_HALF * parent->GetDiameter() * (thisMinDiameter / parent->GetMinDiameter()) ; };
+
+	void FixEndPoint(Segment* seg, float angle);
 
 	MyFloat3 startPoint;
 	MyFloat3 initDirection;
 	float initVoltage;
 	float initPressure;
 	float pressureGradient;
-	size_t maxNumSegments;
-	size_t numSegments;
+	size_t maxNumLayers;
+	size_t numLayers;
 
 	BoxMullerGen diameterToLengthGaussianGen;
 

@@ -125,6 +125,9 @@
     <ClInclude Include="PathIdentifier.h">
       <Filter>Header Files\GeometryTransformers</Filter>
     </ClInclude>
+    <ClInclude Include="MyMath.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="light_ps.hlsl">

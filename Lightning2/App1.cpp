@@ -3,6 +3,8 @@
 #include <random>
 #include <ctime>
 
+#include "MyClamp.h"
+
 ////
 // PUBLIC:
 ////
@@ -69,10 +71,10 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	sg.InitParameters(
 		MyFloat3(0.f, 100.f, 0.f), //start point
 		MyFloat3(0.f, -1.f, 0.f),  //init direction
-		500.f, //voltage
-		10.f, //pressure
+		7000.f, //voltage
+		35.f, //pressure
 		0.5f, //pressure gradient
-		100   //max num segments
+		10   //max num layers
 	);
 	sg.Run();
 	UpdateLineMesh(sg.GetOutput(), lineMesh);		
@@ -139,6 +141,10 @@ bool App1::render()
 	planeMesh->sendData(renderer->getDeviceContext());
 	lightShader->setShaderParameters(renderer->getDeviceContext(), planeMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"metal"), light);
 	lightShader->render(renderer->getDeviceContext(), planeMesh->getIndexCount());
+
+	int lineCount = lineMesh->GetLineCount();
+
+	linesToRender = MyClamp(linesToRender, 0, lineCount);
 
 	if (viewLine)
 	{
@@ -249,13 +255,40 @@ void App1::Gui()
 	}
 #endif
 	
+#if STREAMER_METHOD_ACTIVE
+	
+	static float streamerVoltage = 7000;
+	static float streamerInitialPressure = 35.f;
+	static float streamerPressurGradient = 0.5f;
+	static int streamerMaxLayers = 10;
 
+	ImGui::SliderFloat("Streamer voltage", &streamerVoltage, 10.f, 10000.f);
+	ImGui::SliderFloat("Streamer init pressure", &streamerInitialPressure, 1.f, 100.f);
+	ImGui::SliderFloat("Streamre pressure gradient", &streamerPressurGradient, 0.f, 1.f);
+	ImGui::SliderInt("Streamer max layers", &streamerMaxLayers, 1, 20);
+
+	if (ImGui::Button("Run streamer method and rebuild line mesh"))
+	{
+		sg.InitParameters(
+			MyFloat3(0.f, 100.f, 0.f), //start point
+			MyFloat3(0.f, -1.f, 0.f),  //init direction
+			streamerVoltage,
+			streamerInitialPressure,
+			streamerPressurGradient,				
+			streamerMaxLayers
+		);
+		sg.Run();
+		UpdateLineMesh(sg.GetOutput(), lineMesh);
+	}
+	
 	ImGui::SliderInt(
 		"Debug lines to render",
 		&linesToRender,
 		0,
 		lineMesh->GetLineCount()
 	);
+
+#endif
 
 	// Render UI
 	ImGui::Render();

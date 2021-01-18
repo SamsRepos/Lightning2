@@ -3,20 +3,16 @@
 #include <math.h>
 #include <random>
 
-float Magnitude(const MyFloat3& vector)
+float MyFloat3::Magnitude()
 {
 	return sqrt(
-		vector.x * vector.x
-		+
-		vector.y * vector.y
-		+
-		vector.z * vector.z
+		(x * x) + (y * y) + (z * z)
 	);
 }
 
-MyFloat3 Normalised(MyFloat3& vector)
+MyFloat3 MyFloat3::Normalised()
 {
-	return vector / Magnitude(vector);
+	return (*this) / Magnitude();
 }
 
 MyFloat3 CrossProduct(const MyFloat3& u, const MyFloat3& v)
@@ -73,10 +69,20 @@ MyFloat3 RandomNormalisedVector(int resolution)
 	res.y = (rand() % resolution) - halfResolution;
 	res.z = (rand() % resolution) - halfResolution;
 		
-	return Normalised(res);
+	return res.Normalised();
 }
 
 MyFloat3 RandomNormalisedVector()
 {
 	return RandomNormalisedVector(DEFAULT_RANDOM_VECTOR_RESOLUTION);
+}
+
+MyFloat3 RandomPerpendicularUnitVector(const MyFloat3& inputVec)
+{
+	MyFloat3 res = CrossProduct(
+		RandomNormalisedVector(),
+		inputVec
+	);
+
+	return res.Normalised();
 }

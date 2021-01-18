@@ -192,6 +192,7 @@
     <ClInclude Include="LineShader.h" />
     <ClInclude Include="MyClamp.h" />
     <ClInclude Include="MyFloat3.h" />
+    <ClInclude Include="MyMath.h" />
     <ClInclude Include="PathIdentifier.h" />
     <ClInclude Include="RandFloatGen.h" />
     <ClInclude Include="Electrifier.h" />

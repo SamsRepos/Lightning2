@@ -80,7 +80,7 @@ std::vector<Segment> Electrifier::JitterSegment(Segment& seed, float extent)
 
 	//2. get the normalised cross product of the current segment's dir vector, and a random vector
 	MyFloat3 offset = CrossProduct(randvec, seed.GetDirection());
-	offset = Normalised(offset);
+	offset = offset.Normalised();
 	//3. multiply that by by chaos factor
 	offset = offset * extent;
 

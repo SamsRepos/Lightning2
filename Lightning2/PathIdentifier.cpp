@@ -38,5 +38,17 @@ void PathIdentifier::DescendantCounterRecurs(Segment* currentSegment)
 
 void PathIdentifier::StatusSetterRecurs(Segment* currentSegment)
 {
-	i'm here
+	Segment* childA = currentSegment->GetChild(0);
+	Segment* childB = currentSegment->GetChild(1);
+
+	if (childA->GetNumDescendants() > childB->GetNumDescendants())
+	{
+		childA->SetStatus(SegmentStatuses::PRIMARY);
+		childB->SetStatus(SegmentStatuses::SECONDARY);
+	}
+	else
+	{
+		childB->SetStatus(SegmentStatuses::PRIMARY);
+		childA->SetStatus(SegmentStatuses::SECONDARY);
+	}
 }

@@ -16,7 +16,6 @@ enum SegmentStatuses
 class Segment
 {	
 public:
-
 	Segment(
 		MyFloat3 startPoint = MyFloat3(0.f, 0.f, 0.f),
 		MyFloat3 endPoint   = MyFloat3(0.f, 0.f, 0.f),
@@ -24,7 +23,9 @@ public:
 		float minDiameter   = 1.f
 	);
 
+	inline void SetStartPoint(MyFloat3 startPt) { startPoint = startPt; };
 	inline MyFloat3 GetStartPoint() { return startPoint; };
+	inline void SetEndPoint(MyFloat3 endPt) { endPoint = endPt; };
 	inline MyFloat3 GetEndPoint() { return endPoint; };
 	inline MyFloat3 GetDirection() { return endPoint - startPoint; };
 	inline MyFloat3 GetMidpoint() { return startPoint + (GetDirection()*.5f); };
@@ -35,9 +36,13 @@ public:
 	inline void SetParent(Segment* _parent) { parent = _parent; };
 	inline void AddChild(Segment* child) { children.push_back(child); };
 	inline std::vector<Segment*>* GetChildren() { return &children; };
+	inline Segment* GetChild(size_t index) { return children[index]; };
 
 	inline void SetNumDescendants(size_t num) { numDescendants = num; };
 	inline size_t GetNumDescendants() { return numDescendants; };
+
+	inline void SetStatus(SegmentStatuses _status) { status = _status; };
+	inline SegmentStatuses GetStatus() { return status; };
 	
 private:
 	MyFloat3 startPoint, endPoint;
@@ -49,4 +54,3 @@ private:
 	size_t numDescendants;
 	SegmentStatuses status;
 };
-
