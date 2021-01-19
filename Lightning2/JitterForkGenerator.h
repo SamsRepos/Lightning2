@@ -19,26 +19,26 @@ public:
 	);
 	
 	void Run();
-	inline std::vector<Segment*>* GetOutput() { return currentSegments; };	
+	inline std::vector<Segment*>* GetOutput() { return output; };
 
 private:
 	void InitAlgorithm();
 	void ResetSegmentVectors();
 	void SwapSegmentsVectors();
-	std::vector<Segment> JitterAndFork(Segment& segment, float forkProbNow);
+	std::vector<Segment*> JitterAndFork(Segment* segment, float forkProbNow);
 
 	Segment originalSeed;
-	int iterations = 10;		
-	float chaosProportion = .1f;	
-	float forkProb = .7f;		
-	float forkProbScaleDown = .6f;
-	//float forkLength = 1.f;
-
+	int iterations;
+	float chaosProportion;
+	float baselineForkProb;
+	float forkProbScaleDown;
+	
 	std::vector<Segment*> segmentsA;
 	std::vector<Segment*> segmentsB;
 	std::vector<Segment*>* currentSegments;
 	std::vector<Segment*>* nextSegments;
 
+	std::vector<Segment*>* output;
+
 	RandFloatGen randFloatGen;
 };
-

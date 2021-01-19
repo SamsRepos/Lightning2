@@ -1,6 +1,6 @@
 #include "PipelineMgr.h"
 
-#include "SegmentCuller.h"
+#include "SegmentRemoval.h"
 #include "MyClamp.h"
 
 ////
@@ -110,8 +110,7 @@ void PipelineMgr::RunProcess()
 	if (settings->IsElectrifierActive())
 	{
 		electrifier.SetSegments(segments);
-		electrifier.Run();
-		electrifier.GetOutput
+		electrifier.Run();		
 	}
 }
 
@@ -121,8 +120,11 @@ void PipelineMgr::RunProcess()
 
 void PipelineMgr::InitProcess()
 {
-	if (segments)
+	if(segments)
 	{
 		ClearAllSegmentData(segments);
+
+		delete segments;
+		segments = NULL;
 	}
 }

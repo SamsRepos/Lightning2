@@ -138,9 +138,7 @@ bool App1::render()
 	lightShader->setShaderParameters(renderer->getDeviceContext(), planeMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"metal"), light);
 	lightShader->render(renderer->getDeviceContext(), planeMesh->getIndexCount());
 
-	int lineCount = lineMesh->GetLineCount();
-
-	linesToRender = MyClamp(linesToRender, 0, lineCount);
+	linesToRender = MyClamp(linesToRender, 0, int(lineMesh->GetLineCount()));
 
 	if (viewLine)
 	{
@@ -180,103 +178,6 @@ void App1::Gui()
 	
 	ImGui::Text("*************************************");
 	
-#if JITTER_FORK_METHOD_ACTIVE
-	if (ImGui::CollapsingHeader("JITTER + FORK GENERATOR"))
-	{
-		//init these static values to defaults defined above:
-		static int iterations = 10;
-		static float chaosProportion = .1f;
-		static float forkProb = .7f;
-		static float forkProbScaleDown = .6f;
-
-		bool changeNow = false;
-
-		changeNow = GuiSliderInt(&changeNow, "JFG iterations", &iterations, 1, 10);
-		changeNow = GuiSliderFloat(&changeNow, "JFG chaos proportion", &chaosProportion, 0.f, MAX_CHAOS_PROPORTION);
-		changeNow = GuiSliderFloat(&changeNow, "JFG fork probability", &forkProb, 0.f, 1.f);
-		changeNow = GuiSliderFloat(&changeNow, "JFG fork prob scaledown", &forkProbScaleDown, 0.f, 1.f);
-
-		if (changeNow)
-		{
-			jfg.InitParameters(
-				iterations,
-				chaosProportion,
-				forkProb,
-				forkProbScaleDown
-			);
-		}
-
-		if (ImGui::Button("RUN JFG AND REBUILD LINE MESH"))
-		{
-			jfg.Run();
-			UpdateLineMesh(jfg.GetOutput(), lineMesh);
-		}
-
-		if (ImGui::CollapsingHeader("ELECTRIFIER"))
-		{
-			static float maxLength = 1.f;
-			static float chaosProportion = 0.1f;
-
-			bool changeNow = false;
-			changeNow = GuiSliderFloat(&changeNow, "E max len", &maxLength, MIN_SEGMENT_LENGTH, 5.f);
-			changeNow = GuiSliderFloat(&changeNow, "E chaos proportion", &chaosProportion, 0.f, MAX_CHAOS_PROPORTION);
-			
-			if (changeNow)
-			{
-				electrifier->InitParameters(
-					maxLength,
-					chaosProportion
-				);
-			}
-
-			if (ImGui::Button("RUN JFG, RUN E, AND REBUILD LINE MESH"))
-			{
-				jfg.Run();
-				electrifier->SetInput(
-					&(jfg.GetOutput())
-				);
-				electrifier->Run();
-				UpdateLineMesh(electrifier->GetOutput(), lineMesh);
-			}
-
-			if (ImGui::Button("RUN E, AND REBUILD LINE MESH"))
-			{
-				electrifier->SetInput(
-					&(jfg.GetOutput())
-				);
-				electrifier->Run();
-				UpdateLineMesh(electrifier->GetOutput(), lineMesh);
-			}
-		}
-	}
-#endif
-	
-#if STREAMER_METHOD_ACTIVE
-	
-	static float streamerVoltage         = 7000;
-	static float streamerInitialPressure = 35.f;
-	static float streamerPressurGradient = 0.5f;
-	static int   streamerMaxLayers       = 10;
-
-	ImGui::SliderFloat("Streamer voltage", &streamerVoltage, 10.f, 10000.f);
-	ImGui::SliderFloat("Streamer init pressure", &streamerInitialPressure, 1.f, 100.f);
-	ImGui::SliderFloat("Streamre pressure gradient", &streamerPressurGradient, 0.f, 1.f);
-	ImGui::SliderInt("Streamer max layers", &streamerMaxLayers, 1, 20);
-
-	if (ImGui::Button("Run streamer method and rebuild line mesh"))
-	{
-		sg.InitParameters(
-			MyFloat3(0.f, 100.f, 0.f), //start point
-			MyFloat3(0.f, -1.f, 0.f),  //init direction
-			streamerVoltage,
-			streamerInitialPressure,
-			streamerPressurGradient,				
-			streamerMaxLayers
-		);
-		sg.Run();
-		UpdateLineMesh(sg.GetOutput(), lineMesh);
-	}
-	
 	ImGui::SliderInt(
 		"Debug lines to render",
 		&linesToRender,
@@ -284,7 +185,108 @@ void App1::Gui()
 		lineMesh->GetLineCount()
 	);
 
-#endif
+	ImGui::Text("*************************************");
+
+
+	if (ImGui::Button("Run whole process"))
+	{
+		pipelineMgr->RunProcess();
+		UpdateLineMesh(pipelineMgr->GetSegments(), lineMesh);
+	}
+
+	//if (ImGui::CollapsingHeader("JITTER + FORK GENERATOR"))
+	//{
+	//	//init these static values to defaults defined above:
+	//	static int iterations = 10;
+	//	static float chaosProportion = .1f;
+	//	static float forkProb = .7f;
+	//	static float forkProbScaleDown = .6f;
+
+	//	bool changeNow = false;
+
+	//	changeNow = GuiSliderInt(&changeNow, "JFG iterations", &iterations, 1, 10);
+	//	changeNow = GuiSliderFloat(&changeNow, "JFG chaos proportion", &chaosProportion, 0.f, MAX_CHAOS_PROPORTION);
+	//	changeNow = GuiSliderFloat(&changeNow, "JFG fork probability", &forkProb, 0.f, 1.f);
+	//	changeNow = GuiSliderFloat(&changeNow, "JFG fork prob scaledown", &forkProbScaleDown, 0.f, 1.f);
+
+	//	if (changeNow)
+	//	{
+	//		jfg.InitParameters(
+	//			iterations,
+	//			chaosProportion,
+	//			forkProb,
+	//			forkProbScaleDown
+	//		);
+	//	}
+
+	//	if (ImGui::Button("RUN JFG AND REBUILD LINE MESH"))
+	//	{
+	//		jfg.Run();
+	//		UpdateLineMesh(jfg.GetOutput(), lineMesh);
+	//	}
+
+	//	if (ImGui::CollapsingHeader("ELECTRIFIER"))
+	//	{
+	//		static float maxLength = 1.f;
+	//		static float chaosProportion = 0.1f;
+
+	//		bool changeNow = false;
+	//		changeNow = GuiSliderFloat(&changeNow, "E max len", &maxLength, MIN_SEGMENT_LENGTH, 5.f);
+	//		changeNow = GuiSliderFloat(&changeNow, "E chaos proportion", &chaosProportion, 0.f, MAX_CHAOS_PROPORTION);
+	//		
+	//		if (changeNow)
+	//		{
+	//			electrifier->InitParameters(
+	//				maxLength,
+	//				chaosProportion
+	//			);
+	//		}
+
+	//		if (ImGui::Button("RUN JFG, RUN E, AND REBUILD LINE MESH"))
+	//		{
+	//			jfg.Run();
+	//			electrifier->SetInput(
+	//				&(jfg.GetOutput())
+	//			);
+	//			electrifier->Run();
+	//			UpdateLineMesh(electrifier->GetOutput(), lineMesh);
+	//		}
+
+	//		if (ImGui::Button("RUN E, AND REBUILD LINE MESH"))
+	//		{
+	//			electrifier->SetInput(
+	//				&(jfg.GetOutput())
+	//			);
+	//			electrifier->Run();
+	//			UpdateLineMesh(electrifier->GetOutput(), lineMesh);
+	//		}
+	//	}
+	//}
+
+	//static float streamerVoltage         = 7000;
+	//static float streamerInitialPressure = 35.f;
+	//static float streamerPressurGradient = 0.5f;
+	//static int   streamerMaxLayers       = 10;
+
+	//ImGui::SliderFloat("Streamer voltage", &streamerVoltage, 10.f, 10000.f);
+	//ImGui::SliderFloat("Streamer init pressure", &streamerInitialPressure, 1.f, 100.f);
+	//ImGui::SliderFloat("Streamre pressure gradient", &streamerPressurGradient, 0.f, 1.f);
+	//ImGui::SliderInt("Streamer max layers", &streamerMaxLayers, 1, 20);
+
+	//if (ImGui::Button("Run streamer method and rebuild line mesh"))
+	//{
+	//	sg.InitParameters(
+	//		MyFloat3(0.f, 100.f, 0.f), //start point
+	//		MyFloat3(0.f, -1.f, 0.f),  //init direction
+	//		streamerVoltage,
+	//		streamerInitialPressure,
+	//		streamerPressurGradient,				
+	//		streamerMaxLayers
+	//	);
+	//	sg.Run();
+	//	UpdateLineMesh(sg.GetOutput(), lineMesh);
+	//}
+	
 
 	// Render UI
 	ImGui::Render();
@@ -301,31 +303,10 @@ bool App1::GuiSliderFloat(bool* changeFlag, const char* msg, float* f, float min
 	return ImGui::SliderFloat(msg, f, min, max) || *changeFlag;
 }
 
-void App1::UpdateLineMesh(std::vector<Segment>& segs, LineMesh* mesh)
+void App1::UpdateLineMesh(std::vector<Segment*>* segs, LineMesh* mesh)
 {
 	mesh->Clear();
-	for (Segment& seg : segs)
-	{
-		mesh->AddLine(
-			XMFLOAT3(
-				seg.GetStartPoint().x,
-				seg.GetStartPoint().y,
-				seg.GetStartPoint().z
-			),
-			XMFLOAT3(
-				seg.GetEndPoint().x,
-				seg.GetEndPoint().y,
-				seg.GetEndPoint().z
-			),
-			0
-		);
-	}
-}
-
-void App1::UpdateLineMesh(std::vector<Segment*>& segs, LineMesh* mesh)
-{
-	mesh->Clear();
-	for (Segment* seg : segs)
+	for (Segment* seg : *segs)
 	{
 		mesh->AddLine(
 			XMFLOAT3(

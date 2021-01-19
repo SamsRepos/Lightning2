@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#include "SegmentRemoval.h"
 #include "MyClamp.h"
 
 ////
@@ -9,6 +10,8 @@
 ////
 
 JitterForkGenerator::JitterForkGenerator()
+	:
+	output(NULL)
 {
 }
 
@@ -16,14 +19,14 @@ void JitterForkGenerator::InitParameters(
 	const Segment& seedSegment,
 	size_t its,
 	float chaosProportionToLength,
-	float forkProbability,
+	float baselineForkProbability ,
 	float forkProbabilityScaleDown
 )
 {
 	originalSeed      = seedSegment;
 	iterations        = its;
 	chaosProportion   = MyClamp(chaosProportionToLength, 0.f, 1.f);
-	forkProb          = forkProbability;
+	baselineForkProb  = baselineForkProbability;
 	forkProbScaleDown = forkProbabilityScaleDown;
 }
 
@@ -31,21 +34,23 @@ void JitterForkGenerator::Run()
 {
 	InitAlgorithm();
 
-	float forkProbNow = forkProb;
+	float forkProb = baselineForkProb;
 
 	for (size_t i = 0; i < iterations; i++)
 	{
-		for (auto& seg : *currentSegments)
+		for (Segment* seg : *currentSegments)
 		{
-			std::vector<Segment> res = JitterAndFork(seg, forkProbNow);
+			std::vector<Segment*> res = JitterAndFork(seg, forkProb);
 			nextSegments->insert(nextSegments->end(), res.begin(), res.end());
 		}
 
 		SwapSegmentsVectors();
 		nextSegments->clear();
 
-		forkProbNow *= forkProbScaleDown;
+		forkProb *= forkProbScaleDown;
 	}
+
+	output = new std::vector<Segment*>(*currentSegments);
 }
 
 ////
@@ -55,16 +60,16 @@ void JitterForkGenerator::Run()
 void JitterForkGenerator::InitAlgorithm()
 {
 	ResetSegmentVectors();
-	currentSegments->push_back(originalSeed);
+	currentSegments->push_back(new Segment(originalSeed));
 }
 
 void JitterForkGenerator::ResetSegmentVectors()
 {
-	segmentsA.clear();
-	segmentsB.clear();
+	ClearAllSegmentData(&segmentsA);
+	ClearAllSegmentData(&segmentsB);
 
 	currentSegments = &segmentsA;
-	nextSegments = &segmentsB;
+	nextSegments    = &segmentsB;
 }
 
 void JitterForkGenerator::SwapSegmentsVectors()
@@ -73,27 +78,27 @@ void JitterForkGenerator::SwapSegmentsVectors()
 	nextSegments    = (nextSegments    == &segmentsA) ? &segmentsB : &segmentsA;
 }
 
-std::vector<Segment> JitterForkGenerator::JitterAndFork(Segment& seed, float forkProbNow)
+std::vector<Segment*> JitterForkGenerator::JitterAndFork(Segment* seed, float forkProbNow)
 {
 	// 1. Get offset point
-	MyFloat3 offset = RandomPerpendicularUnitVector(seed.GetDirection());
-	float chaos = seed.GetLength() * chaosProportion;
+	MyFloat3 offset = RandomPerpendicularUnitVector(seed->GetDirection());
+	float chaos = seed->GetLength() * chaosProportion;
 	offset = offset * chaos;
-	MyFloat3 offsetPoint = seed.GetMidpoint() + offset;
+	MyFloat3 offsetPoint = seed->GetMidpoint() + offset;
 
 	// 2. Generate two new segments
-	Segment topSeg(seed.GetStartPoint(), offsetPoint);
-	Segment bottomSeg(offsetPoint, seed.GetEndPoint());
+	Segment* topSeg    = new Segment(seed->GetStartPoint(), offsetPoint);
+	Segment* bottomSeg = new Segment(offsetPoint, seed->GetEndPoint());
 
-	std::vector<Segment> res = { topSeg, bottomSeg };
+	std::vector<Segment*> res = { topSeg, bottomSeg };
 
 	// 3. Maybe fork
 	if(randFloatGen.GetRandFloat(1.f) < forkProbNow)
 	{
 		res.push_back(
-			Segment(
+			new Segment(
 				offsetPoint,
-				offsetPoint + topSeg.GetDirection()
+				offsetPoint + topSeg->GetDirection()
 			)
 		);
 	}

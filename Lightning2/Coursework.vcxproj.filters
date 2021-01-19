@@ -90,9 +90,6 @@
     <ClCompile Include="DiameterTransformer.cpp">
       <Filter>Source Files\GeometryTransformers</Filter>
     </ClCompile>
-    <ClCompile Include="SegmentCuller.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="LineMesh.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
@@ -101,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="PipelineMgrSettings.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SegmentRemoval.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -146,9 +146,6 @@
     <ClInclude Include="DiameterTransformer.h">
       <Filter>Header Files\GeometryTransformers</Filter>
     </ClInclude>
-    <ClInclude Include="SegmentCuller.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="LineMesh.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
@@ -157,6 +154,9 @@
     </ClInclude>
     <ClInclude Include="PipelineMgrSettings.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SegmentRemoval.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

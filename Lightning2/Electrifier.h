@@ -11,22 +11,21 @@ public:
 		float maxSegLength,
 		float chaosProportionToLength
 	);
-	inline void SetInput(std::vector<Segment>* inputVector) { input = inputVector; };
+	inline void SetSegments(std::vector<Segment*>* _segments) { segments = _segments; };
 	void Run();
-	inline std::vector<Segment>& GetOutput() { return *currentSegments; };
-
+	
 private:
 	void InitAlgorithm();
 	void ResetSegmentVectors();
 	void SwapSegmentsVectors();
-	std::vector<Segment> JitterSegment(Segment& segment, float extent);
+	std::vector<Segment*> JitterSegment(Segment* segment, float extent);
 	
-	std::vector<Segment>* input;
+	std::vector<Segment*>* segments;
 	float maxLength = 1.f;
 	float chaosProportion = .1f;
 		
-	std::vector<Segment> segmentsA;
-	std::vector<Segment> segmentsB;
-	std::vector<Segment>* currentSegments;
-	std::vector<Segment>* nextSegments;
+	std::vector<Segment*> segmentsA;
+	std::vector<Segment*> segmentsB;
+	std::vector<Segment*>* currentSegments;
+	std::vector<Segment*>* nextSegments;
 };

@@ -1,6 +1,6 @@
 #include "DiameterTransformer.h"
 
-#include "SegmentCuller.h"
+#include "SegmentRemoval.h"
 
 ////
 // PUBLIC:

@@ -1,4 +1,4 @@
-#include "SegmentCuller.h"
+#include "SegmentRemoval.h"
 
 void CullSegments(std::vector<Segment*>* vec)
 {
@@ -32,8 +32,5 @@ void ClearAllSegmentData(std::vector<Segment*>* vec)
 		}
 
 		vec->clear();
-
-		delete vec;
-		vec = NULL;
 	}	
 }

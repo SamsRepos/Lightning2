@@ -180,7 +180,7 @@
     <ClCompile Include="MyFloat3.cpp" />
     <ClCompile Include="PipelineMgr.cpp" />
     <ClCompile Include="PipelineMgrSettings.cpp" />
-    <ClCompile Include="SegmentCuller.cpp" />
+    <ClCompile Include="SegmentRemoval.cpp" />
     <ClCompile Include="PathIdentifier.cpp" />
     <ClCompile Include="RandFloatGen.cpp" />
     <ClCompile Include="Electrifier.cpp" />
@@ -200,7 +200,7 @@
     <ClInclude Include="MyMath.h" />
     <ClInclude Include="PipelineMgr.h" />
     <ClInclude Include="PipelineMgrSettings.h" />
-    <ClInclude Include="SegmentCuller.h" />
+    <ClInclude Include="SegmentRemoval.h" />
     <ClInclude Include="PathIdentifier.h" />
     <ClInclude Include="RandFloatGen.h" />
     <ClInclude Include="Electrifier.h" />

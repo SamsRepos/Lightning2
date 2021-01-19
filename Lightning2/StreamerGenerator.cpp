@@ -36,7 +36,7 @@ void StreamerGenerator::Run()
 	InitAlgorithm();
 
 	//algorithm
-	float rootDiameter = initVoltage * INIT_VOLTAGE_CONST;
+	float rootDiameter = initVoltage * INIT_VOLTAGE_COEFF;
 	float rootLength = DiameterToLength(rootDiameter);
 	MyFloat3 rootStartPt = startPoint;
 	MyFloat3 rootEndPt = startPoint + (initDirection * rootLength);
@@ -46,7 +46,7 @@ void StreamerGenerator::Run()
 
 	Segment* rootSegment = new Segment(rootStartPt, rootEndPt, rootDiameter, rootMinimumDiamater);
 
-	output.push_back(rootSegment);
+	output->push_back(rootSegment);
 
 	CreateChildren(rootSegment, 0);
 }
@@ -57,7 +57,7 @@ void StreamerGenerator::Run()
 
 void StreamerGenerator::InitAlgorithm()
 {
-	output.clear();
+	output = new std::vector<Segment*>;
 	numLayers = 0;	
 }
 
@@ -102,7 +102,7 @@ Segment* StreamerGenerator::CreateSegment(Segment* parent)
 	newSegment->SetParent(parent);
 	parent->AddChild(newSegment);
 
-	output.push_back(newSegment);
+	output->push_back(newSegment);
 	
 	return newSegment;
 }

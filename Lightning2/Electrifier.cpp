@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "SegmentRemoval.h"
+
 ////
 // PUBLIC:
 ////
@@ -25,15 +27,15 @@ void Electrifier::Run()
 	{
 		anySegmentTooLong = false;
 
-		for (auto& seg : *currentSegments)
+		for (Segment* seg : *currentSegments)
 		{
-			float len = seg.GetLength();
+			float len = seg->GetLength();
 
 			if (len > maxLength)
 			{
 				anySegmentTooLong = true;
 
-				std::vector<Segment> res = JitterSegment(seg, len * chaosProportion);
+				std::vector<Segment*> res = JitterSegment(seg, len * chaosProportion);
 				nextSegments->insert(nextSegments->end(), res.begin(), res.end());
 			}
 			else
@@ -46,6 +48,14 @@ void Electrifier::Run()
 		nextSegments->clear();
 
 	} while(anySegmentTooLong);
+
+	//output vector:
+	if (segments)
+	{
+		ClearAllSegmentData(segments);
+		delete segments;
+	}
+	segments = new std::vector<Segment*>(*currentSegments);
 }
 
 ////
@@ -55,16 +65,16 @@ void Electrifier::Run()
 void Electrifier::InitAlgorithm()
 {
 	ResetSegmentVectors();
-	*currentSegments = *input;
+	*currentSegments = *segments;
 }
 
 void Electrifier::ResetSegmentVectors()
 {
-	segmentsA.clear();
-	segmentsB.clear();
+	ClearAllSegmentData(&segmentsA);
+	ClearAllSegmentData(&segmentsB);
 
 	currentSegments = &segmentsA;
-	nextSegments = &segmentsB;
+	nextSegments    = &segmentsB;
 }
 
 void Electrifier::SwapSegmentsVectors()
@@ -73,25 +83,25 @@ void Electrifier::SwapSegmentsVectors()
 	nextSegments    = (nextSegments    == &segmentsA) ? &segmentsB : &segmentsA;
 }
 
-std::vector<Segment> Electrifier::JitterSegment(Segment& seed, float extent)
+std::vector<Segment*> Electrifier::JitterSegment(Segment* seed, float extent)
 {
 	//1. get a random vector
 	MyFloat3 randvec = RandomNormalisedVector();
 
 	//2. get the normalised cross product of the current segment's dir vector, and a random vector
-	MyFloat3 offset = CrossProduct(randvec, seed.GetDirection());
+	MyFloat3 offset = CrossProduct(randvec, seed->GetDirection());
 	offset = offset.Normalised();
 	//3. multiply that by by chaos factor
 	offset = offset * extent;
 
 	//4. get new point
-	MyFloat3 newPt = seed.GetMidpoint() + offset;
+	MyFloat3 newPt = seed->GetMidpoint() + offset;
 
 	//5. two resulting segments
-	Segment topSeg(seed.GetStartPoint(), newPt);
-	Segment bottomSeg(newPt, seed.GetEndPoint());
+	Segment* topSeg =    new Segment(seed->GetStartPoint(), newPt);
+	Segment* bottomSeg = new Segment(newPt, seed->GetEndPoint());
 
-	std::vector<Segment> res = { topSeg, bottomSeg };
+	std::vector<Segment*> res = { topSeg, bottomSeg };
 
 	return res;
 }

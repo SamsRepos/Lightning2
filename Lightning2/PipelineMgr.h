@@ -59,6 +59,7 @@ public:
 
 	//run whole process
 	void RunProcess();
+	std::vector<Segment*>* GetSegments() { return segments; };
 
 	//render output
 	
