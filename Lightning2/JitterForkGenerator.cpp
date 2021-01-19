@@ -20,17 +20,7 @@ void JitterForkGenerator::InitParameters(
 	float forkProbabilityScaleDown
 )
 {
-	originalSeed = seedSegment;
-	InitParameters(its, chaosProportionToLength, forkProbability, forkProbabilityScaleDown);
-}
-
-void JitterForkGenerator::InitParameters(
-	size_t its,
-	float chaosProportionToLength,
-	float forkProbability,
-	float forkProbabilityScaleDown
-)
-{
+	originalSeed      = seedSegment;
 	iterations        = its;
 	chaosProportion   = MyClamp(chaosProportionToLength, 0.f, 1.f);
 	forkProb          = forkProbability;

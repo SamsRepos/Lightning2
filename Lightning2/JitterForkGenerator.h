@@ -17,15 +17,9 @@ public:
 		float forkProbability,
 		float forkProbabilityScaleDown
 	);
-	void InitParameters(
-		size_t its,
-		float chaosProportionToLength,
-		float forkProbability,
-		float forkProbabilityScaleDown
-	);
-
+	
 	void Run();
-	inline std::vector<Segment>& GetOutput() { return *currentSegments; };	
+	inline std::vector<Segment*>* GetOutput() { return currentSegments; };	
 
 private:
 	void InitAlgorithm();
@@ -40,10 +34,10 @@ private:
 	float forkProbScaleDown = .6f;
 	//float forkLength = 1.f;
 
-	std::vector<Segment> segmentsA;
-	std::vector<Segment> segmentsB;
-	std::vector<Segment>* currentSegments;
-	std::vector<Segment>* nextSegments;
+	std::vector<Segment*> segmentsA;
+	std::vector<Segment*> segmentsB;
+	std::vector<Segment*>* currentSegments;
+	std::vector<Segment*>* nextSegments;
 
 	RandFloatGen randFloatGen;
 };

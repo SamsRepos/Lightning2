@@ -44,49 +44,45 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	planeMatrix = DirectX::XMMatrixTranslation(-50.f, 0.f, -50.f);
 
 	//Line Mesh:
-
 	lineMesh = new LineMesh(renderer->getDevice(), renderer->getDeviceContext());
 
-	//Generators:
-	//Jitter-fork generator
-#if JITTER_FORK_METHOD_ACTIVE
-	Segment seed = Segment(
-		MyFloat3(0.f, 100.f, 0.f),
-		MyFloat3(0.f, 0.f, 0.f)
+
+	// Pipeline manager:
+	PipelineMgrDefaultSettings defaultSettings;
+	defaultSettings.geometryGenerator         = GeometryGeneratorTypes::JITTER_FORK;
+	defaultSettings.diameterTransformerActive = true;
+	defaultSettings.wholeTransformerActive    = false;
+	defaultSettings.electrifierActive         = false;
+	pipelineMgr = new PipelineMgr(defaultSettings);
+
+	pipelineMgr->InitJitterForkGenerator(
+		MyFloat3(0.f, 100.f, 0.f), //start point
+		MyFloat3(0.f, 0.f, 0.f),   //end point
+		10,                        //its
+		.1f,                       //chaos proportion
+		.7f,                       //forkProbability
+		.6f                        //forkProbabilityScaleDown
 	);
 
-	jfg.InitParameters(
-		seed,
-		10,    //its
-		.1f,   //chaos proportion
-		.7f,   //forkProbability
-		.6f    //forkProbabilityScaleDown
-	);
-	jfg.Run();
-	UpdateLineMesh(jfg.GetOutput(), lineMesh);
-#endif
-
-	//Streamer generator:
-#if STREAMER_METHOD_ACTIVE
-	sg.InitParameters(
+	pipelineMgr->InitStreamerGenerator(
 		MyFloat3(0.f, 100.f, 0.f), //start point
 		MyFloat3(0.f, -1.f, 0.f),  //init direction
-		7000.f, //voltage
-		35.f, //pressure
-		0.5f, //pressure gradient
-		10   //max num layers
+		7000.f,                    //voltage
+		35.f,                      //pressure
+		0.5f,                      //pressure gradient
+		10                         //max num layers
 	);
-	sg.Run();
-	UpdateLineMesh(sg.GetOutput(), lineMesh);		
-#endif
 
-	//Post-generation stages:
-	electrifier = new Electrifier();
-
-	electrifier->InitParameters(
-		1.f,
-		.1f
+	pipelineMgr->InitDiameterTransformer(
+		5.f,  //initial diameter
+		0.5f, //diameter scaledown
+		4     //max num branch levels
 	);
+
+	pipelineMgr->InitElectrifier(
+		1.f, //max segment length
+		.1f  //chaos proportion to length
+	);	
 }
 
 App1::~App1()

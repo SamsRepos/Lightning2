@@ -1,5 +1,7 @@
 #include "DiameterTransformer.h"
 
+#include "SegmentCuller.h"
+
 ////
 // PUBLIC:
 ////
@@ -16,6 +18,8 @@ void DiameterTransformer::Run()
 	Segment* root = segments->front();
 
 	DiameterTransformRecurs(root, initialDiameter, 0);
+
+	CullSegments(segments);
 }
 
 ////
@@ -47,6 +51,6 @@ void DiameterTransformer::DiameterTransformRecurs(Segment* segment, float diamet
 	else
 	{
 		//delete and remove segment
-
+		segment->SetToBeCulled();
 	}
 }

@@ -20,3 +20,12 @@ float Segment::GetLength()
 		direction.z * direction.z
 	);
 }
+
+void Segment::SetToBeCulled()
+{
+	cullMe = true;
+	for (Segment* child : children)
+	{
+		child->SetToBeCulled();
+	}
+}

@@ -43,6 +43,12 @@
     <Filter Include="Header Files\GeometryTransformers">
       <UniqueIdentifier>{4165753b-6cf4-4b98-9a7d-063be5bfc5e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Graphics">
+      <UniqueIdentifier>{6aa2f147-5b8d-4a9c-ba57-9f07f830f851}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{227ed8e5-6ff7-4a05-8a63-e9580792155e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App1.cpp">
@@ -56,9 +62,6 @@
     </ClCompile>
     <ClCompile Include="LineShader.cpp">
       <Filter>Source Files\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="LineMesh.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Segment.cpp">
       <Filter>Source Files</Filter>
@@ -87,6 +90,18 @@
     <ClCompile Include="DiameterTransformer.cpp">
       <Filter>Source Files\GeometryTransformers</Filter>
     </ClCompile>
+    <ClCompile Include="SegmentCuller.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="LineMesh.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="PipelineMgr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PipelineMgrSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App1.h">
@@ -97,9 +112,6 @@
     </ClInclude>
     <ClInclude Include="LightShader.h">
       <Filter>Header Files\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="LineMesh.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Segment.h">
       <Filter>Header Files</Filter>
@@ -133,6 +145,18 @@
     </ClInclude>
     <ClInclude Include="DiameterTransformer.h">
       <Filter>Header Files\GeometryTransformers</Filter>
+    </ClInclude>
+    <ClInclude Include="SegmentCuller.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="LineMesh.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="PipelineMgr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PipelineMgrSettings.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

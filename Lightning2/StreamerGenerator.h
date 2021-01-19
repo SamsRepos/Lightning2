@@ -27,7 +27,7 @@ public:
 		size_t _maxNumLayers
 	);
 	void Run();
-	inline std::vector<Segment*>& GetOutput() { return output; };
+	inline std::vector<Segment*>* GetOutput() { return output; };
 
 private:
 	void InitAlgorithm();
@@ -53,6 +53,6 @@ private:
 
 	BoxMullerGen diameterToLengthGaussianGen;
 
-	std::vector<Segment*> output;
+	std::vector<Segment*>* output;
 };
 

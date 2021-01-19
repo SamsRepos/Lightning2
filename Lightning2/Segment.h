@@ -10,7 +10,7 @@ const float MAX_CHAOS_PROPORTION = 0.2f;
 enum SegmentStatuses
 {
 	PRIMARY,
-	SECONDARY
+	SECONDARY	
 };
 
 class Segment
@@ -44,6 +44,9 @@ public:
 
 	inline void SetStatus(SegmentStatuses _status) { status = _status; };
 	inline SegmentStatuses GetStatus() { return status; };
+
+	void SetToBeCulled();
+	inline bool IsToBeCulled() { return cullMe; };
 	
 private:
 	MyFloat3 startPoint, endPoint;
@@ -54,4 +57,6 @@ private:
 
 	size_t numDescendants;
 	SegmentStatuses status;
+
+	bool cullMe = false;
 };
