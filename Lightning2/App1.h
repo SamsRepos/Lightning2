@@ -34,7 +34,7 @@ public:
 	
 private:
 	void Gui();
-	bool GuiSliderInt(bool* changeFlag, const char* msg, int* i, float min, float max);
+	bool GuiSliderInt(bool* changeFlag, const char* msg, int* i, int min, int max);
 	bool GuiSliderFloat(bool* changeFlag, const char* msg, float* f, float min, float max);
 
 	void UpdateLineMesh(std::vector<Segment*>* segs, LineMesh* mesh);

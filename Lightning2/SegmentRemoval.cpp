@@ -14,6 +14,10 @@ void CullSegments(std::vector<Segment*>* vec)
 				it = vec->erase(it);
 				delete seg;
 			}
+			else
+			{
+				it++;
+			}
 		}
 	}
 }

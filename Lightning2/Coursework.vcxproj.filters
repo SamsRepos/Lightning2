@@ -158,6 +158,9 @@
     <ClInclude Include="SegmentRemoval.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="DefaultParameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="light_ps.hlsl">

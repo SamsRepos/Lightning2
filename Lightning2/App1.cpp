@@ -5,6 +5,8 @@
 
 #include "MyClamp.h"
 
+#include "DefaultParameters.h"
+
 ////
 // PUBLIC:
 ////
@@ -56,32 +58,32 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	pipelineMgr = new PipelineMgr(defaultSettings);
 
 	pipelineMgr->InitJitterForkGenerator(
-		MyFloat3(0.f, 100.f, 0.f), //start point
-		MyFloat3(0.f, 0.f, 0.f),   //end point
-		10,                        //its
-		.1f,                       //chaos proportion
-		.7f,                       //forkProbability
-		.6f                        //forkProbabilityScaleDown
+		DEFAULT_JFG_START_PT,
+		DEFAULT_JFG_END_PT,
+		DEFAULT_JFG_ITERATIONS,
+		DEFAULT_JFG_CHAOS_PROPORTION,
+		DEFAULT_JFG_BASELINE_FORK_PROB, 
+		DEFAULT_JFG_FORK_PROB_SCALEDOWN
 	);
 
 	pipelineMgr->InitStreamerGenerator(
-		MyFloat3(0.f, 100.f, 0.f), //start point
-		MyFloat3(0.f, -1.f, 0.f),  //init direction
-		7000.f,                    //voltage
-		35.f,                      //pressure
-		0.5f,                      //pressure gradient
-		10                         //max num layers
+		DEFAULT_SG_START_PT,
+		DEFAULT_SG_INITIAL_DIRECTION,
+		DEFAULT_SG_INITIAL_VOLTAGE,
+		DEFAULT_SG_INITIAL_PRESSURE,
+		DEFAULT_SG_PRESSURE_GRADIENT,
+		DEFAULT_SG_MAX_NUM_LAYERS
 	);
 
 	pipelineMgr->InitDiameterTransformer(
-		5.f,  //initial diameter
-		0.5f, //diameter scaledown
-		4     //max num branch levels
+		DEFAULT_DT_INITIAL_DIAMETER,
+		DEFAULT_DT_DIAMETER_SCALEDOWN,
+		DEFAULT_DT_MAX_NUM_BRANCH_LEVELS
 	);
 
 	pipelineMgr->InitElectrifier(
-		1.f, //max segment length
-		.1f  //chaos proportion to length
+		DEFAULT_E_MAX_SEG_LENGTH,
+		DEFAULT_E_CHAOS_PROPORTION
 	);	
 }
 
@@ -175,9 +177,9 @@ void App1::Gui()
 	ImGui::Text("FPS: %.2f", timer->getFPS());
 	ImGui::Text("Camera Pos: (%.2f, %.2f, %.2f)", camera->getPosition().x, camera->getPosition().y, camera->getPosition().z);
 	ImGui::Checkbox("Wireframe mode", &wireframeToggle);
-	
+
 	ImGui::Text("*************************************");
-	
+
 	ImGui::SliderInt(
 		"Debug lines to render",
 		&linesToRender,
@@ -193,8 +195,8 @@ void App1::Gui()
 		pipelineMgr->RunProcess();
 		UpdateLineMesh(pipelineMgr->GetSegments(), lineMesh);
 	}
-	
-	//Pipeline stages:
+
+	// Pipeline stages:
 	{
 		PipelineMgrSettings* settings = pipelineMgr->GetSettings();
 
@@ -202,7 +204,7 @@ void App1::Gui()
 		GeometryGeneratorTypes genType = settings->GetGeometryGeneratorType();
 
 		static std::map<GeometryGeneratorTypes, std::string> genTypesMap = {
-			{GeometryGeneratorTypes::JITTER_FORK, "Jitter Fork"},
+			{GeometryGeneratorTypes::JITTER_FORK, "Jitter + Fork"},
 			{GeometryGeneratorTypes::STREAMER, "Streamer"}
 		};
 
@@ -211,32 +213,32 @@ void App1::Gui()
 		//Transform stages:
 		ImGui::Text("Active Transformers: ");
 		ImGui::Indent();
-			if (settings->IsPathIdentifierActive())
-			{
-				ImGui::Text("- Path Identifier (auto)");
-			}
-			if (settings->IsDiameterTransformerActive())
-			{
-				ImGui::Text("- Diameter Transformer");
-			}
-			if (settings->IsWholeTransformerActive())
-			{
-				ImGui::Text("- Whole Transformer");
-			}
-			if (settings->IsElectrifierActive())
-			{
-				ImGui::Text("- Electrifier");
-			}
+		if (settings->IsPathIdentifierActive())
+		{
+			ImGui::Text("- Path Identifier (auto)");
+		}
+		if (settings->IsDiameterTransformerActive())
+		{
+			ImGui::Text("- Diameter Transformer");
+		}
+		if (settings->IsWholeTransformerActive())
+		{
+			ImGui::Text("- Whole Transformer");
+		}
+		if (settings->IsElectrifierActive())
+		{
+			ImGui::Text("- Electrifier");
+		}
 		ImGui::Unindent();
-		
 
-		//
-		if (ImGui::CollapsingHeader("Adjust Pipeline Stages"))
+
+		// Toggle pipeline stages
+		if (ImGui::CollapsingHeader("Toggle Pipeline Stages"))
 		{
 			ImGui::ListBoxHeader("Geometry Generators");
 			for (const auto& pair : genTypesMap)
 			{
-				std::string name            = pair.second;
+				std::string name = pair.second;
 				GeometryGeneratorTypes type = pair.first;
 
 				if (ImGui::Selectable(name.c_str()))
@@ -266,110 +268,141 @@ void App1::Gui()
 			}
 
 		}
-
-
 	}
 
-	//if (ImGui::CollapsingHeader("JITTER + FORK GENERATOR"))
-	//{
-	//	//init these static values to defaults defined above:
-	//	static int iterations = 10;
-	//	static float chaosProportion = .1f;
-	//	static float forkProb = .7f;
-	//	static float forkProbScaleDown = .6f;
+	//Adjust Jitter+Fork Method Parameters
+	{
+		static MyFloat3 startPt        = DEFAULT_JFG_START_PT;
+		static MyFloat3 endPt          = DEFAULT_JFG_END_PT;
+		static int iterations          = DEFAULT_JFG_ITERATIONS;
+		static float chaosProportion   = DEFAULT_JFG_CHAOS_PROPORTION;
+		static float baselineForkProb  = DEFAULT_JFG_BASELINE_FORK_PROB;
+		static float forkProbScaledown = DEFAULT_JFG_FORK_PROB_SCALEDOWN;
 
-	//	bool changeNow = false;
+		if (ImGui::CollapsingHeader("Set Jitter+Fork Params"))
+		{
+			bool changeNow = false;
+			// TODO - gui for Start and End points
+			changeNow = GuiSliderInt(&changeNow, "JFG iterations", &iterations, JFG_MIN_ITERATIONS, JFG_MAX_ITERATIONS);
+			changeNow = GuiSliderFloat(&changeNow, "JFG chaos proportion", &chaosProportion, JFG_MIN_CHAOS_PROPORTION, JFG_MAX_CHAOS_PROPORTION);
+			changeNow = GuiSliderFloat(&changeNow, "JFG baseline fork probability", &baselineForkProb, JFG_MIN_BASELINE_FORK_PROB, JFG_MAX_BASELINE_FORK_PROB);
+			changeNow = GuiSliderFloat(&changeNow, "JFG fork prob scaledown", &forkProbScaledown, JFG_MIN_FORK_PROB_SCALEDOWN, JFG_MAX_FORK_PROB_SCALEDOWN);
 
-	//	changeNow = GuiSliderInt(&changeNow, "JFG iterations", &iterations, 1, 10);
-	//	changeNow = GuiSliderFloat(&changeNow, "JFG chaos proportion", &chaosProportion, 0.f, MAX_CHAOS_PROPORTION);
-	//	changeNow = GuiSliderFloat(&changeNow, "JFG fork probability", &forkProb, 0.f, 1.f);
-	//	changeNow = GuiSliderFloat(&changeNow, "JFG fork prob scaledown", &forkProbScaleDown, 0.f, 1.f);
+			if (changeNow)
+			{
+				pipelineMgr->InitJitterForkGenerator(
+					startPt,
+					endPt,
+					iterations,
+					chaosProportion,
+					baselineForkProb,
+					forkProbScaledown
+				);
+			}
+		}
+	}
 
-	//	if (changeNow)
-	//	{
-	//		jfg.InitParameters(
-	//			iterations,
-	//			chaosProportion,
-	//			forkProb,
-	//			forkProbScaleDown
-	//		);
-	//	}
+	//Adjust Diameter Transformer Parameters
+	{
+		static float initialDiameter   = DEFAULT_DT_INITIAL_DIAMETER;
+		static float diameterScaledown = DEFAULT_DT_DIAMETER_SCALEDOWN;
+		static int maxNumBranchLevels  = DEFAULT_DT_MAX_NUM_BRANCH_LEVELS;
 
-	//	if (ImGui::Button("RUN JFG AND REBUILD LINE MESH"))
-	//	{
-	//		jfg.Run();
-	//		UpdateLineMesh(jfg.GetOutput(), lineMesh);
-	//	}
+		if (ImGui::CollapsingHeader("Set Diameter Transformer Params"))
+		{
+			bool changeNow = false;
+			changeNow = GuiSliderFloat(&changeNow, "DT initial diameter", &initialDiameter, DT_MIN_INITIAL_DIAMETER, DT_MAX_INITIAL_DIAMETER);
+			changeNow = GuiSliderFloat(&changeNow, "DT diameter scaledown", &diameterScaledown, DT_MIN_DIAMETER_SCALEDOWN, DT_MAX_DIAMETER_SCALEDOWN);
+			changeNow = GuiSliderInt(&changeNow, "DT max num branch levels", &maxNumBranchLevels, DT_MIN_MAX_NUM_BRANCH_LEVELS, DT_MAX_MAX_NUM_BRANCH_LEVELS);
 
-	//	if (ImGui::CollapsingHeader("ELECTRIFIER"))
-	//	{
-	//		static float maxLength = 1.f;
-	//		static float chaosProportion = 0.1f;
+			if (changeNow)
+			{
+				pipelineMgr->InitDiameterTransformer(
+					initialDiameter,
+					diameterScaledown,
+					maxNumBranchLevels
+				);
+			}
+		}
+	}
 
-	//		bool changeNow = false;
-	//		changeNow = GuiSliderFloat(&changeNow, "E max len", &maxLength, MIN_SEGMENT_LENGTH, 5.f);
-	//		changeNow = GuiSliderFloat(&changeNow, "E chaos proportion", &chaosProportion, 0.f, MAX_CHAOS_PROPORTION);
-	//		
-	//		if (changeNow)
-	//		{
-	//			electrifier->InitParameters(
-	//				maxLength,
-	//				chaosProportion
-	//			);
-	//		}
 
-	//		if (ImGui::Button("RUN JFG, RUN E, AND REBUILD LINE MESH"))
-	//		{
-	//			jfg.Run();
-	//			electrifier->SetInput(
-	//				&(jfg.GetOutput())
-	//			);
-	//			electrifier->Run();
-	//			UpdateLineMesh(electrifier->GetOutput(), lineMesh);
-	//		}
 
-	//		if (ImGui::Button("RUN E, AND REBUILD LINE MESH"))
-	//		{
-	//			electrifier->SetInput(
-	//				&(jfg.GetOutput())
-	//			);
-	//			electrifier->Run();
-	//			UpdateLineMesh(electrifier->GetOutput(), lineMesh);
-	//		}
-	//	}
-	//}
+//	if (ImGui::Button("RUN JFG AND REBUILD LINE MESH"))
+//	{
+//		jfg.Run();
+//		UpdateLineMesh(jfg.GetOutput(), lineMesh);
+//	}
 
-	//static float streamerVoltage         = 7000;
-	//static float streamerInitialPressure = 35.f;
-	//static float streamerPressurGradient = 0.5f;
-	//static int   streamerMaxLayers       = 10;
+//	if (ImGui::CollapsingHeader("ELECTRIFIER"))
+//	{
+//		static float maxLength = 1.f;
+//		static float chaosProportion = 0.1f;
 
-	//ImGui::SliderFloat("Streamer voltage", &streamerVoltage, 10.f, 10000.f);
-	//ImGui::SliderFloat("Streamer init pressure", &streamerInitialPressure, 1.f, 100.f);
-	//ImGui::SliderFloat("Streamre pressure gradient", &streamerPressurGradient, 0.f, 1.f);
-	//ImGui::SliderInt("Streamer max layers", &streamerMaxLayers, 1, 20);
+//		bool changeNow = false;
+//		changeNow = GuiSliderFloat(&changeNow, "E max len", &maxLength, MIN_SEGMENT_LENGTH, 5.f);
+//		changeNow = GuiSliderFloat(&changeNow, "E chaos proportion", &chaosProportion, 0.f, MAX_CHAOS_PROPORTION);
+//		
+//		if (changeNow)
+//		{
+//			electrifier->InitParameters(
+//				maxLength,
+//				chaosProportion
+//			);
+//		}
 
-	//if (ImGui::Button("Run streamer method and rebuild line mesh"))
-	//{
-	//	sg.InitParameters(
-	//		MyFloat3(0.f, 100.f, 0.f), //start point
-	//		MyFloat3(0.f, -1.f, 0.f),  //init direction
-	//		streamerVoltage,
-	//		streamerInitialPressure,
-	//		streamerPressurGradient,				
-	//		streamerMaxLayers
-	//	);
-	//	sg.Run();
-	//	UpdateLineMesh(sg.GetOutput(), lineMesh);
-	//}
-	
+//		if (ImGui::Button("RUN JFG, RUN E, AND REBUILD LINE MESH"))
+//		{
+//			jfg.Run();
+//			electrifier->SetInput(
+//				&(jfg.GetOutput())
+//			);
+//			electrifier->Run();
+//			UpdateLineMesh(electrifier->GetOutput(), lineMesh);
+//		}
 
-	// Render UI
+//		if (ImGui::Button("RUN E, AND REBUILD LINE MESH"))
+//		{
+//			electrifier->SetInput(
+//				&(jfg.GetOutput())
+//			);
+//			electrifier->Run();
+//			UpdateLineMesh(electrifier->GetOutput(), lineMesh);
+//		}
+//	}
+//}
+
+//static float streamerVoltage         = 7000;
+//static float streamerInitialPressure = 35.f;
+//static float streamerPressurGradient = 0.5f;
+//static int   streamerMaxLayers       = 10;
+
+//ImGui::SliderFloat("Streamer voltage", &streamerVoltage, 10.f, 10000.f);
+//ImGui::SliderFloat("Streamer init pressure", &streamerInitialPressure, 1.f, 100.f);
+//ImGui::SliderFloat("Streamre pressure gradient", &streamerPressurGradient, 0.f, 1.f);
+//ImGui::SliderInt("Streamer max layers", &streamerMaxLayers, 1, 20);
+
+//if (ImGui::Button("Run streamer method and rebuild line mesh"))
+//{
+//	sg.InitParameters(
+//		MyFloat3(0.f, 100.f, 0.f), //start point
+//		MyFloat3(0.f, -1.f, 0.f),  //init direction
+//		streamerVoltage,
+//		streamerInitialPressure,
+//		streamerPressurGradient,				
+//		streamerMaxLayers
+//	);
+//	sg.Run();
+//	UpdateLineMesh(sg.GetOutput(), lineMesh);
+//}
+
+
+// Render UI
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
-bool App1::GuiSliderInt(bool* changeFlag, const char* msg, int* i, float min, float max)
+bool App1::GuiSliderInt(bool* changeFlag, const char* msg, int* i, int min, int max)
 {
 	return ImGui::SliderInt(msg, i, min, max) || *changeFlag;
 }

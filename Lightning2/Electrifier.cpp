@@ -3,6 +3,8 @@
 #include <algorithm>
 
 #include "SegmentRemoval.h"
+#include "DefaultParameters.h"
+#include "MyClamp.h"
 
 ////
 // PUBLIC:
@@ -10,12 +12,16 @@
 
 void Electrifier::InitParameters(float maxSegLength, float chaosProportionToLength)
 {	
-	chaosProportion = std::min(
-		std::max(chaosProportionToLength, 0.f),
-		MAX_CHAOS_PROPORTION
+	chaosProportion = MyClamp(
+		chaosProportionToLength,
+		E_MIN_CHAOS_PROPORTION,
+		E_MAX_CHAOS_PROPORTION
 	);
 
-	maxLength = std::max(maxSegLength, MIN_SEGMENT_LENGTH);	
+	maxLength = MyClamp(maxSegLength,
+		E_MIN_MAX_SEG_LENGTH,
+		E_MAX_MAX_SEG_LENGTH
+	);	
 }
 
 void Electrifier::Run()

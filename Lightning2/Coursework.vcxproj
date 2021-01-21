@@ -190,6 +190,7 @@
   <ItemGroup>
     <ClInclude Include="App1.h" />
     <ClInclude Include="BoxMullerGen.h" />
+    <ClInclude Include="DefaultParameters.h" />
     <ClInclude Include="DiameterTransformer.h" />
     <ClInclude Include="JitterForkGenerator.h" />
     <ClInclude Include="LightShader.h" />

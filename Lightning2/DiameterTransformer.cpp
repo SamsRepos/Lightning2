@@ -35,7 +35,7 @@ void DiameterTransformer::DiameterTransformRecurs(Segment* segment, float diamet
 		{
 			if (child->GetStatus() == SegmentStatuses::PRIMARY)
 			{
-				DiameterTransformRecurs(child, diameter, (branchLevel + 1));
+				DiameterTransformRecurs(child, diameter, branchLevel);
 			}
 			else if (child->GetStatus() == SegmentStatuses::SECONDARY)
 			{
@@ -50,7 +50,6 @@ void DiameterTransformer::DiameterTransformRecurs(Segment* segment, float diamet
 	}
 	else
 	{
-		//delete and remove segment
 		segment->SetToBeCulled();
 	}
 }

@@ -4,9 +4,6 @@
 
 #include "MyFloat3.h"
 
-const float MIN_SEGMENT_LENGTH   = 0.1f;
-const float MAX_CHAOS_PROPORTION = 0.2f;
-
 enum SegmentStatuses
 {
 	PRIMARY,
