@@ -32,6 +32,7 @@ public:
 	float GetLength();
 
 	inline void SetParent(Segment* _parent) { parent = _parent; };
+	inline Segment* GetParent() { return parent; };
 	inline void AddChild(Segment* child) { children.push_back(child); };
 	inline std::vector<Segment*>* GetChildren() { return &children; };
 	inline Segment* GetChild(size_t index) { return children[index]; };
@@ -49,7 +50,7 @@ private:
 	MyFloat3 startPoint, endPoint;
 	float diameter, minDiameter;
 
-	Segment* parent = NULL;
+	Segment* parent;
 	std::vector<Segment*> children;
 
 	size_t numDescendants;

@@ -7,7 +7,8 @@ Segment::Segment(MyFloat3 startPoint, MyFloat3 endPoint, float diameter, float m
 	startPoint(startPoint),
 	endPoint(endPoint),
 	diameter(diameter),
-	minDiameter(minDiameter)
+	minDiameter(minDiameter),
+	parent(NULL)
 {
 }
 

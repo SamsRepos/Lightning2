@@ -34,7 +34,6 @@ void PathIdentifier::DescendantCounterRecurs(Segment* currentSegment)
 	}
 
 	// 2. All descendants should have their num descendants now
-
 	size_t numDescendants = numChildren;
 	for (Segment* child : *(currentSegment->GetChildren()))
 	{
@@ -46,24 +45,55 @@ void PathIdentifier::DescendantCounterRecurs(Segment* currentSegment)
 
 void PathIdentifier::StatusSetterRecurs(Segment* currentSegment)
 {
+
 	if (currentSegment->GetChildren()->size() > 0)
 	{
-		Segment* childA = currentSegment->GetChild(0);
-		Segment* childB = currentSegment->GetChild(1);
-
-		if (childA->GetNumDescendants() > childB->GetNumDescendants())
+		Segment* primaryChild = currentSegment->GetChild(0);
+		int currentGreatestNumDescendants = primaryChild->GetNumDescendants();
+		
+		for (size_t i = 1; i < currentSegment->GetChildren()->size(); i++)
 		{
-			childA->SetStatus(SegmentStatuses::PRIMARY);
-			childB->SetStatus(SegmentStatuses::SECONDARY);
-		}
-		else
-		{
-			childB->SetStatus(SegmentStatuses::PRIMARY);
-			childA->SetStatus(SegmentStatuses::SECONDARY);
+			Segment* currentChild = currentSegment->GetChild(i);
+			if (currentChild->GetNumDescendants() > currentGreatestNumDescendants)
+			{
+				currentGreatestNumDescendants = currentChild->GetNumDescendants();
+				primaryChild = currentChild;
+			}
 		}
 
-		StatusSetterRecurs(childA);
-		StatusSetterRecurs(childB);
+		for (Segment* child : *(currentSegment->GetChildren()))
+		{
+			child->SetStatus((child == primaryChild) ? SegmentStatuses::PRIMARY : SegmentStatuses::SECONDARY);
+			StatusSetterRecurs(child);
+		}
 	}
+	
+//#if 0
+//	if (currentSegment->GetChildren()->size() == 2)
+//	{
+//		Segment* childA = currentSegment->GetChild(0);
+//		Segment* childB = currentSegment->GetChild(1);
+//
+//		if (childA->GetNumDescendants() > childB->GetNumDescendants())
+//		{
+//			childA->SetStatus(SegmentStatuses::PRIMARY);
+//			childB->SetStatus(SegmentStatuses::SECONDARY);
+//		}
+//		else
+//		{
+//			childB->SetStatus(SegmentStatuses::PRIMARY);
+//			childA->SetStatus(SegmentStatuses::SECONDARY);
+//		}
+//
+//		StatusSetterRecurs(childA);
+//		StatusSetterRecurs(childB);
+//	}
+//	else if (currentSegment->GetChildren()->size() == 1)
+//	{
+//		//should only be true after jitter+fork method
+//		currentSegment->GetChild(0)->SetStatus(SegmentStatuses::PRIMARY);
+//		StatusSetterRecurs(currentSegment->GetChild(0));
+//	}
+//#endif
 	
 }

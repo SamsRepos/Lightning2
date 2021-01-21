@@ -51,8 +51,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	// Pipeline manager:
 	PipelineMgrDefaultSettings defaultSettings;
-	defaultSettings.geometryGenerator         = GeometryGeneratorTypes::JITTER_FORK;
-	defaultSettings.diameterTransformerActive = false;
+	defaultSettings.geometryGenerator         = GeometryGeneratorTypes::STREAMER;
+	defaultSettings.diameterTransformerActive = true;
 	defaultSettings.wholeTransformerActive    = false;
 	defaultSettings.electrifierActive         = false;
 	pipelineMgr = new PipelineMgr(defaultSettings);
