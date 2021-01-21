@@ -18,8 +18,8 @@ class PipelineMgrSettings
 public:
 	PipelineMgrSettings(const PipelineMgrDefaultSettings& defaultSettings);
 
-	inline void SetGeometryGenerator(GeometryGeneratorTypes type) { currentGeometryGenerator = type; };
-	inline GeometryGeneratorTypes GetGeometryGenerator() { return currentGeometryGenerator; };
+	inline void SetGeometryGeneratorType(GeometryGeneratorTypes type) { currentGeometryGenerator = type; };
+	inline GeometryGeneratorTypes GetGeometryGeneratorType() { return currentGeometryGenerator; };
 
 	inline void SetDiameterTransformerActive(bool active) { diameterTransformerActive = active; };
 	inline void SetWholeTransformerActive(bool active) { wholeTransformerActive = active; };

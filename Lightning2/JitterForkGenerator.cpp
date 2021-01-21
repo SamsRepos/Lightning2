@@ -50,7 +50,11 @@ void JitterForkGenerator::Run()
 		forkProb *= forkProbScaleDown;
 	}
 
-	output = new std::vector<Segment*>(*currentSegments);
+	output = new std::vector<Segment*>;
+	for (Segment* seg : *currentSegments)
+	{
+		output->push_back(new Segment(*seg));
+	}
 }
 
 ////

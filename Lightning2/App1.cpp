@@ -25,7 +25,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	//Shaders:
 	lightShader = new LightShader(renderer->getDevice(), hwnd);
-	lineShader = new LineShader(renderer->getDevice(), hwnd);
+	lineShader  = new LineShader(renderer->getDevice(), hwnd);
 
 	//Light:
 	light = new Light;
@@ -50,7 +50,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	// Pipeline manager:
 	PipelineMgrDefaultSettings defaultSettings;
 	defaultSettings.geometryGenerator         = GeometryGeneratorTypes::JITTER_FORK;
-	defaultSettings.diameterTransformerActive = true;
+	defaultSettings.diameterTransformerActive = false;
 	defaultSettings.wholeTransformerActive    = false;
 	defaultSettings.electrifierActive         = false;
 	pipelineMgr = new PipelineMgr(defaultSettings);
@@ -192,6 +192,82 @@ void App1::Gui()
 	{
 		pipelineMgr->RunProcess();
 		UpdateLineMesh(pipelineMgr->GetSegments(), lineMesh);
+	}
+	
+	//Pipeline stages:
+	{
+		PipelineMgrSettings* settings = pipelineMgr->GetSettings();
+
+		//Geometry generator:
+		GeometryGeneratorTypes genType = settings->GetGeometryGeneratorType();
+
+		static std::map<GeometryGeneratorTypes, std::string> genTypesMap = {
+			{GeometryGeneratorTypes::JITTER_FORK, "Jitter Fork"},
+			{GeometryGeneratorTypes::STREAMER, "Streamer"}
+		};
+
+		ImGui::Text(("Current Method: " + genTypesMap[genType]).c_str());
+
+		//Transform stages:
+		ImGui::Text("Active Transformers: ");
+		ImGui::Indent();
+			if (settings->IsPathIdentifierActive())
+			{
+				ImGui::Text("- Path Identifier (auto)");
+			}
+			if (settings->IsDiameterTransformerActive())
+			{
+				ImGui::Text("- Diameter Transformer");
+			}
+			if (settings->IsWholeTransformerActive())
+			{
+				ImGui::Text("- Whole Transformer");
+			}
+			if (settings->IsElectrifierActive())
+			{
+				ImGui::Text("- Electrifier");
+			}
+		ImGui::Unindent();
+		
+
+		//
+		if (ImGui::CollapsingHeader("Adjust Pipeline Stages"))
+		{
+			ImGui::ListBoxHeader("Geometry Generators");
+			for (const auto& pair : genTypesMap)
+			{
+				std::string name            = pair.second;
+				GeometryGeneratorTypes type = pair.first;
+
+				if (ImGui::Selectable(name.c_str()))
+				{
+					pipelineMgr->SetGeometryGeneratorType(type);
+				}
+			}
+			ImGui::ListBoxFooter();
+
+			if (ImGui::Button("Toggle Diameter Transformer"))
+			{
+				pipelineMgr->SetDiameterTransformerActive(
+					!(settings->IsDiameterTransformerActive())
+				);
+			}
+			if (ImGui::Button("Toggle Whole Transformer"))
+			{
+				pipelineMgr->SetWholeTransformerActive(
+					!(settings->IsWholeTransformerActive())
+				);
+			}
+			if (ImGui::Button("Toggle Electrifier"))
+			{
+				pipelineMgr->SetElectifierActive(
+					!(settings->IsElectrifierActive())
+				);
+			}
+
+		}
+
+
 	}
 
 	//if (ImGui::CollapsingHeader("JITTER + FORK GENERATOR"))

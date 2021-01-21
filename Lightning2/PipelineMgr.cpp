@@ -81,7 +81,7 @@ void PipelineMgr::RunProcess()
 {
 	InitProcess();
 
-	switch (settings->GetGeometryGenerator())
+	switch (settings->GetGeometryGeneratorType())
 	{
 	case (GeometryGeneratorTypes::JITTER_FORK):
 		jitForkGen.Run();

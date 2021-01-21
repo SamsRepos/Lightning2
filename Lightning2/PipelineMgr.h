@@ -47,8 +47,10 @@ public:
 		float chaosProportionToLength
 	);
 
+	inline PipelineMgrSettings* GetSettings() { return settings; };
+
 	//set current geometry generator
-	inline void SetGeometryGenerator(GeometryGeneratorTypes type) { settings->SetGeometryGenerator(type); };
+	inline void SetGeometryGeneratorType(GeometryGeneratorTypes type) { settings->SetGeometryGeneratorType(type); };
 	
 	//toggle post-generation transform stages
 	inline void SetDiameterTransformerActive(bool active) { settings->SetDiameterTransformerActive(active); };
