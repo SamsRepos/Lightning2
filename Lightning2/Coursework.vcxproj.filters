@@ -102,6 +102,9 @@
     <ClCompile Include="SegmentRemoval.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="DebugCsvWriter.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App1.h">
@@ -160,6 +163,9 @@
     </ClInclude>
     <ClInclude Include="DefaultParameters.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugCsvWriter.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

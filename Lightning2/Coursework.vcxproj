@@ -171,6 +171,7 @@
   <ItemGroup>
     <ClCompile Include="App1.cpp" />
     <ClCompile Include="BoxMullerGen.cpp" />
+    <ClCompile Include="DebugCsvWriter.cpp" />
     <ClCompile Include="DiameterTransformer.cpp" />
     <ClCompile Include="JitterForkGenerator.cpp" />
     <ClCompile Include="LightShader.cpp" />
@@ -190,6 +191,7 @@
   <ItemGroup>
     <ClInclude Include="App1.h" />
     <ClInclude Include="BoxMullerGen.h" />
+    <ClInclude Include="DebugCsvWriter.h" />
     <ClInclude Include="DefaultParameters.h" />
     <ClInclude Include="DiameterTransformer.h" />
     <ClInclude Include="JitterForkGenerator.h" />

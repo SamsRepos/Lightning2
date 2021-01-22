@@ -41,17 +41,18 @@ void JitterForkGenerator::Run()
 	{
 		currentSegments = new std::vector<Segment*>;
 
+		still need to fix this. maybe make recursive
+
 		Segment* root = previousSegments->front();
-
-		TODO sort this out!
-
+		
+		Segment* parentSeg = NULL;
 		for (Segment* seg : *previousSegments)
 		{
-			Segment* previousParent = seg->GetParent();
-			std::vector<Segment*>* previousChildren = seg->GetChildren();
-
-			std::vector<Segment*> res = JitterAndFork(seg, forkProb, previousParent, previousChildren);
+			std::vector<Segment*> res = JitterAndFork(seg, forkProb, parentSeg);
 			currentSegments->insert(currentSegments->end(), res.begin(), res.end());
+
+			//for next itearation:
+			parentSeg = res[1]; //res[1] should be "bottomSeg" from in JitterAndFork()
 		}
 
 		//Prep for the next iteration:
@@ -84,8 +85,7 @@ void JitterForkGenerator::Run()
 std::vector<Segment*> JitterForkGenerator::JitterAndFork(
 	Segment* seed,
 	float forkProbNow,
-	Segment* previousParent,
-	std::vector<Segment*>* previousChildren
+	Segment* parent
 )
 {
 	// 1. Get offset point
@@ -99,14 +99,14 @@ std::vector<Segment*> JitterForkGenerator::JitterAndFork(
 	Segment* bottomSeg = new Segment(offsetPoint, seed->GetEndPoint());
 
 	// 2.2 parenting:
-	topSeg->SetParent(previousParent);
-	topSeg->AddChild(bottomSeg);
-	bottomSeg->SetParent(topSeg);
-	for (Segment* previousChild : *previousChildren)
+	if (parent)
 	{
-		bottomSeg->AddChild(previousChild);
+		topSeg->SetParent(parent);
+		parent->AddChild(topSeg);
 	}
-
+	bottomSeg->SetParent(topSeg);
+	topSeg->AddChild(bottomSeg);
+	
 	std::vector<Segment*> res = { topSeg, bottomSeg };
 
 	// 3. Maybe fork

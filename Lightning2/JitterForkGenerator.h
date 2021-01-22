@@ -22,11 +22,11 @@ public:
 	inline std::vector<Segment*>* GetOutput() { return output; };
 
 private:
+
 	std::vector<Segment*> JitterAndFork(
-		Segment* segment,
+		Segment* seed,
 		float forkProbNow,
-		Segment* previousParent,
-		std::vector<Segment*>* previousChildren
+		Segment* parent		
 	);
 
 	Segment originalSeed;

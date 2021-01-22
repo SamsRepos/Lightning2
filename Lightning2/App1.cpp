@@ -4,8 +4,8 @@
 #include <ctime>
 
 #include "MyClamp.h"
-
 #include "DefaultParameters.h"
+#include "DebugCsvWriter.h"
 
 ////
 // PUBLIC:
@@ -194,6 +194,7 @@ void App1::Gui()
 	{
 		pipelineMgr->RunProcess();
 		UpdateLineMesh(pipelineMgr->GetSegments(), lineMesh);
+		DebugWriteCsv(pipelineMgr->GetSegments());
 	}
 
 	// Pipeline stages:
