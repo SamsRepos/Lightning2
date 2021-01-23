@@ -23,6 +23,8 @@ public:
 
 private:
 
+	void RunIterationRecursive(Segment* seed, Segment* parentSegment, float forkProb);
+
 	std::vector<Segment*> JitterAndFork(
 		Segment* seed,
 		float forkProbNow,

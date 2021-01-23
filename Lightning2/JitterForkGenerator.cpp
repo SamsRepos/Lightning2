@@ -40,21 +40,11 @@ void JitterForkGenerator::Run()
 	for (size_t i = 0; i < iterations; i++)
 	{
 		currentSegments = new std::vector<Segment*>;
-
-		still need to fix this. maybe make recursive
-
+		
 		Segment* root = previousSegments->front();
 		
-		Segment* parentSeg = NULL;
-		for (Segment* seg : *previousSegments)
-		{
-			std::vector<Segment*> res = JitterAndFork(seg, forkProb, parentSeg);
-			currentSegments->insert(currentSegments->end(), res.begin(), res.end());
-
-			//for next itearation:
-			parentSeg = res[1]; //res[1] should be "bottomSeg" from in JitterAndFork()
-		}
-
+		RunIterationRecursive(root, NULL, forkProb);
+		
 		//Prep for the next iteration:
 		ClearAllSegmentData(previousSegments);
 		delete previousSegments;
@@ -65,14 +55,14 @@ void JitterForkGenerator::Run()
 
 	//setting output:
 	output = new std::vector<Segment*>;
-	for (Segment* seg : *currentSegments)
+	for (Segment* segPtr : *currentSegments)
 	{
-		output->push_back(new Segment(*seg));
+		output->push_back(segPtr);
 	}
 
 	//cleaning up the remaining working vector:
-	ClearAllSegmentData(currentSegments);
-	//note: current and previous segments now point to the same vector
+	//note: not calling ClearAllSegmentData(currentSegments) because the dynamically allocated segments are now in output
+	//note: currentSegments and previousSegments now point to the same vector
 	delete currentSegments;
 	currentSegments  = NULL;
 	previousSegments = NULL; 
@@ -81,6 +71,19 @@ void JitterForkGenerator::Run()
 ////
 // PRIVATE:
 ////
+
+void JitterForkGenerator::RunIterationRecursive(Segment* seed, Segment* parentSegment, float forkProb)
+{
+	std::vector<Segment*> res = JitterAndFork(seed, forkProb, parentSegment);
+	currentSegments->insert(currentSegments->end(), res.begin(), res.end());
+
+	Segment* nextParent = res[1]; //bottomSeg
+
+	for (Segment* seedChild : *(seed->GetChildren()))
+	{
+		RunIterationRecursive(seedChild, nextParent, forkProb);
+	}
+}
 
 std::vector<Segment*> JitterForkGenerator::JitterAndFork(
 	Segment* seed,
