@@ -61,7 +61,9 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 		DEFAULT_JFG_START_PT,
 		DEFAULT_JFG_END_PT,
 		DEFAULT_JFG_ITERATIONS,
-		DEFAULT_JFG_CHAOS_PROPORTION,
+		DEFAULT_JFG_CHAOS_MEAN,
+		DEFAULT_JFG_CHAOS_STDDEV,
+		DEFAULT_JFG_MIDPOINT_STDDEV,
 		DEFAULT_JFG_BASELINE_FORK_PROB, 
 		DEFAULT_JFG_FORK_PROB_SCALEDOWN
 	);
@@ -273,11 +275,13 @@ void App1::Gui()
 
 	//Adjust Jitter+Fork Method Parameters
 	{
-		static MyFloat3 startPt        = DEFAULT_JFG_START_PT;
-		static MyFloat3 endPt          = DEFAULT_JFG_END_PT;
-		static int iterations          = DEFAULT_JFG_ITERATIONS;
-		static float chaosProportion   = DEFAULT_JFG_CHAOS_PROPORTION;
-		static float baselineForkProb  = DEFAULT_JFG_BASELINE_FORK_PROB;
+		static MyFloat3 startPt = DEFAULT_JFG_START_PT;
+		static MyFloat3 endPt = DEFAULT_JFG_END_PT;
+		static int iterations = DEFAULT_JFG_ITERATIONS;
+		static float chaosMean = DEFAULT_JFG_CHAOS_MEAN;
+		static float chaosStdDev = DEFAULT_JFG_CHAOS_STDDEV;
+		static float midpointStdDev = DEFAULT_JFG_MIDPOINT_STDDEV;
+		static float baselineForkProb = DEFAULT_JFG_BASELINE_FORK_PROB;
 		static float forkProbScaledown = DEFAULT_JFG_FORK_PROB_SCALEDOWN;
 
 		if (ImGui::CollapsingHeader("Set Jitter+Fork Params"))
@@ -285,7 +289,9 @@ void App1::Gui()
 			bool changeNow = false;
 			// TODO - gui for Start and End points
 			changeNow = GuiSliderInt(&changeNow, "JFG iterations", &iterations, JFG_MIN_ITERATIONS, JFG_MAX_ITERATIONS);
-			changeNow = GuiSliderFloat(&changeNow, "JFG chaos proportion", &chaosProportion, JFG_MIN_CHAOS_PROPORTION, JFG_MAX_CHAOS_PROPORTION);
+			changeNow = GuiSliderFloat(&changeNow, "JFG chaos mean", &chaosMean, JFG_MIN_CHAOS_MEAN, JFG_MAX_CHAOS_MEAN);
+			changeNow = GuiSliderFloat(&changeNow, "JFG chaos std dev", &chaosStdDev, JFG_MIN_CHAOS_STDDEV, JFG_MAX_CHAOS_STDDEV);
+			changeNow = GuiSliderFloat(&changeNow, "JFG midpoint std dev", &midpointStdDev, JFG_MIN_MIDPOINT_STDDEV, JFG_MAX_MIDPOINT_STDDEV);
 			changeNow = GuiSliderFloat(&changeNow, "JFG baseline fork probability", &baselineForkProb, JFG_MIN_BASELINE_FORK_PROB, JFG_MAX_BASELINE_FORK_PROB);
 			changeNow = GuiSliderFloat(&changeNow, "JFG fork prob scaledown", &forkProbScaledown, JFG_MIN_FORK_PROB_SCALEDOWN, JFG_MAX_FORK_PROB_SCALEDOWN);
 
@@ -295,12 +301,47 @@ void App1::Gui()
 					startPt,
 					endPt,
 					iterations,
-					chaosProportion,
+					chaosMean,
+					chaosStdDev,
+					midpointStdDev,
 					baselineForkProb,
 					forkProbScaledown
 				);
 			}
 		}
+	}
+
+	//Adjust streamer parameters:
+	{
+		static MyFloat3 startPt          = DEFAULT_SG_START_PT;
+		static MyFloat3 initialDirection = DEFAULT_SG_INITIAL_DIRECTION;
+		static float initialVoltage      = DEFAULT_SG_INITIAL_VOLTAGE;
+		static float initialPressure     = DEFAULT_SG_INITIAL_PRESSURE;
+		static float pressureGradient    = DEFAULT_SG_PRESSURE_GRADIENT;
+		static int   maxNumLayers        = DEFAULT_SG_MAX_NUM_LAYERS;
+
+		if (ImGui::CollapsingHeader("Set Streamer Params"))
+		{
+
+			bool changeNow = false;
+			//TODO MyFloat3 gui
+			changeNow = GuiSliderFloat(&changeNow, "SG initial voltage", &initialVoltage, SG_MIN_INITIAL_VOLTAGE, SG_MAX_INITIAL_VOLTAGE);
+			changeNow = GuiSliderFloat(&changeNow, "SG initial pressure", &initialPressure, SG_MIN_INITIAL_PRESSURE, SG_MAX_INITIAL_PRESSURE);
+			changeNow = GuiSliderFloat(&changeNow, "SG pressure gradient", &pressureGradient, SG_MIN_PRESSURE_GRADIENT, SG_MAX_PRESSURE_GRADIENT);
+			changeNow = GuiSliderInt(&changeNow, "SG max num layers", &maxNumLayers, SG_MIN_MAX_NUM_LAYERS, SG_MAX_MAX_NUM_LAYERS);
+
+			if (changeNow)
+			{
+				pipelineMgr->InitStreamerGenerator(
+					startPt,
+					initialDirection,
+					initialVoltage,
+					initialPressure,
+					pressureGradient,
+					maxNumLayers
+				);
+			}
+		}		
 	}
 
 	//Adjust Diameter Transformer Parameters
@@ -328,12 +369,6 @@ void App1::Gui()
 	}
 
 
-
-//	if (ImGui::Button("RUN JFG AND REBUILD LINE MESH"))
-//	{
-//		jfg.Run();
-//		UpdateLineMesh(jfg.GetOutput(), lineMesh);
-//	}
 
 //	if (ImGui::CollapsingHeader("ELECTRIFIER"))
 //	{
@@ -371,30 +406,6 @@ void App1::Gui()
 //			UpdateLineMesh(electrifier->GetOutput(), lineMesh);
 //		}
 //	}
-//}
-
-//static float streamerVoltage         = 7000;
-//static float streamerInitialPressure = 35.f;
-//static float streamerPressurGradient = 0.5f;
-//static int   streamerMaxLayers       = 10;
-
-//ImGui::SliderFloat("Streamer voltage", &streamerVoltage, 10.f, 10000.f);
-//ImGui::SliderFloat("Streamer init pressure", &streamerInitialPressure, 1.f, 100.f);
-//ImGui::SliderFloat("Streamre pressure gradient", &streamerPressurGradient, 0.f, 1.f);
-//ImGui::SliderInt("Streamer max layers", &streamerMaxLayers, 1, 20);
-
-//if (ImGui::Button("Run streamer method and rebuild line mesh"))
-//{
-//	sg.InitParameters(
-//		MyFloat3(0.f, 100.f, 0.f), //start point
-//		MyFloat3(0.f, -1.f, 0.f),  //init direction
-//		streamerVoltage,
-//		streamerInitialPressure,
-//		streamerPressurGradient,				
-//		streamerMaxLayers
-//	);
-//	sg.Run();
-//	UpdateLineMesh(sg.GetOutput(), lineMesh);
 //}
 
 

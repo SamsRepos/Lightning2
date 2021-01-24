@@ -19,10 +19,11 @@ public:
 		MyFloat3 startPoint,
 		MyFloat3 endPoint,
 		size_t iterations,
-		float chaosProportionToLength,
+		float chaosProportionMean,
+		float chaosProportionStdDev,
+		float midpointStdDev,
 		float forkProbability,
 		float forkProbabilityScaledown
-
 	);
 
 	void InitStreamerGenerator(

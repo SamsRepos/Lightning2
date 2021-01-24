@@ -18,7 +18,9 @@ void PipelineMgr::InitJitterForkGenerator(
 	MyFloat3 startPoint,
 	MyFloat3 endPoint,
 	size_t iterations,
-	float chaosProportionToLength,
+	float chaosProportionMean,
+	float chaosProportionStdDev,
+	float midpointStdDev,
 	float forkProbability,
 	float forkProbabilityScaledown
 )
@@ -26,7 +28,9 @@ void PipelineMgr::InitJitterForkGenerator(
 	jitForkGen.InitParameters(
 		Segment(startPoint, endPoint),
 		iterations,
-		chaosProportionToLength,
+		chaosProportionMean,
+		chaosProportionStdDev,
+		midpointStdDev,
 		forkProbability,
 		forkProbabilityScaledown
 	);

@@ -4,6 +4,7 @@
 
 #include "SegmentRemoval.h"
 #include "MyClamp.h"
+#include "DefaultParameters.h"
 
 ////
 // PUBLIC:
@@ -13,19 +14,29 @@ JitterForkGenerator::JitterForkGenerator()
 	:
 	output(NULL)
 {
+	chaosGaussianGen.SetMean(DEFAULT_JFG_CHAOS_MEAN);
+	chaosGaussianGen.SetStdDev(DEFAULT_JFG_CHAOS_STDDEV);
+	midpointGaussianGen.SetMean(.5f);
+	midpointGaussianGen.SetStdDev(DEFAULT_JFG_MIDPOINT_STDDEV);
 }
 
 void JitterForkGenerator::InitParameters(
 	const Segment& seedSegment,
 	size_t its,
-	float chaosProportionToLength,
-	float baselineForkProbability ,
+	float chaosProportionMean,
+	float chaosProportionStdDev,
+	float midpointStdDev,
+	float baselineForkProbability,
 	float forkProbabilityScaleDown
 )
 {
 	originalSeed      = seedSegment;
 	iterations        = its;
-	chaosProportion   = MyClamp(chaosProportionToLength, 0.f, 1.f);
+	
+	chaosGaussianGen.SetMean(chaosProportionMean);
+	chaosGaussianGen.SetStdDev(chaosProportionStdDev);
+	midpointGaussianGen.SetStdDev(midpointStdDev);
+
 	baselineForkProb  = baselineForkProbability;
 	forkProbScaleDown = forkProbabilityScaleDown;
 }
@@ -43,7 +54,7 @@ void JitterForkGenerator::Run()
 		
 		Segment* root = previousSegments->front();
 		
-		RunIterationRecursive(root, NULL, forkProb);
+		RunIterationRecursive(root, forkProb, NULL);
 		
 		//Prep for the next iteration:
 		ClearAllSegmentData(previousSegments);
@@ -72,7 +83,7 @@ void JitterForkGenerator::Run()
 // PRIVATE:
 ////
 
-void JitterForkGenerator::RunIterationRecursive(Segment* seed, Segment* parentSegment, float forkProb)
+void JitterForkGenerator::RunIterationRecursive(Segment* seed, float forkProb, Segment* parentSegment)
 {
 	std::vector<Segment*> res = JitterAndFork(seed, forkProb, parentSegment);
 	currentSegments->insert(currentSegments->end(), res.begin(), res.end());
@@ -81,7 +92,7 @@ void JitterForkGenerator::RunIterationRecursive(Segment* seed, Segment* parentSe
 
 	for (Segment* seedChild : *(seed->GetChildren()))
 	{
-		RunIterationRecursive(seedChild, nextParent, forkProb);
+		RunIterationRecursive(seedChild, forkProb, nextParent);
 	}
 }
 
@@ -93,9 +104,10 @@ std::vector<Segment*> JitterForkGenerator::JitterAndFork(
 {
 	// 1. Get offset point
 	MyFloat3 offset = RandomPerpendicularUnitVector(seed->GetDirection());
+	float chaosProportion = chaosGaussianGen.GetSample();
 	float chaos = seed->GetLength() * chaosProportion;
 	offset = offset * chaos;
-	MyFloat3 offsetPoint = seed->GetMidpoint() + offset;
+	MyFloat3 offsetPoint = seed->GetOffsetMidpoint(midpointGaussianGen.GetSample()) + offset;
 
 	// 2. Generate two new segments
 	Segment* topSeg    = new Segment(seed->GetStartPoint(), offsetPoint);

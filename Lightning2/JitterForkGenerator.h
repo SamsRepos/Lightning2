@@ -4,6 +4,7 @@
 
 #include "Segment.h"
 #include "RandFloatGen.h"
+#include "BoxMullerGen.h"
 
 class JitterForkGenerator
 {	
@@ -13,8 +14,10 @@ public:
 	void InitParameters(
 		const Segment& seedSegment,
 		size_t its,
-		float chaosProportionToLength,
-		float forkProbability,
+		float chaosProportionMean,
+		float chaosProportionStdDev,
+		float midpointStdDev,
+		float baselineForkProbability,
 		float forkProbabilityScaleDown
 	);
 	
@@ -23,7 +26,7 @@ public:
 
 private:
 
-	void RunIterationRecursive(Segment* seed, Segment* parentSegment, float forkProb);
+	void RunIterationRecursive(Segment* seed, float forkProb, Segment* parentSegment);
 
 	std::vector<Segment*> JitterAndFork(
 		Segment* seed,
@@ -33,7 +36,6 @@ private:
 
 	Segment originalSeed;
 	int iterations;
-	float chaosProportion;
 	float baselineForkProb;
 	float forkProbScaleDown;
 	
@@ -43,4 +45,7 @@ private:
 	std::vector<Segment*>* output;
 
 	RandFloatGen randFloatGen;
+
+	BoxMullerGen chaosGaussianGen;
+	BoxMullerGen midpointGaussianGen;
 };
