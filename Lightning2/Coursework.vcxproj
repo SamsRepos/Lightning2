@@ -176,6 +176,7 @@
     <ClCompile Include="JitterForkGenerator.cpp" />
     <ClCompile Include="LightShader.cpp" />
     <ClCompile Include="LineMesh.cpp" />
+    <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="LineShader.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MyFloat3.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="JitterForkGenerator.h" />
     <ClInclude Include="LightShader.h" />
     <ClInclude Include="LineMesh.h" />
+    <ClInclude Include="LineRenderer.h" />
     <ClInclude Include="LineShader.h" />
     <ClInclude Include="MyClamp.h" />
     <ClInclude Include="MyFloat3.h" />

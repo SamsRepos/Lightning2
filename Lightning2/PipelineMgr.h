@@ -60,6 +60,7 @@ public:
 	inline void SetElectifierActive(bool active) { settings->SetElectifierActive(active); };
 
 	//set current renderer
+	inline void SetRendererType(RendererTypes type) { settings->SetRendererType(type); };
 
 	//run whole process
 	void RunProcess();

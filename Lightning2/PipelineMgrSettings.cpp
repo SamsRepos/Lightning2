@@ -5,6 +5,7 @@ PipelineMgrSettings::PipelineMgrSettings(const PipelineMgrDefaultSettings& defau
 	currentGeometryGenerator(defaultSettings.geometryGenerator),
 	diameterTransformerActive(defaultSettings.diameterTransformerActive),
 	wholeTransformerActive(defaultSettings.wholeTransformerActive),
-	electrifierActive(defaultSettings.electrifierActive)
+	electrifierActive(defaultSettings.electrifierActive),
+	currentRenderer(defaultSettings.renderer)
 {
 }

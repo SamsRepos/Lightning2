@@ -27,7 +27,6 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	//Shaders:
 	lightShader = new LightShader(renderer->getDevice(), hwnd);
-	lineShader  = new LineShader(renderer->getDevice(), hwnd);
 
 	//Light:
 	light = new Light;
@@ -44,17 +43,14 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	
 	//planeMatrix = DirectX::XMMatrixIdentity();
 	planeMatrix = DirectX::XMMatrixTranslation(-50.f, 0.f, -50.f);
-
-	//Line Mesh:
-	lineMesh = new LineMesh(renderer->getDevice(), renderer->getDeviceContext());
-
-
+			
 	// Pipeline manager:
 	PipelineMgrDefaultSettings defaultSettings;
 	defaultSettings.geometryGenerator         = GeometryGeneratorTypes::STREAMER;
 	defaultSettings.diameterTransformerActive = true;
 	defaultSettings.wholeTransformerActive    = false;
 	defaultSettings.electrifierActive         = false;
+	defaultSettings.renderer                  = RendererTypes::LINE;
 	pipelineMgr = new PipelineMgr(defaultSettings);
 
 	pipelineMgr->InitJitterForkGenerator(
@@ -87,19 +83,15 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 		DEFAULT_E_MAX_SEG_LENGTH,
 		DEFAULT_E_CHAOS_MEAN,
 		DEFAULT_E_CHAOS_STDDEV
-	);	
+	);
+
+	lineRenderer.Init(renderer, hwnd);
 }
 
 App1::~App1()
 {
 	// Run base application deconstructor
 	BaseApplication::~BaseApplication();
-			
-	if (lineShader)
-	{
-		delete lineShader;
-		lineShader = 0;
-	}
 
 }
 
@@ -143,18 +135,8 @@ bool App1::render()
 	lightShader->setShaderParameters(renderer->getDeviceContext(), planeMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"metal"), light);
 	lightShader->render(renderer->getDeviceContext(), planeMesh->getIndexCount());
 
-	linesToRender = MyClamp(linesToRender, 0, int(lineMesh->GetLineCount()));
-
-	if (viewLine)
-	{
-		for (int i = 0; i < linesToRender; i++)
-		{
-			lineShader->setShaderParameters(renderer->getDeviceContext(), worldMatrix, viewMatrix, projectionMatrix, NULL, light, LIGHTNING_WHITE);
-
-			lineMesh->sendData(renderer->getDeviceContext(), i);
-			lineShader->render(renderer->getDeviceContext(), lineMesh->getIndexCount());
-		}
-	}
+	lineRenderer.SetShaderParams(worldMatrix, viewMatrix, projectionMatrix, light, LIGHTNING_WHITE);
+	lineRenderer.Render(renderer);
 
 	// Render GUI
 	Gui();
@@ -183,12 +165,14 @@ void App1::Gui()
 
 	ImGui::Text("*************************************");
 
+#if 0
 	ImGui::SliderInt(
 		"Debug lines to render",
 		&linesToRender,
 		0,
 		lineMesh->GetLineCount()
 	);
+#endif
 
 	ImGui::Text("*************************************");
 
@@ -196,7 +180,9 @@ void App1::Gui()
 	if (ImGui::Button("Run whole process"))
 	{
 		pipelineMgr->RunProcess();
-		UpdateLineMesh(pipelineMgr->GetSegments(), lineMesh);
+		
+		lineRenderer.Build(pipelineMgr->GetSegments());
+		
 		DebugWriteCsv(pipelineMgr->GetSegments());
 	}
 
@@ -276,13 +262,13 @@ void App1::Gui()
 
 	//Adjust Jitter+Fork Method Parameters
 	{
-		static MyFloat3 startPt = DEFAULT_JFG_START_PT;
-		static MyFloat3 endPt = DEFAULT_JFG_END_PT;
-		static int iterations = DEFAULT_JFG_ITERATIONS;
-		static float chaosMean = DEFAULT_JFG_CHAOS_MEAN;
-		static float chaosStdDev = DEFAULT_JFG_CHAOS_STDDEV;
-		static float midpointStdDev = DEFAULT_JFG_MIDPOINT_STDDEV;
-		static float baselineForkProb = DEFAULT_JFG_BASELINE_FORK_PROB;
+		static MyFloat3 startPt        = DEFAULT_JFG_START_PT;
+		static MyFloat3 endPt          = DEFAULT_JFG_END_PT;
+		static int iterations          = DEFAULT_JFG_ITERATIONS;
+		static float chaosMean         = DEFAULT_JFG_CHAOS_MEAN;
+		static float chaosStdDev       = DEFAULT_JFG_CHAOS_STDDEV;
+		static float midpointStdDev    = DEFAULT_JFG_MIDPOINT_STDDEV;
+		static float baselineForkProb  = DEFAULT_JFG_BASELINE_FORK_PROB;
 		static float forkProbScaledown = DEFAULT_JFG_FORK_PROB_SCALEDOWN;
 
 		if (ImGui::CollapsingHeader("Set Jitter+Fork Parameters"))
@@ -409,25 +395,4 @@ bool App1::GuiSliderInt(bool* changeFlag, const char* msg, int* i, int min, int 
 bool App1::GuiSliderFloat(bool* changeFlag, const char* msg, float* f, float min, float max)
 {
 	return ImGui::SliderFloat(msg, f, min, max) || *changeFlag;
-}
-
-void App1::UpdateLineMesh(std::vector<Segment*>* segs, LineMesh* mesh)
-{
-	mesh->Clear();
-	for (Segment* seg : *segs)
-	{
-		mesh->AddLine(
-			XMFLOAT3(
-				seg->GetStartPoint().x,
-				seg->GetStartPoint().y,
-				seg->GetStartPoint().z
-			),
-			XMFLOAT3(
-				seg->GetEndPoint().x,
-				seg->GetEndPoint().y,
-				seg->GetEndPoint().z
-			),
-			0
-		);
-	}
 }
