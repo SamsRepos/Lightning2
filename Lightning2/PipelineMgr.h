@@ -45,7 +45,8 @@ public:
 
 	void InitElectrifier(
 		float maxSegmentLength,
-		float chaosProportionToLength
+		float chaosMean,
+		float chaosStdDev
 	);
 
 	inline PipelineMgrSettings* GetSettings() { return settings; };

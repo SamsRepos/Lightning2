@@ -72,12 +72,14 @@ void PipelineMgr::InitDiameterTransformer(
 
 void PipelineMgr::InitElectrifier(
 	float maxSegmentLength,
-	float chaosProportionToLength
+	float chaosMean,
+	float chaosStdDev
 )
 {
 	electrifier.InitParameters(
 		maxSegmentLength,
-		chaosProportionToLength
+		chaosMean,
+		chaosStdDev
 	);
 }
 

@@ -85,7 +85,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	pipelineMgr->InitElectrifier(
 		DEFAULT_E_MAX_SEG_LENGTH,
-		DEFAULT_E_CHAOS_PROPORTION
+		DEFAULT_E_CHAOS_MEAN,
+		DEFAULT_E_CHAOS_STDDEV
 	);	
 }
 
@@ -284,7 +285,7 @@ void App1::Gui()
 		static float baselineForkProb = DEFAULT_JFG_BASELINE_FORK_PROB;
 		static float forkProbScaledown = DEFAULT_JFG_FORK_PROB_SCALEDOWN;
 
-		if (ImGui::CollapsingHeader("Set Jitter+Fork Params"))
+		if (ImGui::CollapsingHeader("Set Jitter+Fork Parameters"))
 		{
 			bool changeNow = false;
 			// TODO - gui for Start and End points
@@ -320,7 +321,7 @@ void App1::Gui()
 		static float pressureGradient    = DEFAULT_SG_PRESSURE_GRADIENT;
 		static int   maxNumLayers        = DEFAULT_SG_MAX_NUM_LAYERS;
 
-		if (ImGui::CollapsingHeader("Set Streamer Params"))
+		if (ImGui::CollapsingHeader("Set Streamer Parameters"))
 		{
 
 			bool changeNow = false;
@@ -350,7 +351,7 @@ void App1::Gui()
 		static float diameterScaledown = DEFAULT_DT_DIAMETER_SCALEDOWN;
 		static int maxNumBranchLevels  = DEFAULT_DT_MAX_NUM_BRANCH_LEVELS;
 
-		if (ImGui::CollapsingHeader("Set Diameter Transformer Params"))
+		if (ImGui::CollapsingHeader("Set Diameter Transformer Parameters"))
 		{
 			bool changeNow = false;
 			changeNow = GuiSliderFloat(&changeNow, "DT initial diameter", &initialDiameter, DT_MIN_INITIAL_DIAMETER, DT_MAX_INITIAL_DIAMETER);
@@ -368,45 +369,31 @@ void App1::Gui()
 		}
 	}
 
+	//Adjust Electrifier Parameters
+	{
+		static float maxSegmentLength = DEFAULT_E_MAX_SEG_LENGTH;
+		static float chaosMean        = DEFAULT_E_CHAOS_MEAN;
+		static float chaosStdDev      = DEFAULT_E_CHAOS_STDDEV;
 
+		if (ImGui::CollapsingHeader("Set Electrifier Parameters"))
+		{
 
-//	if (ImGui::CollapsingHeader("ELECTRIFIER"))
-//	{
-//		static float maxLength = 1.f;
-//		static float chaosProportion = 0.1f;
+			bool changeNow = false;
+			changeNow = GuiSliderFloat(&changeNow, "E max len", &maxSegmentLength, E_MIN_MAX_SEG_LENGTH, E_MAX_MAX_SEG_LENGTH);
+			changeNow = GuiSliderFloat(&changeNow, "E chaos mean", &chaosMean, E_MIN_CHAOS_MEAN, E_MAX_CHAOS_MEAN);
+			changeNow = GuiSliderFloat(&changeNow, "E chaos std dev", &chaosStdDev, E_MIN_CHAOS_STDDEV, E_MAX_CHAOS_STDDEV);
 
-//		bool changeNow = false;
-//		changeNow = GuiSliderFloat(&changeNow, "E max len", &maxLength, MIN_SEGMENT_LENGTH, 5.f);
-//		changeNow = GuiSliderFloat(&changeNow, "E chaos proportion", &chaosProportion, 0.f, MAX_CHAOS_PROPORTION);
-//		
-//		if (changeNow)
-//		{
-//			electrifier->InitParameters(
-//				maxLength,
-//				chaosProportion
-//			);
-//		}
+			if (changeNow)
+			{
+				pipelineMgr->InitElectrifier(
+					maxSegmentLength,
+					chaosMean,
+					chaosStdDev
+				);
+			}						
+		}
+	}
 
-//		if (ImGui::Button("RUN JFG, RUN E, AND REBUILD LINE MESH"))
-//		{
-//			jfg.Run();
-//			electrifier->SetInput(
-//				&(jfg.GetOutput())
-//			);
-//			electrifier->Run();
-//			UpdateLineMesh(electrifier->GetOutput(), lineMesh);
-//		}
-
-//		if (ImGui::Button("RUN E, AND REBUILD LINE MESH"))
-//		{
-//			electrifier->SetInput(
-//				&(jfg.GetOutput())
-//			);
-//			electrifier->Run();
-//			UpdateLineMesh(electrifier->GetOutput(), lineMesh);
-//		}
-//	}
-//}
 
 
 // Render UI

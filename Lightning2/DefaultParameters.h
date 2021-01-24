@@ -31,8 +31,8 @@ const size_t DEFAULT_DT_MAX_NUM_BRANCH_LEVELS = 4;
 
 // Electrifier
 const float DEFAULT_E_MAX_SEG_LENGTH   = 1.f;
-const float DEFAULT_E_CHAOS_PROPORTION = .1f;
-
+const float DEFAULT_E_CHAOS_MEAN       = .1f;
+const float DEFAULT_E_CHAOS_STDDEV     = .05f;
 
 ////
 // MIN & MAX VALUES:
@@ -82,9 +82,11 @@ const size_t DT_MIN_MAX_NUM_BRANCH_LEVELS = 1;
 const size_t DT_MAX_MAX_NUM_BRANCH_LEVELS = 10;
 
 // Electrifier
-
 const float E_MIN_MAX_SEG_LENGTH = .1f;
 const float E_MAX_MAX_SEG_LENGTH = 10.f;
 
-const float E_MIN_CHAOS_PROPORTION = 0.f;
-const float E_MAX_CHAOS_PROPORTION = .5f;
+const float E_MIN_CHAOS_MEAN = 0.f;
+const float E_MAX_CHAOS_MEAN = .2f;
+
+const float E_MIN_CHAOS_STDDEV = 0.f;
+const float E_MAX_CHAOS_STDDEV = .3f;

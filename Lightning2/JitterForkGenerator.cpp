@@ -103,11 +103,11 @@ std::vector<Segment*> JitterForkGenerator::JitterAndFork(
 )
 {
 	// 1. Get offset point
-	MyFloat3 offset = RandomPerpendicularUnitVector(seed->GetDirection());
+	MyFloat3 offset       = RandomPerpendicularUnitVector(seed->GetDirection());
 	float chaosProportion = chaosGaussianGen.GetSample();
-	float chaos = seed->GetLength() * chaosProportion;
-	offset = offset * chaos;
-	MyFloat3 offsetPoint = seed->GetOffsetMidpoint(midpointGaussianGen.GetSample()) + offset;
+	float chaos           = seed->GetLength() * chaosProportion;
+	offset                = offset * chaos;
+	MyFloat3 offsetPoint  = seed->GetOffsetMidpoint(midpointGaussianGen.GetSample()) + offset;
 
 	// 2. Generate two new segments
 	Segment* topSeg    = new Segment(seed->GetStartPoint(), offsetPoint);

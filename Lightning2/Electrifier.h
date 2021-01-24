@@ -3,29 +3,28 @@
 #include <vector>
 
 #include "Segment.h"
+#include "BoxMullerGen.h"
 
 class Electrifier
 {	
 public:
 	void InitParameters(
 		float maxSegLength,
-		float chaosProportionToLength
+		float chaosMean,
+		float chaosStdDev
 	);
 	inline void SetSegments(std::vector<Segment*>* _segments) { segments = _segments; };
 	void Run();
 	
 private:
-	void InitAlgorithm();
-	void ResetSegmentVectors();
-	void SwapSegmentsVectors();
 	std::vector<Segment*> JitterSegment(Segment* segment, float extent);
 	
 	std::vector<Segment*>* segments;
-	float maxLength = 1.f;
-	float chaosProportion = .1f;
-		
-	std::vector<Segment*> segmentsA;
-	std::vector<Segment*> segmentsB;
+
+	float maxLength;
+
+	std::vector<Segment*>* previousSegments;
 	std::vector<Segment*>* currentSegments;
-	std::vector<Segment*>* nextSegments;
+
+	BoxMullerGen chaosGaussianGen;
 };

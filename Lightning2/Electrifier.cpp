@@ -10,30 +10,34 @@
 // PUBLIC:
 ////
 
-void Electrifier::InitParameters(float maxSegLength, float chaosProportionToLength)
+void Electrifier::InitParameters(float maxSegLength, float chaosMean, float chaosStdDev)
 {	
-	chaosProportion = MyClamp(
-		chaosProportionToLength,
-		E_MIN_CHAOS_PROPORTION,
-		E_MAX_CHAOS_PROPORTION
-	);
-
 	maxLength = MyClamp(maxSegLength,
 		E_MIN_MAX_SEG_LENGTH,
 		E_MAX_MAX_SEG_LENGTH
-	);	
+	);
+
+	chaosGaussianGen.SetMean(chaosMean);
+	chaosGaussianGen.SetStdDev(chaosStdDev);
 }
 
 void Electrifier::Run()
 {
-	InitAlgorithm();
+	previousSegments = new std::vector<Segment*>;
+	
+	for (Segment* segment : *segments)
+	{
+		previousSegments->push_back(new Segment(*segment));
+	}
 	
 	bool anySegmentTooLong;
 	do
 	{
+		currentSegments = new std::vector<Segment*>;
+
 		anySegmentTooLong = false;
 
-		for (Segment* seg : *currentSegments)
+		for (Segment* seg : *previousSegments)
 		{
 			float len = seg->GetLength();
 
@@ -41,17 +45,19 @@ void Electrifier::Run()
 			{
 				anySegmentTooLong = true;
 
-				std::vector<Segment*> res = JitterSegment(seg, len * chaosProportion);
-				nextSegments->insert(nextSegments->end(), res.begin(), res.end());
+				std::vector<Segment*> res = JitterSegment(seg, len * chaosGaussianGen.GetSample());
+				currentSegments->insert(currentSegments->end(), res.begin(), res.end());
 			}
 			else
 			{
-				nextSegments->push_back(seg);
+				currentSegments->push_back(new Segment(*seg));
 			}
 		}
 
-		SwapSegmentsVectors();
-		nextSegments->clear();
+		//prep for the next iteration:
+		ClearAllSegmentData(previousSegments);
+		delete previousSegments;
+		previousSegments = currentSegments;
 
 	} while(anySegmentTooLong);
 
@@ -59,35 +65,21 @@ void Electrifier::Run()
 	if (segments)
 	{
 		ClearAllSegmentData(segments);
-		delete segments;
+		for (Segment* segment : *currentSegments)
+		{
+			segments->push_back(new Segment(*segment));
+		}
 	}
-	segments = new std::vector<Segment*>(*currentSegments);
+
+	//cleaning up working vectors:
+	delete currentSegments;
+	currentSegments = NULL;
+	previousSegments = NULL;
 }
 
 ////
 // PRIVATE:
 ////
-
-void Electrifier::InitAlgorithm()
-{
-	ResetSegmentVectors();
-	*currentSegments = *segments;
-}
-
-void Electrifier::ResetSegmentVectors()
-{
-	ClearAllSegmentData(&segmentsA);
-	ClearAllSegmentData(&segmentsB);
-
-	currentSegments = &segmentsA;
-	nextSegments    = &segmentsB;
-}
-
-void Electrifier::SwapSegmentsVectors()
-{
-	currentSegments = (currentSegments == &segmentsA) ? &segmentsB : &segmentsA;
-	nextSegments    = (nextSegments    == &segmentsA) ? &segmentsB : &segmentsA;
-}
 
 std::vector<Segment*> Electrifier::JitterSegment(Segment* seed, float extent)
 {
@@ -96,7 +88,7 @@ std::vector<Segment*> Electrifier::JitterSegment(Segment* seed, float extent)
 
 	//2. get the normalised cross product of the current segment's dir vector, and a random vector
 	MyFloat3 offset = CrossProduct(randvec, seed->GetDirection());
-	offset = offset.Normalised();
+	offset          = offset.Normalised();
 	//3. multiply that by by chaos factor
 	offset = offset * extent;
 
@@ -104,7 +96,7 @@ std::vector<Segment*> Electrifier::JitterSegment(Segment* seed, float extent)
 	MyFloat3 newPt = seed->GetMidpoint() + offset;
 
 	//5. two resulting segments
-	Segment* topSeg =    new Segment(seed->GetStartPoint(), newPt);
+	Segment* topSeg    = new Segment(seed->GetStartPoint(), newPt);
 	Segment* bottomSeg = new Segment(newPt, seed->GetEndPoint());
 
 	std::vector<Segment*> res = { topSeg, bottomSeg };
