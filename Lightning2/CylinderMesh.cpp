@@ -17,7 +17,7 @@ CylinderMesh::~CylinderMesh()
 	BaseMesh::~BaseMesh();
 }
 
-void CylinderMesh::InitBuffers(ID3D11Device* device) {
+void CylinderMesh::initBuffers(ID3D11Device* device) {
 
 	VertexType* vertices;
 	unsigned long* indices;

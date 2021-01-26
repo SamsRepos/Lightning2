@@ -7,7 +7,6 @@
 class LineRenderer
 {
 public:
-
 	LineRenderer();
 	~LineRenderer();
 	

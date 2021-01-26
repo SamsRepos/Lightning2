@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "SegmentRemoval.h"
+#include "MyVectorUtil.h"
 #include "DefaultParameters.h"
 #include "MyClamp.h"
 
@@ -55,7 +55,7 @@ void Electrifier::Run()
 		}
 
 		//prep for the next iteration:
-		ClearAllSegmentData(previousSegments);
+		DeleteAllVectorData(previousSegments);
 		delete previousSegments;
 		previousSegments = currentSegments;
 
@@ -64,7 +64,7 @@ void Electrifier::Run()
 	//output vector:
 	if (segments)
 	{
-		ClearAllSegmentData(segments);
+		DeleteAllVectorData(segments);
 		for (Segment* segment : *currentSegments)
 		{
 			segments->push_back(new Segment(*segment));
@@ -98,6 +98,9 @@ std::vector<Segment*> Electrifier::JitterSegment(Segment* seed, float extent)
 	//5. two resulting segments
 	Segment* topSeg    = new Segment(seed->GetStartPoint(), newPt);
 	Segment* bottomSeg = new Segment(newPt, seed->GetEndPoint());
+
+	topSeg->SetDiameter(seed->GetDiameter());
+	bottomSeg->SetDiameter(seed->GetDiameter());
 
 	std::vector<Segment*> res = { topSeg, bottomSeg };
 

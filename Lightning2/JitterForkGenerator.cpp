@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "SegmentRemoval.h"
+#include "MyVectorUtil.h"
 #include "MyClamp.h"
 #include "DefaultParameters.h"
 
@@ -57,7 +57,7 @@ void JitterForkGenerator::Run()
 		RunIterationRecursive(root, forkProb, NULL);
 		
 		//Prep for the next iteration:
-		ClearAllSegmentData(previousSegments);
+		DeleteAllVectorData(previousSegments);
 		delete previousSegments;
 		previousSegments = currentSegments;
 		
@@ -72,7 +72,7 @@ void JitterForkGenerator::Run()
 	}
 
 	//cleaning up the remaining working vector:
-	//note: not calling ClearAllSegmentData(currentSegments) because the dynamically allocated segments are now in output
+	//note: not calling DeleteAllVectorData(currentSegments) because the dynamically allocated segments are now in output
 	//note: currentSegments and previousSegments now point to the same vector
 	delete currentSegments;
 	currentSegments  = NULL;

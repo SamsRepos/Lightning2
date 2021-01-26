@@ -184,6 +184,7 @@
     <ClCompile Include="MyFloat3.cpp" />
     <ClCompile Include="PipelineMgr.cpp" />
     <ClCompile Include="PipelineMgrSettings.cpp" />
+    <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SegmentRemoval.cpp" />
     <ClCompile Include="PathIdentifier.cpp" />
     <ClCompile Include="RandFloatGen.cpp" />
@@ -207,8 +208,10 @@
     <ClInclude Include="MyClamp.h" />
     <ClInclude Include="MyFloat3.h" />
     <ClInclude Include="MyMath.h" />
+    <ClInclude Include="MyVectorUtil.h" />
     <ClInclude Include="PipelineMgr.h" />
     <ClInclude Include="PipelineMgrSettings.h" />
+    <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SegmentRemoval.h" />
     <ClInclude Include="PathIdentifier.h" />
     <ClInclude Include="RandFloatGen.h" />

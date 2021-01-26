@@ -86,6 +86,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	);
 
 	lineRenderer.Init(renderer, hwnd);
+	cylRenderer.Init(renderer, textureMgr->getTexture(L"grass"));
 }
 
 App1::~App1()
@@ -138,6 +139,9 @@ bool App1::render()
 	lineRenderer.SetShaderParams(worldMatrix, viewMatrix, projectionMatrix, light, LIGHTNING_WHITE);
 	lineRenderer.Render(renderer);
 
+	cylRenderer.SetShaderParams(viewMatrix, projectionMatrix, light);
+	cylRenderer.Render(renderer, lightShader);
+
 	// Render GUI
 	Gui();
 
@@ -182,7 +186,8 @@ void App1::Gui()
 		pipelineMgr->RunProcess();
 		
 		lineRenderer.Build(pipelineMgr->GetSegments());
-		
+		cylRenderer.Build(pipelineMgr->GetSegments());
+
 		DebugWriteCsv(pipelineMgr->GetSegments());
 	}
 

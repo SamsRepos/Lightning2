@@ -2,6 +2,8 @@
 #include "BaseMesh.h"
 #include <vector>
 
+//Note, this class is taken from a lab from CMP305 - Procedural Methods
+
 class Line {
 public:
 	Line() {
@@ -26,7 +28,7 @@ public:
 	LineMesh(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
 	~LineMesh();
 
-	void	sendData(ID3D11DeviceContext* deviceContext, int line, D3D_PRIMITIVE_TOPOLOGY top = D3D_PRIMITIVE_TOPOLOGY_LINELIST);
+	void sendData(ID3D11DeviceContext* deviceContext, int line, D3D_PRIMITIVE_TOPOLOGY top = D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 
 	size_t GetLineCount() { return lines.size(); }
 

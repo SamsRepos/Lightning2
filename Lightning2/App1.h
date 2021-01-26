@@ -19,6 +19,7 @@
 
 
 #include "LineRenderer.h"
+#include "CylinderRenderer.h"
 
 const XMFLOAT4 BLUE_BACKGROUND_COLOUR = XMFLOAT4(0.39f, 0.58f, 0.92f, 1.0f);
 const XMFLOAT4 NIGHT_BACKGROUND_COLOUR = XMFLOAT4(.05f, 0.f, .1f, 1.f);
@@ -53,8 +54,9 @@ private:
 	XMMATRIX planeMatrix;
 
 	PipelineMgr* pipelineMgr;		
-
+	
 	LineRenderer lineRenderer;
+	CylinderRenderer cylRenderer;
 };
 
 #endif

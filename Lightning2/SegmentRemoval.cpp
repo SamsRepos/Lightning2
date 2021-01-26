@@ -21,20 +21,3 @@ void CullSegments(std::vector<Segment*>* vec)
 		}
 	}
 }
-
-void ClearAllSegmentData(std::vector<Segment*>* vec)
-{
-	if (vec)
-	{
-		for (Segment* seg : *vec)
-		{
-			if (seg)
-			{
-				delete seg;
-				seg = NULL;
-			}
-		}
-
-		vec->clear();
-	}	
-}

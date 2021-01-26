@@ -1,6 +1,6 @@
 #include "PipelineMgr.h"
 
-#include "SegmentRemoval.h"
+#include "MyVectorUtil.h"
 #include "MyClamp.h"
 
 ////
@@ -128,7 +128,7 @@ void PipelineMgr::InitProcess()
 {
 	if(segments)
 	{
-		ClearAllSegmentData(segments);
+		DeleteAllVectorData(segments);
 
 		delete segments;
 		segments = NULL;

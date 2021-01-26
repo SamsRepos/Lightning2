@@ -1,40 +1,76 @@
 #include "CylinderRenderer.h"
 
+#include "MyVectorUtil.h"
+#include "MyMath.h"
 
-// from 3rd year project - to adapt to this next time...
-
-TreeObject::TreeObject(Tree* _tree, SceneObject _cylinder)
+CylinderRenderer::CylinderRenderer()
 	:
-	tree(_tree),
-	baseCylinder(_cylinder)
+	cylinderMesh(NULL),
+	baseCylinder(NULL)
 {
-	setPosition(0.f, 0.f, 0.f);
+	
 }
 
-TreeObject::~TreeObject()
+CylinderRenderer::~CylinderRenderer()
 {
-}
+	cylinderObjects.clear();
 
-void TreeObject::init()
-{
-	cylinders.clear();
-
-	std::vector<Segment*> segs = tree->getSegments();
-	for (Segment* s : segs)
+	if (cylinderMesh)
 	{
-		//SceneObject* newCylinder = new SceneObject(cylinderObject->getMesh(), cylinderObject->getTexture(), renderer->getWorldMatrix());
+		delete cylinderMesh;
+		cylinderMesh = NULL;
+	}
 
-		SceneObject newCylinder(baseCylinder);
+	if (baseCylinder)
+	{
+		delete baseCylinder;
+		baseCylinder = NULL;
+	}
+}
 
-		XMFLOAT3 startPosFloat3 = s->startpt;
-		XMFLOAT3 endPosFloat3 = s->endpt;
+void CylinderRenderer::Init(D3D* renderer, ID3D11ShaderResourceView* texture)
+{
+	cylinderMesh = new CylinderMesh(
+		renderer->getDevice(),
+		renderer->getDeviceContext(),
+		.5f,
+		.5f //diameter of 1, which matches defaylt height
+		//leave resolution as default for now
+	);
+
+	//SCENEOBJECTS:
+	baseCylinder = new SceneObject(cylinderMesh, texture, renderer->getWorldMatrix());
+}
+
+void CylinderRenderer::Build(std::vector<Segment*>* segments)
+{
+	cylinderObjects.clear();
+
+	for (Segment* seg : *segments)
+	{
+		SceneObject newCylinder(*baseCylinder);
+
+		XMFLOAT3 startPosFloat3 = XMFLOAT3(
+			seg->GetStartPoint().x,
+			seg->GetStartPoint().y,
+			seg->GetStartPoint().z
+		);
+			
+		XMFLOAT3 endPosFloat3 = XMFLOAT3(
+			seg->GetEndPoint().x,
+			seg->GetEndPoint().y,
+			seg->GetEndPoint().z
+		); 
 
 		//position:
-		newCylinder.setPosition(XMFLOAT3(startPosFloat3.x + position.x, startPosFloat3.y + position.y, startPosFloat3.z + position.z));
+		newCylinder.setPosition(XMFLOAT3(startPosFloat3.x, startPosFloat3.y, startPosFloat3.z));
 
 		//scale:
-		float branchThinner = 1.f - (float(s->treelevel) / float(tree->getHighestLevel()));
-		newCylinder.setScale(s->magnitude * branchThinner, s->magnitude, s->magnitude * branchThinner);
+		newCylinder.setScale(
+			seg->GetDiameter(),
+			seg->GetLength(),
+			seg->GetDiameter()
+		);
 
 		//direction for roll/pitch/yaw for rotation:
 		XMVECTOR startPos = XMLoadFloat3(&startPosFloat3);
@@ -52,11 +88,11 @@ void TreeObject::init()
 		float yaw = atan(dirX / dirZ);
 
 		//roll value is just used for correction where the branch is pointing downwards:
-#define PI 3.14159265359f
+
 		float roll = (dirY < 0.f) ? PI : 0.f;
 
 		//pitch down value is determined by tranforming direction coordinates onto the X-axis:
-		XMMATRIX axisChanger = XMMatrixRotationRollPitchYaw(0.f, -yaw, 0.f);
+		XMMATRIX axisChanger    = XMMatrixRotationRollPitchYaw(0.f, -yaw, 0.f);
 		XMVECTOR transDirection = XMVector3Transform(direction, axisChanger);
 
 		float tdirX = XMVectorGetX(transDirection);
@@ -76,72 +112,28 @@ void TreeObject::init()
 
 		newCylinder.updateObjectMatrix();
 
-		cylinders.push_back(newCylinder);
+		cylinderObjects.push_back(newCylinder);
 	}
 
-	cylinderCount = cylinders.size();
+	cylindersToRender = cylinderObjects.size();
 
 }
 
-void TreeObject::updateCylinders()
+void CylinderRenderer::SetShaderParams(
+	const XMMATRIX& _viewMatrix,
+	const XMMATRIX& _projectionMatrix,
+	Light* _light	
+)
 {
-	assert(cylinderCount == tree->getSegments().size());
-
-	for (size_t i = 0; i < cylinderCount; i++)
-	{
-		Segment* seg = tree->getSegments()[i];
-		SceneObject* cyl = &(cylinders[i]);
-
-		XMFLOAT3 startPosFloat3 = seg->startpt;
-		XMFLOAT3 endPosFloat3 = seg->endpt;
-
-		//position:
-		cyl->setPosition(XMFLOAT3(startPosFloat3.x + position.x, startPosFloat3.y + position.y, startPosFloat3.z + position.z));
-
-		//direction for roll/pitch/yaw for rotation:
-		XMVECTOR startPos = XMLoadFloat3(&startPosFloat3);
-		XMVECTOR endPos = XMLoadFloat3(&endPosFloat3);
-
-		XMVECTOR direction = endPos - startPos;
-
-		//direction = XMVector3Normalize(direction);
-
-		float dirX = XMVectorGetX(direction);
-		float dirY = XMVectorGetY(direction);
-		float dirZ = XMVectorGetZ(direction);
-
-		//yaw value rotates cylinder, around Y axis, towards  new point...
-		float yaw = atan(dirX / dirZ);
-
-		//roll value is just used for correction where the branch is pointing downwards:
-#define PI 3.14159265359f
-		float roll = (dirY < 0.f) ? PI : 0.f;
-
-		//pitch down value is determined by tranforming direction coordinates onto the X-axis:
-		XMMATRIX axisChanger = XMMatrixRotationRollPitchYaw(0.f, -yaw, 0.f);
-		XMVECTOR transDirection = XMVector3Transform(direction, axisChanger);
-
-		float tdirX = XMVectorGetX(transDirection);
-		float tdirY = XMVectorGetY(transDirection);
-		float tdirZ = XMVectorGetZ(transDirection);
-
-		float pitch = atan(tdirZ / tdirY);
-
-		//(glitch fix, for if the branch points vertically upwards)
-		if (dirZ == 0.f && dirX == 0.f)
-		{
-			yaw = 1.f;
-			pitch = roll = 0.f;
-		}
-
-		cyl->setRotation(pitch, yaw, roll);
-		cyl->updateObjectMatrix();
-	}
+	viewMatrix = _viewMatrix;
+	projectionMatrix = _projectionMatrix;
+	light = _light;
 }
 
-void TreeObject::render(D3D* renderer, LightShader* shader, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, Light* light)
+
+void CylinderRenderer::Render(D3D* renderer, LightShader* shader)
 {
-	for (auto c : cylinders)
+	for (auto c : cylinderObjects)
 	{
 		c.getMesh()->sendData(renderer->getDeviceContext());
 		shader->setShaderParameters(renderer->getDeviceContext(), c.getObjectMatrix(), viewMatrix, projectionMatrix, c.getTexture(), light);
@@ -149,24 +141,6 @@ void TreeObject::render(D3D* renderer, LightShader* shader, const XMMATRIX &view
 	}
 }
 
-void TreeObject::render(D3D* renderer, LightShader* shader, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, Light* light, size_t currentSeg, ID3D11ShaderResourceView* highlightTexture)
-{
-	for (size_t i = 0; i < cylinderCount; i++)
-	{
-		cylinders[i].getMesh()->sendData(renderer->getDeviceContext());
-
-		shader->setShaderParameters(renderer->getDeviceContext(), cylinders[i].getObjectMatrix(), viewMatrix, projectionMatrix,
-			(i == (currentSeg % cylinders.size())) ? highlightTexture : cylinders[i].getTexture(),
-			light);
-
-		shader->render(renderer->getDeviceContext(), cylinders[i].getMesh()->getIndexCount());
-
-		if (i == (currentSeg % cylinderCount))
-		{
-			break;
-		}
-	}
-}
 //
 //void TreeObject::guiInspectCylinderRotation(size_t currentSeg)
 //{
