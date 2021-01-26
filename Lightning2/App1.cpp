@@ -50,7 +50,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	defaultSettings.diameterTransformerActive = true;
 	defaultSettings.wholeTransformerActive    = false;
 	defaultSettings.electrifierActive         = false;
-	defaultSettings.renderer                  = RendererTypes::LINE;
+	defaultSettings.lineRendererActive        = true;
+	defaultSettings.cylinderRendererActive    = true;
 	pipelineMgr = new PipelineMgr(defaultSettings);
 
 	pipelineMgr->InitJitterForkGenerator(
@@ -208,24 +209,36 @@ void App1::Gui()
 		//Transform stages:
 		ImGui::Text("Active Transformers: ");
 		ImGui::Indent();
-		if (settings->IsPathIdentifierActive())
-		{
-			ImGui::Text("- Path Identifier (auto)");
-		}
-		if (settings->IsDiameterTransformerActive())
-		{
-			ImGui::Text("- Diameter Transformer");
-		}
-		if (settings->IsWholeTransformerActive())
-		{
-			ImGui::Text("- Whole Transformer");
-		}
-		if (settings->IsElectrifierActive())
-		{
-			ImGui::Text("- Electrifier");
-		}
+			if (settings->IsPathIdentifierActive())
+			{
+				ImGui::Text("- Path Identifier (auto)");
+			}
+			if (settings->IsDiameterTransformerActive())
+			{
+				ImGui::Text("- Diameter Transformer");
+			}
+			if (settings->IsWholeTransformerActive())
+			{
+				ImGui::Text("- Whole Transformer");
+			}
+			if (settings->IsElectrifierActive())
+			{
+				ImGui::Text("- Electrifier");
+			}
 		ImGui::Unindent();
 
+		//Renderers:
+		ImGui::Text("Active Renderers: ");
+		ImGui::Indent();
+			if (settings->IsLineRendererActive())
+			{
+				ImGui::Text("- Line Renderer");
+			}
+			if (settings->IsCylinderRendererActive())
+			{
+				ImGui::Text("- Cylinder Renderer");
+			}			
+		ImGui::Unindent();
 
 		// Toggle pipeline stages
 		if (ImGui::CollapsingHeader("Toggle Pipeline Stages"))
@@ -243,19 +256,25 @@ void App1::Gui()
 			}
 			ImGui::ListBoxFooter();
 
-			if (ImGui::Button("Toggle Diameter Transformer"))
+			std::string buttonMsgNow = "Toggle Diameter Transformer ";
+			buttonMsgNow.append((settings->IsDiameterTransformerActive()) ? "Off" : "On");
+			if (ImGui::Button(buttonMsgNow.c_str()))					
 			{
 				pipelineMgr->SetDiameterTransformerActive(
 					!(settings->IsDiameterTransformerActive())
 				);
 			}
-			if (ImGui::Button("Toggle Whole Transformer"))
+			buttonMsgNow = "Toggle Whole Transformer ";
+			buttonMsgNow.append((settings->IsWholeTransformerActive()) ? "Off" : "On");
+			if (ImGui::Button(buttonMsgNow.c_str()))
 			{
 				pipelineMgr->SetWholeTransformerActive(
 					!(settings->IsWholeTransformerActive())
 				);
 			}
-			if (ImGui::Button("Toggle Electrifier"))
+			buttonMsgNow = "Toggle Electrifier ";
+			buttonMsgNow.append((settings->IsElectrifierActive()) ? "Off" : "On");
+			if (ImGui::Button(buttonMsgNow.c_str()))
 			{
 				pipelineMgr->SetElectifierActive(
 					!(settings->IsElectrifierActive())

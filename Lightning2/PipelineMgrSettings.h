@@ -6,18 +6,13 @@ enum GeometryGeneratorTypes
 	STREAMER
 };
 
-enum RendererTypes
-{
-	LINE,
-	CYLINDER
-};
-
 struct PipelineMgrDefaultSettings {
 	GeometryGeneratorTypes geometryGenerator;
 	bool diameterTransformerActive;
 	bool wholeTransformerActive;
 	bool electrifierActive;
-	RendererTypes renderer;
+	bool lineRendererActive;
+	bool cylinderRendererActive;
 };
 
 class PipelineMgrSettings
@@ -37,13 +32,17 @@ public:
 	inline bool IsWholeTransformerActive() { return wholeTransformerActive; };
 	inline bool IsElectrifierActive() { return electrifierActive; };
 
-	inline void SetRendererType(RendererTypes type) { currentRenderer = type; };
-	inline RendererTypes GetRendererType() { return currentRenderer; };
+	inline void SetLineRendererActive(bool active) { lineRendererActive = active; };
+	inline void SetCylinderRendererActive(bool active) { cylinderRendererActive = active; };
+
+	inline bool IsLineRendererActive() { return lineRendererActive; };
+	inline bool IsCylinderRendererActive() { return cylinderRendererActive; };
 
 private:
 	GeometryGeneratorTypes currentGeometryGenerator;
 	bool diameterTransformerActive;
 	bool wholeTransformerActive;
 	bool electrifierActive;
-	RendererTypes currentRenderer;
+	bool lineRendererActive;
+	bool cylinderRendererActive;
 };

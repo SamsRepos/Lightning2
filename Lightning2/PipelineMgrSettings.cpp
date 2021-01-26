@@ -6,6 +6,7 @@ PipelineMgrSettings::PipelineMgrSettings(const PipelineMgrDefaultSettings& defau
 	diameterTransformerActive(defaultSettings.diameterTransformerActive),
 	wholeTransformerActive(defaultSettings.wholeTransformerActive),
 	electrifierActive(defaultSettings.electrifierActive),
-	currentRenderer(defaultSettings.renderer)
+	lineRendererActive(defaultSettings.lineRendererActive),
+    cylinderRendererActive(defaultSettings.cylinderRendererActive)
 {
 }

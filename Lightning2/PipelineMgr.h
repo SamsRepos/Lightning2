@@ -60,7 +60,8 @@ public:
 	inline void SetElectifierActive(bool active) { settings->SetElectifierActive(active); };
 
 	//set current renderer
-	inline void SetRendererType(RendererTypes type) { settings->SetRendererType(type); };
+	inline void SetLineRendererActive(bool active) { settings->SetLineRendererActive(active); };
+	inline void SetCylinderRendererActive(bool active) { settings->SetCylinderRendererActive(active); };
 
 	//run whole process
 	void RunProcess();
