@@ -25,7 +25,7 @@ const float    DEFAULT_SG_PRESSURE_GRADIENT = .5f;
 const size_t   DEFAULT_SG_MAX_NUM_LAYERS    = 10;
 
 // Diameter Transformer
-const float  DEFAULT_DT_INITIAL_DIAMETER      = 5.f;
+const float  DEFAULT_DT_INITIAL_DIAMETER      = .5f;
 const float  DEFAULT_DT_DIAMETER_SCALEDOWN    = .5f;
 const size_t DEFAULT_DT_MAX_NUM_BRANCH_LEVELS = 4;
 
@@ -73,7 +73,7 @@ const size_t SG_MAX_MAX_NUM_LAYERS = 20;
 
 // Diameter Transformer
 const float DT_MIN_INITIAL_DIAMETER = .1f;
-const float DT_MAX_INITIAL_DIAMETER = 5.f;
+const float DT_MAX_INITIAL_DIAMETER = 2.f;
 
 const float DT_MIN_DIAMETER_SCALEDOWN = 0.f;
 const float DT_MAX_DIAMETER_SCALEDOWN = 1.f;

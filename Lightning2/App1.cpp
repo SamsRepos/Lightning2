@@ -263,6 +263,7 @@ void App1::Gui()
 					!(settings->IsDiameterTransformerActive())
 				);
 			}
+			
 			buttonMsgNow = "Toggle Whole Transformer ";
 			buttonMsgNow.append((settings->IsWholeTransformerActive()) ? "Off" : "On");
 			if (ImGui::Button(buttonMsgNow.c_str()))
@@ -271,6 +272,7 @@ void App1::Gui()
 					!(settings->IsWholeTransformerActive())
 				);
 			}
+			
 			buttonMsgNow = "Toggle Electrifier ";
 			buttonMsgNow.append((settings->IsElectrifierActive()) ? "Off" : "On");
 			if (ImGui::Button(buttonMsgNow.c_str()))
@@ -279,7 +281,28 @@ void App1::Gui()
 					!(settings->IsElectrifierActive())
 				);
 			}
+		}
 
+		//Toggle renderers:
+		if (ImGui::CollapsingHeader("Toggle Renderers"))
+		{
+			std::string buttonMsgNow = "Toggle Line Renderer ";
+			buttonMsgNow.append((settings->IsLineRendererActive()) ? "Off" : "On");
+			if (ImGui::Button(buttonMsgNow.c_str()))
+			{
+				pipelineMgr->SetLineRendererActive(
+					!(settings->IsLineRendererActive())
+				);
+			}
+
+			buttonMsgNow = "Toggle Cylinder Renderer ";
+			buttonMsgNow.append((settings->IsCylinderRendererActive()) ? "Off" : "On");
+			if (ImGui::Button(buttonMsgNow.c_str()))
+			{
+				pipelineMgr->SetCylinderRendererActive(
+					!(settings->IsCylinderRendererActive())
+				);
+			}
 		}
 	}
 

@@ -173,6 +173,7 @@
     <ClCompile Include="BoxMullerGen.cpp" />
     <ClCompile Include="CylinderMesh.cpp" />
     <ClCompile Include="CylinderRenderer.cpp" />
+    <ClCompile Include="CylinderShader.cpp" />
     <ClCompile Include="DebugCsvWriter.cpp" />
     <ClCompile Include="DiameterTransformer.cpp" />
     <ClCompile Include="JitterForkGenerator.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="BoxMullerGen.h" />
     <ClInclude Include="CylinderMesh.h" />
     <ClInclude Include="CylinderRenderer.h" />
+    <ClInclude Include="CylinderShader.h" />
     <ClInclude Include="DebugCsvWriter.h" />
     <ClInclude Include="DefaultParameters.h" />
     <ClInclude Include="DiameterTransformer.h" />
@@ -220,6 +222,12 @@
     <ClInclude Include="StreamerGenerator.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="cyl_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="cyl_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="light_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>

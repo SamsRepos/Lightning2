@@ -49,6 +49,9 @@
     <Filter Include="Header Files\Graphics">
       <UniqueIdentifier>{227ed8e5-6ff7-4a05-8a63-e9580792155e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\CylinderShaders">
+      <UniqueIdentifier>{066b631a-6d97-4dd4-88f4-3fac1b9b98e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App1.cpp">
@@ -116,6 +119,9 @@
     </ClCompile>
     <ClCompile Include="SceneObject.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="CylinderShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +200,9 @@
     <ClInclude Include="SceneObject.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="CylinderShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="light_ps.hlsl">
@@ -207,6 +216,12 @@
     </FxCompile>
     <FxCompile Include="line_vs.hlsl">
       <Filter>Resource Files\Line Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="cyl_ps.hlsl">
+      <Filter>Resource Files\CylinderShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="cyl_vs.hlsl">
+      <Filter>Resource Files\CylinderShaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

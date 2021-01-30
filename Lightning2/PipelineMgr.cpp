@@ -162,7 +162,7 @@ void PipelineMgr::RenderOutput(
 
 	if (settings->IsCylinderRendererActive())
 	{
-		cylRenderer.SetShaderParams(viewMatrix, projMatrix);
+		cylRenderer.SetShaderParams(viewMatrix, projMatrix, LIGHTNING_WHITE);
 		cylRenderer.Render(renderer);
 	}
 }

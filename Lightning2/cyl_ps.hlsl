@@ -4,7 +4,7 @@
 Texture2D texture0 : register(t0);
 SamplerState sampler0 : register(s0);
 
-cbuffer Colourbuffer : register(b0)
+cbuffer ColourBuffer : register(b0)
 {
 	float4 colour;
 };
@@ -19,7 +19,7 @@ struct InputType
 
 float4 main(InputType input) : SV_TARGET
 {
-	return colour;	
+	return colour;
 }
 
 

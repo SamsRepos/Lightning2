@@ -8,8 +8,7 @@ CylinderRenderer::CylinderRenderer()
 	cylinderMesh(NULL),
 	baseCylinder(NULL)
 {
-	light = new Light;
-	light->setAmbientColour(1.f, 1.f, 1.f, 1.f);
+	
 }
 
 CylinderRenderer::~CylinderRenderer()
@@ -43,7 +42,7 @@ void CylinderRenderer::Init(D3D* renderer, HWND hwnd, ID3D11ShaderResourceView* 
 	baseCylinder = new SceneObject(cylinderMesh, texture, renderer->getWorldMatrix());
 
 	//Shader:
-	shader = new LightShader(renderer->getDevice(), hwnd);
+	shader = new CylinderShader(renderer->getDevice(), hwnd);
 }
 
 void CylinderRenderer::Build(std::vector<Segment*>* segments)
@@ -105,11 +104,20 @@ void CylinderRenderer::Build(std::vector<Segment*>* segments)
 
 		float pitch = atan(tdirZ / tdirY);
 
-		//(glitch fix, for if the branch points vertically upwards)
+		//(glitch fix, for if the branch is perfectly vertical)
 		if (dirZ == 0.f && dirX == 0.f)
 		{
-			yaw = 1.f;
-			pitch = roll = 0.f;
+			if (dirY > 0.f)
+			{
+				yaw = 1.f;
+				pitch = roll = 0.f;
+			}
+			else
+			{
+				yaw = -1.f;
+				pitch = PI;
+				roll = 0.f;
+			}			
 		}
 
 		newCylinder.setRotation(pitch, yaw, roll);
@@ -125,11 +133,13 @@ void CylinderRenderer::Build(std::vector<Segment*>* segments)
 
 void CylinderRenderer::SetShaderParams(
 	const XMMATRIX& _viewMatrix,
-	const XMMATRIX& _projectionMatrix
+	const XMMATRIX& _projectionMatrix,
+	const XMFLOAT4& _colour
 )
 {
 	viewMatrix       = _viewMatrix;
 	projectionMatrix = _projectionMatrix;
+	colour           = _colour;
 }
 
 
@@ -138,7 +148,7 @@ void CylinderRenderer::Render(D3D* renderer)
 	for (auto c : cylinderObjects)
 	{
 		c.getMesh()->sendData(renderer->getDeviceContext());
-		shader->setShaderParameters(renderer->getDeviceContext(), c.getObjectMatrix(), viewMatrix, projectionMatrix, c.getTexture(), light);
+		shader->setShaderParameters(renderer->getDeviceContext(), c.getObjectMatrix(), viewMatrix, projectionMatrix, c.getTexture(), colour);
 		shader->render(renderer->getDeviceContext(), c.getMesh()->getIndexCount());
 	}
 }
