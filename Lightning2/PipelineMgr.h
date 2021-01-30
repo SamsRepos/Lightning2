@@ -9,6 +9,13 @@
 #include "DiameterTransformer.h"
 #include "Electrifier.h"
 
+#include "LineRenderer.h"
+#include "CylinderRenderer.h"
+
+const XMFLOAT4 LIGHTNING_WHITE = XMFLOAT4(1.f, 1.f, 1.f, 1.f);
+const XMFLOAT4 LIGHTNING_YELLOW = XMFLOAT4(1.f, .749f, .122f, 1.f);
+const XMFLOAT4 LIGHTNING_BLUE = XMFLOAT4(.45f, .35f, 1.f, 1.f);
+
 class PipelineMgr
 {
 public:
@@ -49,6 +56,17 @@ public:
 		float chaosStdDev
 	);
 
+	void InitLineRenderer(
+		D3D* renderer,
+		HWND hwnd
+	);
+
+	void InitCylinderRenderer(
+		D3D* renderer,
+		HWND hwnd,
+		ID3D11ShaderResourceView* texture
+	);
+
 	inline PipelineMgrSettings* GetSettings() { return settings; };
 
 	//set current geometry generator
@@ -68,7 +86,12 @@ public:
 	std::vector<Segment*>* GetSegments() { return segments; };
 
 	//render output
-	
+	void RenderOutput(
+		D3D* renderer,
+		const XMMATRIX& worldMatrix,
+		const XMMATRIX& viewMatrix,
+		const XMMATRIX& projMatrix
+	);
 
 private:
 
@@ -91,6 +114,7 @@ private:
 	Electrifier electrifier;
 
 	//Graphics renderers:
-
+	LineRenderer lineRenderer;
+	CylinderRenderer cylRenderer;
 };
 

@@ -16,7 +16,6 @@ public:
 		const XMMATRIX& _worldMatrix, 
 		const XMMATRIX& _viewMatrix, 
 		const XMMATRIX& _projectionMatrix, 
-		Light* _light, 
 		const XMFLOAT4& _colour
 	);
 	void Render(D3D* renderer);
@@ -28,7 +27,6 @@ private:
 	XMMATRIX worldMatrix;
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
-	Light* light;
 	XMFLOAT4 colour;
 
 	//debug stuff:

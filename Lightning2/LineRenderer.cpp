@@ -65,20 +65,18 @@ void LineRenderer::SetShaderParams(
 	const XMMATRIX& _worldMatrix,
 	const XMMATRIX& _viewMatrix,
 	const XMMATRIX& _projectionMatrix,
-	Light* _light,
 	const XMFLOAT4& _colour
 )
 {
 	worldMatrix      = _worldMatrix;
 	viewMatrix       = _viewMatrix;
 	projectionMatrix = _projectionMatrix;
-	light            = _light;
 	colour           = _colour;
 }
 
 void LineRenderer::Render(D3D* renderer)
 {
-	if (shader && mesh && light)
+	if (shader && mesh)
 	{
 		//linesToRender = MyClamp(linesToRender, 0, int(mesh->GetLineCount()));
 		linesToRender = int(mesh->GetLineCount());
@@ -91,7 +89,6 @@ void LineRenderer::Render(D3D* renderer)
 				viewMatrix,
 				projectionMatrix,
 				NULL,
-				light,
 				colour
 			);
 

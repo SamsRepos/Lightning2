@@ -8,7 +8,8 @@ CylinderRenderer::CylinderRenderer()
 	cylinderMesh(NULL),
 	baseCylinder(NULL)
 {
-	
+	light = new Light;
+	light->setAmbientColour(1.f, 1.f, 1.f, 1.f);
 }
 
 CylinderRenderer::~CylinderRenderer()
@@ -28,7 +29,7 @@ CylinderRenderer::~CylinderRenderer()
 	}
 }
 
-void CylinderRenderer::Init(D3D* renderer, ID3D11ShaderResourceView* texture)
+void CylinderRenderer::Init(D3D* renderer, HWND hwnd, ID3D11ShaderResourceView* texture)
 {
 	cylinderMesh = new CylinderMesh(
 		renderer->getDevice(),
@@ -40,6 +41,9 @@ void CylinderRenderer::Init(D3D* renderer, ID3D11ShaderResourceView* texture)
 
 	//SCENEOBJECTS:
 	baseCylinder = new SceneObject(cylinderMesh, texture, renderer->getWorldMatrix());
+
+	//Shader:
+	shader = new LightShader(renderer->getDevice(), hwnd);
 }
 
 void CylinderRenderer::Build(std::vector<Segment*>* segments)
@@ -121,17 +125,15 @@ void CylinderRenderer::Build(std::vector<Segment*>* segments)
 
 void CylinderRenderer::SetShaderParams(
 	const XMMATRIX& _viewMatrix,
-	const XMMATRIX& _projectionMatrix,
-	Light* _light	
+	const XMMATRIX& _projectionMatrix
 )
 {
-	viewMatrix = _viewMatrix;
+	viewMatrix       = _viewMatrix;
 	projectionMatrix = _projectionMatrix;
-	light = _light;
 }
 
 
-void CylinderRenderer::Render(D3D* renderer, LightShader* shader)
+void CylinderRenderer::Render(D3D* renderer)
 {
 	for (auto c : cylinderObjects)
 	{

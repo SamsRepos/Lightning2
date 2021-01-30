@@ -10,23 +10,12 @@
 
 #include "Light.h"
 
-#include "LineMesh.h"
-
 #include "PlaneMesh.h"
 
 #include "PipelineMgr.h"
 
-
-
-#include "LineRenderer.h"
-#include "CylinderRenderer.h"
-
 const XMFLOAT4 BLUE_BACKGROUND_COLOUR = XMFLOAT4(0.39f, 0.58f, 0.92f, 1.0f);
 const XMFLOAT4 NIGHT_BACKGROUND_COLOUR = XMFLOAT4(.05f, 0.f, .1f, 1.f);
-
-const XMFLOAT4 LIGHTNING_WHITE  = XMFLOAT4(1.f, 1.f, 1.f, 1.f);
-const XMFLOAT4 LIGHTNING_YELLOW = XMFLOAT4(1.f, .749f, .122f, 1.f);
-const XMFLOAT4 LIGHTNING_BLUE   = XMFLOAT4(.45f, .35f, 1.f, 1.f);
 
 class App1 : public BaseApplication
 {
@@ -53,10 +42,7 @@ private:
 	
 	XMMATRIX planeMatrix;
 
-	PipelineMgr* pipelineMgr;		
-	
-	LineRenderer lineRenderer;
-	CylinderRenderer cylRenderer;
+	PipelineMgr* pipelineMgr;
 };
 
 #endif

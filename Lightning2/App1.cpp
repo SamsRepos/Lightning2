@@ -24,6 +24,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	//TEXTURES:
 	textureMgr->loadTexture(L"grass", L"res/grass.jpg");
 	textureMgr->loadTexture(L"metal", L"res/metal.jpg");
+	textureMgr->loadTexture(L"white", L"res/white.jpg");
 
 	//Shaders:
 	lightShader = new LightShader(renderer->getDevice(), hwnd);
@@ -86,8 +87,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 		DEFAULT_E_CHAOS_STDDEV
 	);
 
-	lineRenderer.Init(renderer, hwnd);
-	cylRenderer.Init(renderer, textureMgr->getTexture(L"grass"));
+	pipelineMgr->InitLineRenderer(renderer, hwnd);
+	pipelineMgr->InitCylinderRenderer(renderer, hwnd, textureMgr->getTexture(L"white"));
 }
 
 App1::~App1()
@@ -137,12 +138,14 @@ bool App1::render()
 	lightShader->setShaderParameters(renderer->getDeviceContext(), planeMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"metal"), light);
 	lightShader->render(renderer->getDeviceContext(), planeMesh->getIndexCount());
 
-	lineRenderer.SetShaderParams(worldMatrix, viewMatrix, projectionMatrix, light, LIGHTNING_WHITE);
-	lineRenderer.Render(renderer);
-
-	cylRenderer.SetShaderParams(viewMatrix, projectionMatrix, light);
-	cylRenderer.Render(renderer, lightShader);
-
+	
+	pipelineMgr->RenderOutput(
+		renderer,
+		worldMatrix,
+		viewMatrix,
+		projectionMatrix
+	);
+	
 	// Render GUI
 	Gui();
 
@@ -185,10 +188,6 @@ void App1::Gui()
 	if (ImGui::Button("Run whole process"))
 	{
 		pipelineMgr->RunProcess();
-		
-		lineRenderer.Build(pipelineMgr->GetSegments());
-		cylRenderer.Build(pipelineMgr->GetSegments());
-
 		DebugWriteCsv(pipelineMgr->GetSegments());
 	}
 

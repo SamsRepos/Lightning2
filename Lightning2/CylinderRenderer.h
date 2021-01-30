@@ -11,23 +11,24 @@ public:
 	CylinderRenderer();
 	~CylinderRenderer();
 
-	void Init(D3D* renderer, ID3D11ShaderResourceView* texture);
+	void Init(D3D* renderer, HWND hwnd, ID3D11ShaderResourceView* texture);
 	void Build(std::vector<Segment*>* segments);
 	void SetShaderParams(
 		const XMMATRIX& _viewMatrix,
-		const XMMATRIX& _projectionMatrix,
-		Light* _light
+		const XMMATRIX& _projectionMatrix		
 	);
-	void Render(D3D* renderer, LightShader* shader);
+	void Render(D3D* renderer);
 
 private:
 	CylinderMesh* cylinderMesh;
 	SceneObject* baseCylinder;
 	std::vector<SceneObject> cylinderObjects;
 
+	Light* light;
+	LightShader* shader;
+
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
-	Light* light;
 
 	//debug stuff:
 	int cylindersToRender;

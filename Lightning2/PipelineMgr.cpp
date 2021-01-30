@@ -83,6 +83,30 @@ void PipelineMgr::InitElectrifier(
 	);
 }
 
+void PipelineMgr::InitLineRenderer(
+	D3D* renderer,
+	HWND hwnd
+)
+{
+	lineRenderer.Init(
+		renderer,
+		hwnd
+	);
+}
+
+void PipelineMgr::InitCylinderRenderer(
+	D3D* renderer,
+	HWND hwnd,
+	ID3D11ShaderResourceView* texture
+)
+{
+	cylRenderer.Init(
+		renderer,
+		hwnd,
+		texture
+	);
+}
+
 void PipelineMgr::RunProcess()
 {
 	InitProcess();
@@ -117,6 +141,29 @@ void PipelineMgr::RunProcess()
 	{
 		electrifier.SetSegments(segments);
 		electrifier.Run();		
+	}
+
+	lineRenderer.Build(segments);
+	cylRenderer.Build(segments);
+}
+
+void PipelineMgr::RenderOutput(
+	D3D* renderer,
+	const XMMATRIX& worldMatrix,
+	const XMMATRIX& viewMatrix,
+	const XMMATRIX& projMatrix
+)
+{
+	if (settings->IsLineRendererActive())
+	{
+		lineRenderer.SetShaderParams(worldMatrix, viewMatrix, projMatrix, LIGHTNING_WHITE);
+		lineRenderer.Render(renderer);
+	}
+
+	if (settings->IsCylinderRendererActive())
+	{
+		cylRenderer.SetShaderParams(viewMatrix, projMatrix);
+		cylRenderer.Render(renderer);
 	}
 }
 
