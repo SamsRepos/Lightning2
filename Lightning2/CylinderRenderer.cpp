@@ -28,7 +28,7 @@ CylinderRenderer::~CylinderRenderer()
 	}
 }
 
-void CylinderRenderer::Init(D3D* renderer, HWND hwnd, ID3D11ShaderResourceView* texture)
+void CylinderRenderer::Init(D3D* renderer, HWND hwnd, int _screenWidth, int _screenHeight)
 {
 	cylinderMesh = new CylinderMesh(
 		renderer->getDevice(),
@@ -38,11 +38,41 @@ void CylinderRenderer::Init(D3D* renderer, HWND hwnd, ID3D11ShaderResourceView* 
 		//leave resolution as default for now
 	);
 
-	//SCENEOBJECTS:
-	baseCylinder = new SceneObject(cylinderMesh, texture, renderer->getWorldMatrix());
+	//Scene objects:
+	baseCylinder = new SceneObject(cylinderMesh, NULL, renderer->getWorldMatrix());
 
-	//Shader:
-	shader = new CylinderShader(renderer->getDevice(), hwnd);
+	//Shaders:
+	mainShader    = new CylinderShader(renderer->getDevice(), hwnd);
+	blurShader    = new BlurShader(renderer->getDevice(), hwnd);
+	textureShader = new TextureShader(renderer->getDevice(), hwnd);
+
+	screenWidth  = _screenWidth;
+	screenHeight = _screenHeight;
+
+	//Render textures:
+	mainRenderTexture = new RenderTexture(
+		renderer->getDevice(),
+		screenWidth,
+		screenHeight,
+		SCREEN_NEAR,
+		SCREEN_DEPTH
+	);
+
+	blurRenderTexture = new RenderTexture(
+		renderer->getDevice(),
+		screenWidth,
+		screenHeight,
+		SCREEN_NEAR,
+		SCREEN_DEPTH
+	);
+
+	fullScreenMesh = new OrthoMesh(
+		renderer->getDevice(),
+		renderer->getDeviceContext(),
+		screenWidth,
+		screenHeight
+	);
+
 }
 
 void CylinderRenderer::Build(std::vector<Segment*>* segments)
@@ -143,14 +173,68 @@ void CylinderRenderer::SetShaderParams(
 }
 
 
-void CylinderRenderer::Render(D3D* renderer)
+void CylinderRenderer::Render(D3D* renderer, Camera* camera)
 {
+#define DEBUG_BACKGROUND_COLOUR .1f, .65f, .3f, .1f
+
+	XMMATRIX worldMatrix     = renderer->getWorldMatrix();
+	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
+	XMMATRIX orthoMatrix     = renderer->getOrthoMatrix();  // ortho matrix for 2D rendering
+
+	//1. Render cylinders to the main texture:
+	mainRenderTexture->setRenderTarget(renderer->getDeviceContext());
+	mainRenderTexture->clearRenderTarget(renderer->getDeviceContext(), DEBUG_BACKGROUND_COLOUR);
+	
 	for (auto c : cylinderObjects)
 	{
 		c.getMesh()->sendData(renderer->getDeviceContext());
-		shader->setShaderParameters(renderer->getDeviceContext(), c.getObjectMatrix(), viewMatrix, projectionMatrix, c.getTexture(), colour);
-		shader->render(renderer->getDeviceContext(), c.getMesh()->getIndexCount());
+		mainShader->setShaderParameters(renderer->getDeviceContext(), c.getObjectMatrix(), viewMatrix, projectionMatrix, c.getTexture(), colour);
+		mainShader->render(renderer->getDeviceContext(), c.getMesh()->getIndexCount());
 	}
+
+	//2. Render main texture to the blur texture:
+	blurRenderTexture->setRenderTarget(renderer->getDeviceContext());
+	blurRenderTexture->clearRenderTarget(renderer->getDeviceContext(), DEBUG_BACKGROUND_COLOUR);
+	blurShader->setScreenSize(renderer->getDeviceContext(), XMINT2(screenWidth, screenHeight));
+	fullScreenMesh->sendData(renderer->getDeviceContext());
+	blurShader->setShaderParameters(
+		renderer->getDeviceContext(),
+		worldMatrix,
+		orthoViewMatrix,
+		orthoMatrix,
+		mainRenderTexture->getShaderResourceView()
+	);
+
+	blurShader->render(
+		renderer->getDeviceContext(),
+		fullScreenMesh->getIndexCount()
+	);
+
+	//3. Render both textures:
+	renderer->setBackBufferRenderTarget();
+	renderer->setZBuffer(false);
+
+	fullScreenMesh->sendData(renderer->getDeviceContext());
+	textureShader->setShaderParameters(
+		renderer->getDeviceContext(),
+		worldMatrix,
+		orthoViewMatrix,
+		orthoMatrix,
+		blurRenderTexture->getShaderResourceView()
+	);
+	textureShader->render(renderer->getDeviceContext(), fullScreenMesh->getIndexCount());
+
+	fullScreenMesh->sendData(renderer->getDeviceContext());
+	textureShader->setShaderParameters(
+		renderer->getDeviceContext(),
+		worldMatrix,
+		orthoViewMatrix,
+		orthoMatrix,
+		mainRenderTexture->getShaderResourceView()
+	);
+	textureShader->render(renderer->getDeviceContext(), fullScreenMesh->getIndexCount());
+
+	renderer->setZBuffer(true);
 }
 
 //

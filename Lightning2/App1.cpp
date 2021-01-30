@@ -88,7 +88,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	);
 
 	pipelineMgr->InitLineRenderer(renderer, hwnd);
-	pipelineMgr->InitCylinderRenderer(renderer, hwnd, textureMgr->getTexture(L"white"));
+	pipelineMgr->InitCylinderRenderer(renderer, hwnd, screenWidth, screenHeight);
 }
 
 App1::~App1()
@@ -132,15 +132,14 @@ bool App1::render()
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 	XMMATRIX viewMatrix = camera->getViewMatrix();
 	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
-	static bool viewLine = true;
 
 	planeMesh->sendData(renderer->getDeviceContext());
 	lightShader->setShaderParameters(renderer->getDeviceContext(), planeMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"metal"), light);
 	lightShader->render(renderer->getDeviceContext(), planeMesh->getIndexCount());
-
-	
+		
 	pipelineMgr->RenderOutput(
 		renderer,
+		camera,
 		worldMatrix,
 		viewMatrix,
 		projectionMatrix

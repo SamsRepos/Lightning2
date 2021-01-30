@@ -52,6 +52,12 @@
     <Filter Include="Resource Files\CylinderShaders">
       <UniqueIdentifier>{066b631a-6d97-4dd4-88f4-3fac1b9b98e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Blur Shaders">
+      <UniqueIdentifier>{c287509a-f738-498f-a1ad-e0e424dcafaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Texture Shaders">
+      <UniqueIdentifier>{c4fcff88-018c-471b-85a0-c3c982de767a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App1.cpp">
@@ -121,6 +127,12 @@
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="CylinderShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="BlurShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureShader.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
   </ItemGroup>
@@ -203,6 +215,12 @@
     <ClInclude Include="CylinderShader.h">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="BlurShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="light_ps.hlsl">
@@ -222,6 +240,18 @@
     </FxCompile>
     <FxCompile Include="cyl_vs.hlsl">
       <Filter>Resource Files\CylinderShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="blur_ps.hlsl">
+      <Filter>Resource Files\Blur Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="blur_vs.hlsl">
+      <Filter>Resource Files\Blur Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="texture_ps.hlsl">
+      <Filter>Resource Files\Texture Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="texture_vs.hlsl">
+      <Filter>Resource Files\Texture Shaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -97,13 +97,15 @@ void PipelineMgr::InitLineRenderer(
 void PipelineMgr::InitCylinderRenderer(
 	D3D* renderer,
 	HWND hwnd,
-	ID3D11ShaderResourceView* texture
+	int screenWidth,
+	int screenHeight
 )
 {
 	cylRenderer.Init(
 		renderer,
 		hwnd,
-		texture
+		screenWidth,
+		screenHeight
 	);
 }
 
@@ -149,6 +151,7 @@ void PipelineMgr::RunProcess()
 
 void PipelineMgr::RenderOutput(
 	D3D* renderer,
+	Camera* camera,
 	const XMMATRIX& worldMatrix,
 	const XMMATRIX& viewMatrix,
 	const XMMATRIX& projMatrix
@@ -163,7 +166,7 @@ void PipelineMgr::RenderOutput(
 	if (settings->IsCylinderRendererActive())
 	{
 		cylRenderer.SetShaderParams(viewMatrix, projMatrix, LIGHTNING_WHITE);
-		cylRenderer.Render(renderer);
+		cylRenderer.Render(renderer, camera);
 	}
 }
 

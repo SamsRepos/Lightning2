@@ -62,9 +62,10 @@ public:
 	);
 
 	void InitCylinderRenderer(
-		D3D* renderer,
+		D3D* renderer,		
 		HWND hwnd,
-		ID3D11ShaderResourceView* texture
+		int screenWidth,
+		int screenHeight
 	);
 
 	inline PipelineMgrSettings* GetSettings() { return settings; };
@@ -88,6 +89,7 @@ public:
 	//render output
 	void RenderOutput(
 		D3D* renderer,
+		Camera* camera,
 		const XMMATRIX& worldMatrix,
 		const XMMATRIX& viewMatrix,
 		const XMMATRIX& projMatrix
