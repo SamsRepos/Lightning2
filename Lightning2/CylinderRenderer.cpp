@@ -93,7 +93,7 @@ void CylinderRenderer::Build(std::vector<Segment*>* segments)
 			seg->GetEndPoint().x,
 			seg->GetEndPoint().y,
 			seg->GetEndPoint().z
-		); 
+		);
 
 		//position:
 		newCylinder.setPosition(XMFLOAT3(startPosFloat3.x, startPosFloat3.y, startPosFloat3.z));
@@ -158,7 +158,6 @@ void CylinderRenderer::Build(std::vector<Segment*>* segments)
 	}
 
 	cylindersToRender = cylinderObjects.size();
-
 }
 
 void CylinderRenderer::SetShaderParams(
@@ -172,10 +171,15 @@ void CylinderRenderer::SetShaderParams(
 	colour           = _colour;
 }
 
+void CylinderRenderer::SetBlurParameters(float _blurExtent, float _blurRange)
+{
+	blurExtent = _blurExtent;
+	blurRange  = _blurRange;
+}
 
 void CylinderRenderer::Render(D3D* renderer, Camera* camera)
 {
-#define DEBUG_BACKGROUND_COLOUR .1f, .65f, .3f, .1f
+#define DEBUG_BACKGROUND_COLOUR .1f, .65f, .3f, 0.f
 
 	XMMATRIX worldMatrix     = renderer->getWorldMatrix();
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix();	// Default camera position for orthographic rendering
@@ -205,6 +209,12 @@ void CylinderRenderer::Render(D3D* renderer, Camera* camera)
 		mainRenderTexture->getShaderResourceView()
 	);
 
+	blurShader->updateGaussianBlurParameters(
+		renderer->getDeviceContext(),
+		blurExtent,
+		blurRange
+	);
+
 	blurShader->render(
 		renderer->getDeviceContext(),
 		fullScreenMesh->getIndexCount()
@@ -221,10 +231,10 @@ void CylinderRenderer::Render(D3D* renderer, Camera* camera)
 		orthoViewMatrix,
 		orthoMatrix,
 		blurRenderTexture->getShaderResourceView()
-	);
+	);	
 	textureShader->render(renderer->getDeviceContext(), fullScreenMesh->getIndexCount());
 
-	fullScreenMesh->sendData(renderer->getDeviceContext());
+	/*fullScreenMesh->sendData(renderer->getDeviceContext());
 	textureShader->setShaderParameters(
 		renderer->getDeviceContext(),
 		worldMatrix,
@@ -232,7 +242,7 @@ void CylinderRenderer::Render(D3D* renderer, Camera* camera)
 		orthoMatrix,
 		mainRenderTexture->getShaderResourceView()
 	);
-	textureShader->render(renderer->getDeviceContext(), fullScreenMesh->getIndexCount());
+	textureShader->render(renderer->getDeviceContext(), fullScreenMesh->getIndexCount());*/
 
 	renderer->setZBuffer(true);
 }

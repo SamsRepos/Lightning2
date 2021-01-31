@@ -68,6 +68,8 @@ public:
 		int screenHeight
 	);
 
+	void SetBlurParameters(float blurExtent, float blurRange);
+
 	inline PipelineMgrSettings* GetSettings() { return settings; };
 
 	//set current geometry generator

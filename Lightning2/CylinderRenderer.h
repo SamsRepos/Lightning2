@@ -20,6 +20,7 @@ public:
 		const XMMATRIX& _projectionMatrix,
 		const XMFLOAT4& _colour
 	);
+	void SetBlurParameters(float _blurExtent, float _blurRange);
 	void Render(D3D* renderer, Camera* camera);
 
 private:
@@ -38,6 +39,9 @@ private:
 
 	int screenWidth;
 	int screenHeight;
+
+	float blurExtent;
+	float blurRange;
 
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;

@@ -24,8 +24,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	//TEXTURES:
 	textureMgr->loadTexture(L"grass", L"res/grass.jpg");
 	textureMgr->loadTexture(L"metal", L"res/metal.jpg");
-	textureMgr->loadTexture(L"white", L"res/white.jpg");
-
+	
 	//Shaders:
 	lightShader = new LightShader(renderer->getDevice(), hwnd);
 
@@ -89,6 +88,11 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 
 	pipelineMgr->InitLineRenderer(renderer, hwnd);
 	pipelineMgr->InitCylinderRenderer(renderer, hwnd, screenWidth, screenHeight);
+	
+	pipelineMgr->SetBlurParameters(
+		DEFAULT_BLUR_EXTENT,
+		DEFAULT_BLUR_RANGE
+	);
 }
 
 App1::~App1()
@@ -425,6 +429,24 @@ void App1::Gui()
 		}
 	}
 
+	//Adjust blur parameters:
+	{
+		static float blurExtent = DEFAULT_BLUR_EXTENT;
+		static float blurRange  = DEFAULT_BLUR_RANGE;
+
+		if (ImGui::CollapsingHeader("Set Blur Parameters"))
+		{
+
+			bool changeNow = false;
+			changeNow = GuiSliderFloat(&changeNow, "Blur extent", &blurExtent, BLUR_MIN_EXTENT, BLUR_MAX_EXTENT);
+			changeNow = GuiSliderFloat(&changeNow, "Blur range", &blurRange, BLUR_MIN_RANGE, BLUR_MAX_RANGE);
+
+			if (changeNow)
+			{
+				pipelineMgr->SetBlurParameters(blurExtent, blurRange);
+			}
+		}
+	}
 
 
 // Render UI

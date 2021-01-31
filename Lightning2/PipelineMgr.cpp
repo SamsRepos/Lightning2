@@ -109,6 +109,11 @@ void PipelineMgr::InitCylinderRenderer(
 	);
 }
 
+void PipelineMgr::SetBlurParameters(float blurExtent, float blurRange)
+{
+	cylRenderer.SetBlurParameters(blurExtent, blurRange);
+}
+
 void PipelineMgr::RunProcess()
 {
 	InitProcess();
@@ -154,7 +159,7 @@ void PipelineMgr::RenderOutput(
 	Camera* camera,
 	const XMMATRIX& worldMatrix,
 	const XMMATRIX& viewMatrix,
-	const XMMATRIX& projMatrix
+	const XMMATRIX& projMatrix	
 )
 {
 	if (settings->IsLineRendererActive())

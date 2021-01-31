@@ -34,6 +34,11 @@ const float DEFAULT_E_MAX_SEG_LENGTH   = 1.f;
 const float DEFAULT_E_CHAOS_MEAN       = .1f;
 const float DEFAULT_E_CHAOS_STDDEV     = .05f;
 
+// Blur parameters for cylinder renderer
+const float DEFAULT_BLUR_EXTENT = .7f;
+const float DEFAULT_BLUR_RANGE  = 4.f;
+
+
 ////
 // MIN & MAX VALUES:
 ////
@@ -90,3 +95,10 @@ const float E_MAX_CHAOS_MEAN = .2f;
 
 const float E_MIN_CHAOS_STDDEV = 0.f;
 const float E_MAX_CHAOS_STDDEV = .3f;
+
+// Blur parameters for cylinder renderer
+const float BLUR_MIN_EXTENT = 0.f;
+const float BLUR_MAX_EXTENT = 1.f;
+
+const float BLUR_MIN_RANGE = 1.f;
+const float BLUR_MAX_RANGE = 20.f;

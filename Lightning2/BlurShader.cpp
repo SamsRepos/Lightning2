@@ -66,28 +66,16 @@ void BlurShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilename
 	renderer->CreateBuffer(&screenSizeBufferDesc, NULL, &screenSizeBuffer);
 
 	//blur info:
-	//directional:
+	//gaussian:
 	{
 		D3D11_BUFFER_DESC d;
 		d.Usage = D3D11_USAGE_DYNAMIC;
-		d.ByteWidth = sizeof(DirectionalBufferType);
+		d.ByteWidth = sizeof(GaussianBufferType);
 		d.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		d.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		d.MiscFlags = 0;
 		d.StructureByteStride = 0;
-		renderer->CreateBuffer(&d, NULL, &directionalBuffer);
-	}
-
-	//motion:
-	{
-		D3D11_BUFFER_DESC d;
-		d.Usage = D3D11_USAGE_DYNAMIC;
-		d.ByteWidth = sizeof(MotionBufferType);
-		d.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		d.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		d.MiscFlags = 0;
-		d.StructureByteStride = 0;
-		renderer->CreateBuffer(&d, NULL, &motionBuffer);
+		renderer->CreateBuffer(&d, NULL, &gaussianBuffer);
 	}
 
 }
@@ -108,43 +96,20 @@ void BlurShader::setScreenSize(ID3D11DeviceContext* deviceContext, XMINT2 size) 
 
 }
 
-void BlurShader::updateDirectionalBlurParameters(ID3D11DeviceContext* deviceContext, float blurExtent, float blurTheta) {
+void BlurShader::updateGaussianBlurParameters(ID3D11DeviceContext* deviceContext, float blurExtent, float blurRange) {
 	
-	DirectionalBufferType* dPtr;
+	GaussianBufferType* gaussianPtr;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
-	deviceContext->Map(directionalBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	dPtr = (DirectionalBufferType*)mappedResource.pData;
+	deviceContext->Map(gaussianBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	gaussianPtr = (GaussianBufferType*)mappedResource.pData;
 
-	dPtr->extent = blurExtent;
-	dPtr->theta = blurTheta;
+	gaussianPtr->extent = blurExtent;
+	gaussianPtr->range  = blurRange;
 
-	deviceContext->Unmap(directionalBuffer, 0);
-	deviceContext->PSSetConstantBuffers(1, 1, &directionalBuffer);
+	deviceContext->Unmap(gaussianBuffer, 0);
+	deviceContext->PSSetConstantBuffers(1, 1, &gaussianBuffer);
 
-}
-
-void BlurShader::updateMotionBlurParameters(ID3D11DeviceContext* deviceContext, float blurExtent) {
-	
-	MotionBufferType* mPtr;
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-
-	deviceContext->Map(motionBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	mPtr = (MotionBufferType*)mappedResource.pData;
-
-	mPtr->extent = blurExtent;
-
-	deviceContext->Unmap(motionBuffer, 0);
-	deviceContext->PSSetConstantBuffers(2, 1, &motionBuffer);
-
-}
-
-void BlurShader::updateMotionBlurTextures(ID3D11DeviceContext* deviceContext, RenderTexture** textures, int texturesNum) {
-
-	for (size_t i = 0; i < texturesNum; i++) {
-		ID3D11ShaderResourceView* texture = textures[i]->getShaderResourceView();
-		deviceContext->PSSetShaderResources((i + 1), 1, &texture);
-	}
 }
 
 void BlurShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &world, const XMMATRIX &view, const XMMATRIX &projection, ID3D11ShaderResourceView* texture) {

@@ -16,17 +16,11 @@ cbuffer ScreenSizeBuffer : register(b0)
 	float2 padding;
 };
 
-cbuffer DirectionalBuffer : register(b1)
+cbuffer GaussianBuffer : register(b1)
 {
-	float directionalExtent;
-	float directionalTheta;
-	float2 paddingfordirecitonal;
-}
-
-cbuffer MotionBuffer : register(b2)
-{
-	float motionExtent;
-	float3 paddingForMotion;
+	float gaussianExtent;
+	float gaussianRange;
+	float2 paddingForGaussian;
 }
 
 struct InputType
@@ -40,63 +34,65 @@ struct InputType
 //	  FUNCTIONS:	//
 //////////////////////
 
-float4 calculateDirectional(float2 inputTex, int extent, float theta) {
+float4 calculateGaussian(float2 inputTex, int extent, float range)
+{
 	
-	if (extent <= 1.f)
+	if (range <= 1.f)
 	{
 		return texture0.Sample(Sampler0, inputTex);
 	}
 
-	float weight = 1.f / extent;
+	float4 outColour = float4(0.f, 0.f, 0.f, 0.f);
 
-	float4 outColour = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float deltaX = (1.0f / screenSize.x);
+	float deltaY = (1.0f / screenSize.y);
 
-	float deltaX = (1.0f / screenSize.x) * cos(radians(theta));
-	float deltaY = (1.0f / screenSize.y) * sin(radians(theta));
+	float weightsSum = 0.f;
 
-	float2 sourceTex = inputTex;
+	float weight = 1.f;
 
-	for (int i = 0; i < extent; i++) {
+	//this pixel first:
+	outColour += texture0.Sample(Sampler0, inputTex) * weight;
 
+	for (int i = 0; i < (range * .5f); i++)
+	{
+		weight *= extent; // extent is used as a scaledown
+		float2 sourceTex;
+
+		//above
+		sourceTex = inputTex;
+		sourceTex.y -= deltaY * i;
 		outColour += texture0.Sample(Sampler0, sourceTex) * weight;
+		weightsSum += weight;
 
-		sourceTex.x += deltaX;
-		sourceTex.y += deltaY;
+		//below
+		sourceTex = inputTex;
+		sourceTex.y += deltaY * i;
+		outColour += texture0.Sample(Sampler0, sourceTex) * weight;
+		weightsSum += weight;
+
+		//left
+		sourceTex = inputTex;
+		sourceTex.x -= deltaX * i;
+		outColour += texture0.Sample(Sampler0, sourceTex) * weight;
+		weightsSum += weight;
+
+		//right
+		sourceTex = inputTex;
+		sourceTex.x += deltaX * i;
+		outColour += texture0.Sample(Sampler0, sourceTex) * weight;
+		weightsSum += weight;
+						
 	}
 
-	outColour.a = 1.f;
+	//outColour.a = 1.f;
+	
+	outColour.x = outColour.x / weightsSum;
+	outColour.y = outColour.y / weightsSum;
+	outColour.z = outColour.z / weightsSum;
+	outColour.a = outColour.a / weightsSum;
 	
 	return outColour;
-}
-
-float4 calculateMotion(int extent, float2 inputTex) {
-	
-	if (extent > MAX_MOTION_TEXTURES_NUM
-		|| extent < 1) {
-		return texture0.Sample(Sampler0, inputTex);
-	}
-	
-	float weight = 1.f / float(extent + 1);
-
-	//setting the weighted current image's colour value first:
-	float4 outColour = texture0.Sample(Sampler0, inputTex) * weight;
-	
-	//adding all other previous blur captures:
-	outColour += motionTexture1.Sample(Sampler0, inputTex) * weight;
-	--extent;
-	if (extent <= 0) return outColour;
-	
-	outColour += motionTexture2.Sample(Sampler0, inputTex) * weight;
-	--extent;
-	if (extent <= 0) return outColour;
-
-	outColour += motionTexture3.Sample(Sampler0, inputTex) * weight;
-	--extent;
-	if (extent <= 0) return outColour;
-		
-	outColour += motionTexture4.Sample(Sampler0, inputTex) * weight;
-	return outColour;
-
 }
 
 //////////////////////
@@ -112,24 +108,14 @@ float4 main(InputType input) : SV_TARGET
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
 	float4 textureColour = texture0.Sample(Sampler0, input.tex);
 
-	float4 outputColour = float4(0.f, 0.f, 0.f, 1.f);
-
-	float blursApplied = 0;
+	float4 outputColour = float4(0.f, 0.f, 0.f, 0.f);
 
 	//if doing directional:
-	if (directionalExtent > 0.f)	{
-		outputColour += calculateDirectional(input.tex, directionalExtent, directionalTheta);
-		blursApplied++;
+	if (gaussianExtent > 0.f && gaussianRange > 0.f)	{
+		outputColour += calculateGaussian(input.tex, gaussianExtent, gaussianRange);
 	}
-	//if doing motion:
-	if (motionExtent > 0.f) {
-		outputColour += calculateMotion(motionExtent, input.tex);
-		blursApplied++;
-	}
-		
-	if (blursApplied == 0.f) return textureColour;
-	outputColour /= blursApplied;
+	
 	outputColour = saturate(outputColour);
-	outputColour.w = 1.f;
+	//outputColour.w = 1.f;
 	return outputColour;
 }
