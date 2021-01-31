@@ -1,6 +1,23 @@
 #pragma once
 
+#include <map>
+
 #include "MyFloat3.h"
+#include "D3D.h"
+
+////
+// Colours
+////
+
+const XMFLOAT4 BLUE_BACKGROUND_COLOUR = XMFLOAT4(0.39f, 0.58f, 0.92f, 1.0f);
+const XMFLOAT4 NIGHT_BACKGROUND_COLOUR = XMFLOAT4(.05f, 0.f, .1f, 1.f);
+
+const std::map<std::string, XMFLOAT4> COLOUR_OPTIONS{
+	{"night", NIGHT_BACKGROUND_COLOUR},
+	{"blue", BLUE_BACKGROUND_COLOUR}
+};
+
+
 
 ////
 // DEFAULT VALUES:
@@ -35,8 +52,10 @@ const float DEFAULT_E_CHAOS_MEAN       = .1f;
 const float DEFAULT_E_CHAOS_STDDEV     = .05f;
 
 // Blur parameters for cylinder renderer
+const bool  DEFAULT_BLUR_ACTIVE = true;
 const float DEFAULT_BLUR_EXTENT = .7f;
 const float DEFAULT_BLUR_RANGE  = 4.f;
+const XMFLOAT4 DEFAULT_BLUR_BACKGROUND_COLOUR = NIGHT_BACKGROUND_COLOUR;
 
 
 ////

@@ -90,8 +90,10 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	pipelineMgr->InitCylinderRenderer(renderer, hwnd, screenWidth, screenHeight);
 	
 	pipelineMgr->SetBlurParameters(
+		DEFAULT_BLUR_ACTIVE,
 		DEFAULT_BLUR_EXTENT,
-		DEFAULT_BLUR_RANGE
+		DEFAULT_BLUR_RANGE,
+		DEFAULT_BLUR_BACKGROUND_COLOUR
 	);
 }
 
@@ -431,19 +433,27 @@ void App1::Gui()
 
 	//Adjust blur parameters:
 	{
-		static float blurExtent = DEFAULT_BLUR_EXTENT;
-		static float blurRange  = DEFAULT_BLUR_RANGE;
+		static bool blurActiveNow            = DEFAULT_BLUR_ACTIVE;
+		static float blurExtent              = DEFAULT_BLUR_EXTENT;
+		static float blurRange               = DEFAULT_BLUR_RANGE;
+		static XMFLOAT4 blurBackgroundColour = DEFAULT_BLUR_BACKGROUND_COLOUR;
 
 		if (ImGui::CollapsingHeader("Set Blur Parameters"))
 		{
 
 			bool changeNow = false;
+			changeNow = GuiCheckBox(&changeNow, "Blur active", &blurActiveNow);
 			changeNow = GuiSliderFloat(&changeNow, "Blur extent", &blurExtent, BLUR_MIN_EXTENT, BLUR_MAX_EXTENT);
 			changeNow = GuiSliderFloat(&changeNow, "Blur range", &blurRange, BLUR_MIN_RANGE, BLUR_MAX_RANGE);
 
 			if (changeNow)
 			{
-				pipelineMgr->SetBlurParameters(blurExtent, blurRange);
+				pipelineMgr->SetBlurParameters(
+					blurActiveNow,
+					blurExtent,
+					blurRange,
+					blurBackgroundColour
+				);
 			}
 		}
 	}
@@ -452,6 +462,11 @@ void App1::Gui()
 // Render UI
 	ImGui::Render();
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+}
+
+bool App1::GuiCheckBox(bool* changeFlag, const char* msg, bool* b)
+{
+	return ImGui::Checkbox(msg, b) || *changeFlag;
 }
 
 bool App1::GuiSliderInt(bool* changeFlag, const char* msg, int* i, int min, int max)

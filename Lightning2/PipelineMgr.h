@@ -68,7 +68,12 @@ public:
 		int screenHeight
 	);
 
-	void SetBlurParameters(float blurExtent, float blurRange);
+	void SetBlurParameters(
+		bool blurActive,
+		float blurExtent,
+		float blurRange,
+		XMFLOAT4 backgroundColour
+	);
 
 	inline PipelineMgrSettings* GetSettings() { return settings; };
 

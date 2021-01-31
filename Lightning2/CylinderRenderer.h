@@ -20,7 +20,12 @@ public:
 		const XMMATRIX& _projectionMatrix,
 		const XMFLOAT4& _colour
 	);
-	void SetBlurParameters(float _blurExtent, float _blurRange);
+	void SetBlurParameters(
+		bool _blurActive,
+		float _blurExtent,
+		float _blurRange,
+		XMFLOAT4 _backgroundColour
+	);
 	void Render(D3D* renderer, Camera* camera);
 
 private:
@@ -32,16 +37,18 @@ private:
 	BlurShader* blurShader;
 	TextureShader* textureShader;
 
-	RenderTexture* mainRenderTexture;
-	RenderTexture* blurRenderTexture;
+	RenderTexture* blurRenderTexture1;
+	RenderTexture* blurRenderTexture2;
 	
 	OrthoMesh* fullScreenMesh;
 
 	int screenWidth;
 	int screenHeight;
 
+	bool blurActive;
 	float blurExtent;
 	float blurRange;
+	XMFLOAT4 blurBackgroundColour;
 
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;

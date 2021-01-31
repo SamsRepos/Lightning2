@@ -109,9 +109,19 @@ void PipelineMgr::InitCylinderRenderer(
 	);
 }
 
-void PipelineMgr::SetBlurParameters(float blurExtent, float blurRange)
+void PipelineMgr::SetBlurParameters(
+	bool blurActive,
+	float blurExtent,
+	float blurRange,
+	XMFLOAT4 backgroundColour
+)
 {
-	cylRenderer.SetBlurParameters(blurExtent, blurRange);
+	cylRenderer.SetBlurParameters(
+		blurActive,
+		blurExtent,
+		blurRange,
+		backgroundColour
+	);
 }
 
 void PipelineMgr::RunProcess()
