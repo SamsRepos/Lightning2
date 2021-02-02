@@ -156,10 +156,12 @@ bool App1::render()
 	XMMATRIX viewMatrix = camera->getViewMatrix();
 	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
 
+#if 0
 	planeMesh->sendData(renderer->getDeviceContext());
 	lightShader->setShaderParameters(renderer->getDeviceContext(), planeMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"metal"), light);
 	lightShader->render(renderer->getDeviceContext(), planeMesh->getIndexCount());
-		
+#endif
+
 	pipelineMgr->RenderOutput(
 		renderer,
 		camera,
@@ -211,6 +213,22 @@ void App1::Gui()
 	{
 		pipelineMgr->RunProcess();
 		DebugWriteCsv(pipelineMgr->GetSegments());
+	}
+	
+	static bool zappy = false;
+	ImGui::Checkbox("ZAPPY", &zappy);
+	if (zappy)
+	{
+		static float currentTime = 0.f;
+		static float period      = 0.5f;
+		ImGui::SliderFloat("period", &period, 0.01f, .5f);
+
+		currentTime += timer->getTime();
+		if (currentTime >= period)
+		{
+			currentTime = 0.f;
+			pipelineMgr->RunProcess();
+		}
 	}
 
 	// Pipeline stages:

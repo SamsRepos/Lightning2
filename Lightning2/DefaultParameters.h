@@ -43,7 +43,7 @@ const float DEFAULT_E_CHAOS_STDDEV     = .05f;
 const std::string DEFAULT_LINE_COLOUR            = "lightning white";
 
 // Cylinder Renderer
-const std::string DEFAULT_BLUR_COLOUR            = "lightning white";
+const std::string DEFAULT_BLUR_COLOUR            = "lightning blue";
 const std::string DEFAULT_BLUR_BACKGROUND_COLOUR = "background night";
 const std::string DEFAULT_CYLINDER_COLOUR        = "lightning white";
 const float DEFAULT_BLUR_EXTENT = .7f;
