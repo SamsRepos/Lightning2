@@ -72,6 +72,7 @@ void Electrifier::Run()
 	}
 
 	//cleaning up working vectors:
+	DeleteAllVectorData(currentSegments);
 	delete currentSegments;
 	currentSegments = NULL;
 	previousSegments = NULL;
