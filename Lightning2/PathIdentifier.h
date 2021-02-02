@@ -12,7 +12,10 @@ public:
 
 private:
 	void DescendantCounterRecurs(Segment* currentSegment);
-	void StatusSetterRecurs(Segment* currentSegment);
+	void StatusSetterRecursByDescendants(Segment* currentSegment);
 	
+	void DistFromRootSetterRecurs(Segment* root, Segment* currentSegment);
+	void StatusSetterRecursByDistFromRoot(Segment* currentSegments);
+
 	std::vector<Segment*>* segments;
 };

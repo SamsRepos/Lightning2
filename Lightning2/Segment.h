@@ -30,7 +30,7 @@ public:
 	inline void SetDiameter(float _diameter) { diameter = _diameter; };
 	inline float GetDiameter() const { return diameter; };
 	inline float GetMinDiameter() const { return minDiameter; };
-	float GetLength();
+	inline float GetLength() { return Magnitude(GetDirection()); };
 
 	inline void SetParent(Segment* _parent) { parent = _parent; };
 	inline Segment* GetParent() { return parent; };
@@ -41,6 +41,12 @@ public:
 	inline void SetNumDescendants(size_t num) { numDescendants = num; };
 	inline size_t GetNumDescendants() { return numDescendants; };
 
+	inline void SetDistanceFromRoot(Segment* root) { distanceFromRoot = Magnitude(endPoint - root->GetStartPoint()); };
+	inline float GetDistanceFromRoot() { return distanceFromRoot; };
+
+	inline void SetFarthestDistanceOnThisPath(float dist) { farthestDistOnThisPath = dist; };
+	inline float GetFarthestDistanceOnThisPath() { return farthestDistOnThisPath; }
+	
 	inline void SetStatus(SegmentStatuses _status) { status = _status; };
 	inline SegmentStatuses GetStatus() { return status; };
 
@@ -55,6 +61,8 @@ private:
 	std::vector<Segment*> children;
 
 	size_t numDescendants;
+	float distanceFromRoot;
+	float farthestDistOnThisPath;
 	SegmentStatuses status;
 
 	bool cullMe = false;

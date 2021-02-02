@@ -86,3 +86,12 @@ MyFloat3 RandomPerpendicularUnitVector(const MyFloat3& inputVec)
 
 	return res.Normalised();
 }
+
+float Magnitude(const MyFloat3& vec)
+{
+	return sqrt(
+		vec.x * vec.x +
+		vec.y * vec.y +
+		vec.z * vec.z
+	);
+}

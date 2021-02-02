@@ -41,3 +41,5 @@ MyFloat3 RandomNormalisedVector(int resolution);
 MyFloat3 RandomNormalisedVector();
 
 MyFloat3 RandomPerpendicularUnitVector(const MyFloat3& inputVec);
+
+float Magnitude(const MyFloat3& vec);

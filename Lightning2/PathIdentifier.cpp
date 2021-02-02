@@ -8,8 +8,15 @@ void PathIdentifier::Run()
 {
 	Segment* root = segments->front();
 
+#if 1	
 	DescendantCounterRecurs(root);
-	StatusSetterRecurs(root);
+	StatusSetterRecursByDescendants(root);
+#endif
+
+#if 0
+	DistFromRootSetterRecurs(root, root);
+	StatusSetterRecursByDistFromRoot(root);
+#endif
 }
 
 ////
@@ -43,7 +50,7 @@ void PathIdentifier::DescendantCounterRecurs(Segment* currentSegment)
 	currentSegment->SetNumDescendants(numDescendants);
 }
 
-void PathIdentifier::StatusSetterRecurs(Segment* currentSegment)
+void PathIdentifier::StatusSetterRecursByDescendants(Segment* currentSegment)
 {
 
 	if (currentSegment->GetChildren()->size() > 0)
@@ -64,36 +71,71 @@ void PathIdentifier::StatusSetterRecurs(Segment* currentSegment)
 		for (Segment* child : *(currentSegment->GetChildren()))
 		{
 			child->SetStatus((child == primaryChild) ? SegmentStatuses::PRIMARY : SegmentStatuses::SECONDARY);
-			StatusSetterRecurs(child);
+			StatusSetterRecursByDescendants(child);
+		}
+	}	
+}
+
+void PathIdentifier::DistFromRootSetterRecurs(Segment* root, Segment* currentSegment)
+{
+	currentSegment->SetDistanceFromRoot(root);
+
+	size_t numChildren = currentSegment->GetChildren()->size();
+
+	// 1.
+	if (numChildren > 0)
+	{
+		for (Segment* child : *(currentSegment->GetChildren()))
+		{
+			DistFromRootSetterRecurs(root, child);
+		}
+
+
+		// 2. All descendants should have their distance from root by now
+		// and we're going back "up" the tree
+		float greatestDistToRootOnThisPath = -1.f;
+		for (Segment* child : *(currentSegment->GetChildren()))
+		{
+			if (child->GetDistanceFromRoot() > greatestDistToRootOnThisPath)
+			{
+				greatestDistToRootOnThisPath = child->GetDistanceFromRoot();
+			}
+		}
+		currentSegment->SetFarthestDistanceOnThisPath(
+			greatestDistToRootOnThisPath
+		);
+	}
+	else
+	{
+		currentSegment->SetFarthestDistanceOnThisPath(
+			currentSegment->GetDistanceFromRoot()
+		);
+	}
+}
+
+void PathIdentifier::StatusSetterRecursByDistFromRoot(Segment* currentSegment)
+{
+
+	if (currentSegment->GetChildren()->size() > 0)
+	{
+		Segment* primaryChild = currentSegment->GetChild(0);
+		float currentGreatestDistFromRoot = primaryChild->GetDistanceFromRoot();
+
+		for (size_t i = 1; i < currentSegment->GetChildren()->size(); i++)
+		{
+			Segment* currentChild = currentSegment->GetChild(i);
+			if (currentChild->GetDistanceFromRoot() > currentGreatestDistFromRoot)
+			{
+				currentGreatestDistFromRoot = currentChild->GetDistanceFromRoot();
+				primaryChild = currentChild;
+			}
+		}
+
+		for (Segment* child : *(currentSegment->GetChildren()))
+		{
+			child->SetStatus((child == primaryChild) ? SegmentStatuses::PRIMARY : SegmentStatuses::SECONDARY);
+			StatusSetterRecursByDescendants(child);
 		}
 	}
-	
-//#if 0
-//	if (currentSegment->GetChildren()->size() == 2)
-//	{
-//		Segment* childA = currentSegment->GetChild(0);
-//		Segment* childB = currentSegment->GetChild(1);
-//
-//		if (childA->GetNumDescendants() > childB->GetNumDescendants())
-//		{
-//			childA->SetStatus(SegmentStatuses::PRIMARY);
-//			childB->SetStatus(SegmentStatuses::SECONDARY);
-//		}
-//		else
-//		{
-//			childB->SetStatus(SegmentStatuses::PRIMARY);
-//			childA->SetStatus(SegmentStatuses::SECONDARY);
-//		}
-//
-//		StatusSetterRecurs(childA);
-//		StatusSetterRecurs(childB);
-//	}
-//	else if (currentSegment->GetChildren()->size() == 1)
-//	{
-//		//should only be true after jitter+fork method
-//		currentSegment->GetChild(0)->SetStatus(SegmentStatuses::PRIMARY);
-//		StatusSetterRecurs(currentSegment->GetChild(0));
-//	}
-//#endif
 	
 }
