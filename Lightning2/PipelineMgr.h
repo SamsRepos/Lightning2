@@ -12,14 +12,16 @@
 #include "LineRenderer.h"
 #include "CylinderRenderer.h"
 
-const XMFLOAT4 LIGHTNING_WHITE = XMFLOAT4(1.f, 1.f, 1.f, 1.f);
-const XMFLOAT4 LIGHTNING_YELLOW = XMFLOAT4(1.f, .749f, .122f, 1.f);
-const XMFLOAT4 LIGHTNING_BLUE = XMFLOAT4(.45f, .35f, 1.f, 1.f);
-
 class PipelineMgr
 {
 public:
-	PipelineMgr(const PipelineMgrDefaultSettings& defaultSettings);
+	PipelineMgr(
+		const PipelineMgrDefaultSettings& defaultSettings,
+		D3D* renderer,
+		HWND hwnd,
+		int screenWidth,
+		int screenHeight
+	);
 
 	//setters for all parameters
 	void InitJitterForkGenerator(
@@ -57,22 +59,15 @@ public:
 	);
 
 	void InitLineRenderer(
-		D3D* renderer,
-		HWND hwnd
+		const XMFLOAT4& lineColour
 	);
 
 	void InitCylinderRenderer(
-		D3D* renderer,		
-		HWND hwnd,
-		int screenWidth,
-		int screenHeight
-	);
-
-	void SetBlurParameters(
-		bool blurActive,
+		const XMFLOAT4& blurColour,
+		const XMFLOAT4& blurBackgroundColour,
+		const XMFLOAT4& cylinderColour,
 		float blurExtent,
-		float blurRange,
-		XMFLOAT4 backgroundColour
+		float blurRange
 	);
 
 	inline PipelineMgrSettings* GetSettings() { return settings; };
@@ -86,8 +81,9 @@ public:
 	inline void SetElectifierActive(bool active) { settings->SetElectifierActive(active); };
 
 	//set current renderer
-	inline void SetLineRendererActive(bool active) { settings->SetLineRendererActive(active); };
-	inline void SetCylinderRendererActive(bool active) { settings->SetCylinderRendererActive(active); };
+	inline void SetBlurRenderingActive(bool active) { settings->SetBlurRenderingActive(active); };
+	inline void SetLineRenderingActive(bool active) { settings->SetLineRenderingActive(active); };
+	inline void SetCylinderRenderingActive(bool active) { settings->SetCylinderRenderingActive(active); };
 
 	//run whole process
 	void RunProcess();
@@ -123,7 +119,7 @@ private:
 	Electrifier electrifier;
 
 	//Graphics renderers:
-	LineRenderer lineRenderer;
-	CylinderRenderer cylRenderer;
+	LineRenderer* lineRenderer;
+	CylinderRenderer* cylRenderer;
 };
 

@@ -11,8 +11,9 @@ struct PipelineMgrDefaultSettings {
 	bool diameterTransformerActive;
 	bool wholeTransformerActive;
 	bool electrifierActive;
-	bool lineRendererActive;
-	bool cylinderRendererActive;
+	bool blurRenderingActive;
+	bool lineRenderingActive;
+	bool cylinderRenderingActive;
 };
 
 class PipelineMgrSettings
@@ -32,17 +33,20 @@ public:
 	inline bool IsWholeTransformerActive() { return wholeTransformerActive; };
 	inline bool IsElectrifierActive() { return electrifierActive; };
 
-	inline void SetLineRendererActive(bool active) { lineRendererActive = active; };
-	inline void SetCylinderRendererActive(bool active) { cylinderRendererActive = active; };
+	inline void SetBlurRenderingActive(bool active) { blurRenderingActive = active; };
+	inline void SetLineRenderingActive(bool active) { lineRenderingActive = active; };
+	inline void SetCylinderRenderingActive(bool active) { cylinderRenderingActive = active; };
 
-	inline bool IsLineRendererActive() { return lineRendererActive; };
-	inline bool IsCylinderRendererActive() { return cylinderRendererActive; };
+	inline bool IsBlurRenderingActive() { return blurRenderingActive; };
+	inline bool IsLineRenderingActive() { return lineRenderingActive; };
+	inline bool IsCylinderRenderingActive() { return cylinderRenderingActive; };
 
 private:
 	GeometryGeneratorTypes currentGeometryGenerator;
 	bool diameterTransformerActive;
 	bool wholeTransformerActive;
 	bool electrifierActive;
-	bool lineRendererActive;
-	bool cylinderRendererActive;
+	bool blurRenderingActive;
+	bool lineRenderingActive;
+	bool cylinderRenderingActive;
 };

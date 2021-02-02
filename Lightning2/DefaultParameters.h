@@ -5,19 +5,7 @@
 #include "MyFloat3.h"
 #include "D3D.h"
 
-////
-// Colours
-////
-
-const XMFLOAT4 BLUE_BACKGROUND_COLOUR = XMFLOAT4(0.39f, 0.58f, 0.92f, 1.0f);
-const XMFLOAT4 NIGHT_BACKGROUND_COLOUR = XMFLOAT4(.05f, 0.f, .1f, 1.f);
-
-const std::map<std::string, XMFLOAT4> COLOUR_OPTIONS{
-	{"night", NIGHT_BACKGROUND_COLOUR},
-	{"blue", BLUE_BACKGROUND_COLOUR}
-};
-
-
+#include "ColourValues.h"
 
 ////
 // DEFAULT VALUES:
@@ -42,7 +30,7 @@ const float    DEFAULT_SG_PRESSURE_GRADIENT = .5f;
 const size_t   DEFAULT_SG_MAX_NUM_LAYERS    = 10;
 
 // Diameter Transformer
-const float  DEFAULT_DT_INITIAL_DIAMETER      = .5f;
+const float  DEFAULT_DT_INITIAL_DIAMETER      = .2f;
 const float  DEFAULT_DT_DIAMETER_SCALEDOWN    = .5f;
 const size_t DEFAULT_DT_MAX_NUM_BRANCH_LEVELS = 4;
 
@@ -51,11 +39,15 @@ const float DEFAULT_E_MAX_SEG_LENGTH   = 1.f;
 const float DEFAULT_E_CHAOS_MEAN       = .1f;
 const float DEFAULT_E_CHAOS_STDDEV     = .05f;
 
-// Blur parameters for cylinder renderer
-const bool  DEFAULT_BLUR_ACTIVE = true;
+// Line Renderer
+const std::string DEFAULT_LINE_COLOUR            = "lightning white";
+
+// Cylinder Renderer
+const std::string DEFAULT_BLUR_COLOUR            = "lightning white";
+const std::string DEFAULT_BLUR_BACKGROUND_COLOUR = "background night";
+const std::string DEFAULT_CYLINDER_COLOUR        = "lightning white";
 const float DEFAULT_BLUR_EXTENT = .7f;
 const float DEFAULT_BLUR_RANGE  = 4.f;
-const XMFLOAT4 DEFAULT_BLUR_BACKGROUND_COLOUR = NIGHT_BACKGROUND_COLOUR;
 
 
 ////

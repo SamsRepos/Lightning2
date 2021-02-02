@@ -3,32 +3,10 @@
 #include "MyVectorUtil.h"
 #include "MyMath.h"
 
-CylinderRenderer::CylinderRenderer()
+CylinderRenderer::CylinderRenderer(D3D* renderer, HWND hwnd, int _screenWidth, int _screenHeight)
 	:
 	cylinderMesh(NULL),
 	baseCylinder(NULL)
-{
-	
-}
-
-CylinderRenderer::~CylinderRenderer()
-{
-	cylinderObjects.clear();
-
-	if (cylinderMesh)
-	{
-		delete cylinderMesh;
-		cylinderMesh = NULL;
-	}
-
-	if (baseCylinder)
-	{
-		delete baseCylinder;
-		baseCylinder = NULL;
-	}
-}
-
-void CylinderRenderer::Init(D3D* renderer, HWND hwnd, int _screenWidth, int _screenHeight)
 {
 	cylinderMesh = new CylinderMesh(
 		renderer->getDevice(),
@@ -42,9 +20,9 @@ void CylinderRenderer::Init(D3D* renderer, HWND hwnd, int _screenWidth, int _scr
 	baseCylinder = new SceneObject(cylinderMesh, NULL, renderer->getWorldMatrix());
 
 	//Shaders:
-	mainShader    = new CylinderShader(renderer->getDevice(), hwnd);
 	blurShader    = new BlurShader(renderer->getDevice(), hwnd);
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
+	mainShader    = new CylinderShader(renderer->getDevice(), hwnd);
 
 	screenWidth  = _screenWidth;
 	screenHeight = _screenHeight;
@@ -71,7 +49,38 @@ void CylinderRenderer::Init(D3D* renderer, HWND hwnd, int _screenWidth, int _scr
 		screenWidth,
 		screenHeight
 	);
+}
 
+CylinderRenderer::~CylinderRenderer()
+{
+	cylinderObjects.clear();
+
+	if (cylinderMesh)
+	{
+		delete cylinderMesh;
+		cylinderMesh = NULL;
+	}
+
+	if (baseCylinder)
+	{
+		delete baseCylinder;
+		baseCylinder = NULL;
+	}
+}
+
+void CylinderRenderer::InitParameters(
+	const XMFLOAT4& _blurColour,
+	const XMFLOAT4& _blurBackgroundColour,
+	const XMFLOAT4& _cylinderColour,
+	float _blurExtent,
+	float _blurRange
+)
+{
+	blurColour           = _blurColour;
+	blurBackgroundColour = _blurBackgroundColour;
+	cylinderColour       = _cylinderColour;
+	blurExtent           = _blurExtent;
+	blurRange            = _blurRange;
 }
 
 void CylinderRenderer::Build(std::vector<Segment*>* segments)
@@ -161,124 +170,94 @@ void CylinderRenderer::Build(std::vector<Segment*>* segments)
 
 void CylinderRenderer::SetShaderParams(
 	const XMMATRIX& _viewMatrix,
-	const XMMATRIX& _projectionMatrix,
-	const XMFLOAT4& _colour
+	const XMMATRIX& _projectionMatrix	
 )
 {
 	viewMatrix       = _viewMatrix;
 	projectionMatrix = _projectionMatrix;
-	colour           = _colour;
 }
 
-void CylinderRenderer::SetBlurParameters(
-	bool _blurActive,
-	float _blurExtent,
-	float _blurRange,
-	XMFLOAT4 _backgroundColour
-)
-{
-	blurActive           = _blurActive;
-	blurExtent           = _blurExtent;
-	blurRange            = _blurRange;
-	blurBackgroundColour = _backgroundColour;
-}
 
-void CylinderRenderer::Render(D3D* renderer, Camera* camera)
+void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera)
 {
-//#define DEBUG_BACKGROUND_COLOUR .1f, .65f, .3f, 0.f
-
-	XMMATRIX worldMatrix     = renderer->getWorldMatrix();
+	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix(); // Default camera position for orthographic rendering
-	XMMATRIX orthoMatrix     = renderer->getOrthoMatrix();   // ortho matrix for 2D rendering
-
-	if (blurActive)
-	{
-
-		//1. Render cylinders to the blur texture:
-		blurRenderTexture1->setRenderTarget(renderer->getDeviceContext());
-		blurRenderTexture1->clearRenderTarget(
-			renderer->getDeviceContext(),
-			blurBackgroundColour.x,
-			blurBackgroundColour.y,
-			blurBackgroundColour.z,
-			blurBackgroundColour.w
-		);
-
-		for (auto c : cylinderObjects)
-		{
-			c.getMesh()->sendData(renderer->getDeviceContext());
-			mainShader->setShaderParameters(renderer->getDeviceContext(), c.getObjectMatrix(), viewMatrix, projectionMatrix, c.getTexture(), colour);
-			mainShader->render(renderer->getDeviceContext(), c.getMesh()->getIndexCount());
-		}
-
-		//2. Render blur texture for blur pass:
-		blurRenderTexture2->setRenderTarget(renderer->getDeviceContext());
-		blurRenderTexture2->clearRenderTarget(
-			renderer->getDeviceContext(),
-			blurBackgroundColour.x,
-			blurBackgroundColour.y,
-			blurBackgroundColour.z,
-			blurBackgroundColour.w
-		);
-		
-		renderer->setZBuffer(false);
-
-		blurShader->setScreenSize(renderer->getDeviceContext(), XMINT2(screenWidth, screenHeight));
-		fullScreenMesh->sendData(renderer->getDeviceContext());
-		blurShader->setShaderParameters(
-			renderer->getDeviceContext(),
-			worldMatrix,
-			orthoViewMatrix,
-			orthoMatrix,
-			blurRenderTexture1->getShaderResourceView()
-		);
-
-		blurShader->updateGaussianBlurParameters(
-			renderer->getDeviceContext(),
-			blurExtent,
-			blurRange
-		);
-
-		blurShader->render(
-			renderer->getDeviceContext(),
-			fullScreenMesh->getIndexCount()
-		);
-
-		//3. Render blur texture:
-		renderer->setBackBufferRenderTarget();
-
-		fullScreenMesh->sendData(renderer->getDeviceContext());
-		textureShader->setShaderParameters(
-			renderer->getDeviceContext(),
-			worldMatrix,
-			orthoViewMatrix,
-			orthoMatrix,
-			blurRenderTexture2->getShaderResourceView()
-		);
-		textureShader->render(renderer->getDeviceContext(), fullScreenMesh->getIndexCount());
-
-		
-	}
+	XMMATRIX orthoMatrix = renderer->getOrthoMatrix();   // ortho matrix for 2D rendering
+	
+														 //1. Render cylinders to the blur texture:
+	blurRenderTexture1->setRenderTarget(renderer->getDeviceContext());
+	blurRenderTexture1->clearRenderTarget(
+		renderer->getDeviceContext(),
+		blurBackgroundColour.x,
+		blurBackgroundColour.y,
+		blurBackgroundColour.z,
+		blurBackgroundColour.w
+	);
 
 	for (auto c : cylinderObjects)
 	{
 		c.getMesh()->sendData(renderer->getDeviceContext());
-		mainShader->setShaderParameters(renderer->getDeviceContext(), c.getObjectMatrix(), viewMatrix, projectionMatrix, c.getTexture(), colour);
+		mainShader->setShaderParameters(renderer->getDeviceContext(), c.getObjectMatrix(), viewMatrix, projectionMatrix, c.getTexture(), blurColour);
 		mainShader->render(renderer->getDeviceContext(), c.getMesh()->getIndexCount());
 	}
 
-	renderer->setZBuffer(true);
+	//2. Render blur texture for blur pass:
+	blurRenderTexture2->setRenderTarget(renderer->getDeviceContext());
+	blurRenderTexture2->clearRenderTarget(
+		renderer->getDeviceContext(),
+		blurBackgroundColour.x,
+		blurBackgroundColour.y,
+		blurBackgroundColour.z,
+		blurBackgroundColour.w
+	);
 
-	/*fullScreenMesh->sendData(renderer->getDeviceContext());
+	renderer->setZBuffer(false);
+
+	blurShader->setScreenSize(renderer->getDeviceContext(), XMINT2(screenWidth, screenHeight));
+	fullScreenMesh->sendData(renderer->getDeviceContext());
+	blurShader->setShaderParameters(
+		renderer->getDeviceContext(),
+		worldMatrix,
+		orthoViewMatrix,
+		orthoMatrix,
+		blurRenderTexture1->getShaderResourceView()
+	);
+
+	blurShader->updateGaussianBlurParameters(
+		renderer->getDeviceContext(),
+		blurExtent,
+		blurRange
+	);
+
+	blurShader->render(
+		renderer->getDeviceContext(),
+		fullScreenMesh->getIndexCount()
+	);
+
+	//3. Render blur texture:
+	renderer->setBackBufferRenderTarget();
+
+	fullScreenMesh->sendData(renderer->getDeviceContext());
 	textureShader->setShaderParameters(
 		renderer->getDeviceContext(),
 		worldMatrix,
 		orthoViewMatrix,
 		orthoMatrix,
-		mainRenderTexture->getShaderResourceView()
+		blurRenderTexture2->getShaderResourceView()
 	);
-	textureShader->render(renderer->getDeviceContext(), fullScreenMesh->getIndexCount());*/
+	textureShader->render(renderer->getDeviceContext(), fullScreenMesh->getIndexCount());
 
+	renderer->setZBuffer(true);
+}
+
+void CylinderRenderer::RenderCylinders(D3D* renderer)
+{
+	for (auto c : cylinderObjects)
+	{
+		c.getMesh()->sendData(renderer->getDeviceContext());
+		mainShader->setShaderParameters(renderer->getDeviceContext(), c.getObjectMatrix(), viewMatrix, projectionMatrix, c.getTexture(), cylinderColour);
+		mainShader->render(renderer->getDeviceContext(), c.getMesh()->getIndexCount());
+	}
 }
 
 //

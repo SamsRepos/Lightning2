@@ -7,27 +7,25 @@
 class LineRenderer
 {
 public:
-	LineRenderer();
+	LineRenderer(D3D* renderer, HWND hwnd);
 	~LineRenderer();
 	
-	void Init(D3D* renderer, HWND hwnd);	
-	void Build(std::vector<Segment*>* segments);
-	void SetShaderParams(
-		const XMMATRIX& _worldMatrix, 
-		const XMMATRIX& _viewMatrix, 
-		const XMMATRIX& _projectionMatrix, 
-		const XMFLOAT4& _colour
+	void InitParameters(
+		const XMFLOAT4& _lineColour
 	);
-	void Render(D3D* renderer);
+	void Build(std::vector<Segment*>* segments);
+	void SetShaderParams(const XMMATRIX& _worldMatrix, const XMMATRIX& _viewMatrix, const XMMATRIX& _projectionMatrix);
+	void RenderLines(D3D* renderer);
 	
 private:
 	LineShader* shader;
 	LineMesh* mesh;
 
+	XMFLOAT4 lineColour;
+
 	XMMATRIX worldMatrix;
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
-	XMFLOAT4 colour;
 
 	//debug stuff:
 	int linesToRender;

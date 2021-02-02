@@ -7,11 +7,20 @@
 // PUBLIC:
 ////
 
-PipelineMgr::PipelineMgr(const PipelineMgrDefaultSettings& defaultSettings) 
+PipelineMgr::PipelineMgr(
+	const PipelineMgrDefaultSettings& defaultSettings,
+	D3D* renderer,
+	HWND hwnd,
+	int screenWidth,
+	int screenHeight
+) 
 	:
 	segments(NULL)
 {
 	settings = new PipelineMgrSettings(defaultSettings);
+
+	lineRenderer = new LineRenderer(renderer, hwnd);
+	cylRenderer = new CylinderRenderer(renderer, hwnd, screenWidth, screenHeight);
 }
 
 void PipelineMgr::InitJitterForkGenerator(
@@ -84,43 +93,28 @@ void PipelineMgr::InitElectrifier(
 }
 
 void PipelineMgr::InitLineRenderer(
-	D3D* renderer,
-	HWND hwnd
+	const XMFLOAT4& lineColour
 )
 {
-	lineRenderer.Init(
-		renderer,
-		hwnd
+	lineRenderer->InitParameters(
+		lineColour
 	);
 }
 
 void PipelineMgr::InitCylinderRenderer(
-	D3D* renderer,
-	HWND hwnd,
-	int screenWidth,
-	int screenHeight
-)
-{
-	cylRenderer.Init(
-		renderer,
-		hwnd,
-		screenWidth,
-		screenHeight
-	);
-}
-
-void PipelineMgr::SetBlurParameters(
-	bool blurActive,
+	const XMFLOAT4& blurColour,
+	const XMFLOAT4& blurBackgroundColour,
+	const XMFLOAT4& cylinderColour,
 	float blurExtent,
-	float blurRange,
-	XMFLOAT4 backgroundColour
+	float blurRange
 )
 {
-	cylRenderer.SetBlurParameters(
-		blurActive,
+	cylRenderer->InitParameters(
+		blurColour,
+		blurBackgroundColour,
+		cylinderColour,
 		blurExtent,
-		blurRange,
-		backgroundColour
+		blurRange
 	);
 }
 
@@ -160,8 +154,8 @@ void PipelineMgr::RunProcess()
 		electrifier.Run();		
 	}
 
-	lineRenderer.Build(segments);
-	cylRenderer.Build(segments);
+	lineRenderer->Build(segments);
+	cylRenderer->Build(segments);
 }
 
 void PipelineMgr::RenderOutput(
@@ -172,16 +166,26 @@ void PipelineMgr::RenderOutput(
 	const XMMATRIX& projMatrix	
 )
 {
-	if (settings->IsLineRendererActive())
+
+	if (settings->IsBlurRenderingActive() || settings->IsCylinderRenderingActive())
 	{
-		lineRenderer.SetShaderParams(worldMatrix, viewMatrix, projMatrix, LIGHTNING_WHITE);
-		lineRenderer.Render(renderer);
+		cylRenderer->SetShaderParams(viewMatrix, projMatrix);
 	}
 
-	if (settings->IsCylinderRendererActive())
+	if (settings->IsBlurRenderingActive())
 	{
-		cylRenderer.SetShaderParams(viewMatrix, projMatrix, LIGHTNING_WHITE);
-		cylRenderer.Render(renderer, camera);
+		cylRenderer->RenderBlur(renderer, camera);
+	}
+
+	if (settings->IsLineRenderingActive())
+	{
+		lineRenderer->SetShaderParams(worldMatrix, viewMatrix, projMatrix);
+		lineRenderer->RenderLines(renderer);
+	}
+
+	if (settings->IsCylinderRenderingActive())
+	{		
+		cylRenderer->RenderCylinders(renderer);
 	}
 }
 

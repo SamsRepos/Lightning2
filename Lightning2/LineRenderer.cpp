@@ -2,11 +2,22 @@
 
 #include "MyClamp.h"
 
-LineRenderer::LineRenderer()
+LineRenderer::LineRenderer(D3D* renderer, HWND hwnd)
 	:
 	shader(NULL),
 	mesh(NULL)
 {
+	if (shader)
+	{
+		delete shader;
+	}
+	shader = new LineShader(renderer->getDevice(), hwnd);
+
+	if (mesh)
+	{
+		delete mesh;
+	}
+	mesh = new LineMesh(renderer->getDevice(), renderer->getDeviceContext());
 }
 
 LineRenderer::~LineRenderer()
@@ -22,19 +33,11 @@ LineRenderer::~LineRenderer()
 	}
 }
 
-void LineRenderer::Init(D3D* renderer, HWND hwnd)
+void LineRenderer::InitParameters(
+	const XMFLOAT4& _lineColour
+)
 {
-	if (shader)
-	{
-		delete shader;		
-	}
-	shader = new LineShader(renderer->getDevice(), hwnd);
-
-	if (mesh)
-	{
-		delete mesh;
-	}
-	mesh = new LineMesh(renderer->getDevice(), renderer->getDeviceContext());
+	lineColour = _lineColour;
 }
 
 void LineRenderer::Build(std::vector<Segment*>* segments)
@@ -64,17 +67,15 @@ void LineRenderer::Build(std::vector<Segment*>* segments)
 void LineRenderer::SetShaderParams(
 	const XMMATRIX& _worldMatrix,
 	const XMMATRIX& _viewMatrix,
-	const XMMATRIX& _projectionMatrix,
-	const XMFLOAT4& _colour
+	const XMMATRIX& _projectionMatrix
 )
 {
 	worldMatrix      = _worldMatrix;
 	viewMatrix       = _viewMatrix;
 	projectionMatrix = _projectionMatrix;
-	colour           = _colour;
 }
 
-void LineRenderer::Render(D3D* renderer)
+void LineRenderer::RenderLines(D3D* renderer)
 {
 	if (shader && mesh)
 	{
@@ -89,7 +90,7 @@ void LineRenderer::Render(D3D* renderer)
 				viewMatrix,
 				projectionMatrix,
 				NULL,
-				colour
+				lineColour
 			);
 
 			mesh->sendData(renderer->getDeviceContext(), i);

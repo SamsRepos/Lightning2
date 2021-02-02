@@ -11,6 +11,14 @@
 // PUBLIC:
 ////
 
+std::map<std::string, XMFLOAT4> COLOUR_OPTIONS{
+	{"lightning white",  LIGHTNING_WHITE},
+	{"lightning yellow", LIGHTNING_YELLOW},
+	{"lightning blue",   LIGHTNING_BLUE},
+	{"background night", NIGHT_BACKGROUND_COLOUR},
+	{"background blue",  BLUE_BACKGROUND_COLOUR}
+};
+
 App1::App1()
 {
 }
@@ -50,9 +58,16 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	defaultSettings.diameterTransformerActive = true;
 	defaultSettings.wholeTransformerActive    = false;
 	defaultSettings.electrifierActive         = false;
-	defaultSettings.lineRendererActive        = true;
-	defaultSettings.cylinderRendererActive    = true;
-	pipelineMgr = new PipelineMgr(defaultSettings);
+	defaultSettings.blurRenderingActive       = true;
+	defaultSettings.lineRenderingActive       = true;
+	defaultSettings.cylinderRenderingActive   = true;
+	pipelineMgr = new PipelineMgr(
+		defaultSettings,
+		renderer,
+		hwnd,
+		screenWidth,
+		screenHeight
+	);
 
 	pipelineMgr->InitJitterForkGenerator(
 		DEFAULT_JFG_START_PT,
@@ -86,14 +101,16 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 		DEFAULT_E_CHAOS_STDDEV
 	);
 
-	pipelineMgr->InitLineRenderer(renderer, hwnd);
-	pipelineMgr->InitCylinderRenderer(renderer, hwnd, screenWidth, screenHeight);
-	
-	pipelineMgr->SetBlurParameters(
-		DEFAULT_BLUR_ACTIVE,
+	pipelineMgr->InitLineRenderer(
+		COLOUR_OPTIONS[DEFAULT_LINE_COLOUR]
+	);
+
+	pipelineMgr->InitCylinderRenderer(
+		COLOUR_OPTIONS[DEFAULT_BLUR_COLOUR],
+		COLOUR_OPTIONS[DEFAULT_BLUR_BACKGROUND_COLOUR],
+		COLOUR_OPTIONS[DEFAULT_CYLINDER_COLOUR],
 		DEFAULT_BLUR_EXTENT,
-		DEFAULT_BLUR_RANGE,
-		DEFAULT_BLUR_BACKGROUND_COLOUR
+		DEFAULT_BLUR_RANGE
 	);
 }
 
@@ -201,15 +218,23 @@ void App1::Gui()
 		PipelineMgrSettings* settings = pipelineMgr->GetSettings();
 
 		//Geometry generator:
-		GeometryGeneratorTypes genType = settings->GetGeometryGeneratorType();
+		GeometryGeneratorTypes genType      = settings->GetGeometryGeneratorType();
+		static std::string currentGenerator = "";
+		switch (genType)
+		{
+		case(GeometryGeneratorTypes::JITTER_FORK):
+			currentGenerator = "Jitter + Fork";
+			break;
+		case(GeometryGeneratorTypes::STREAMER):
+			currentGenerator = "Streamer";
+			break;
+		}
 
-		static std::map<GeometryGeneratorTypes, std::string> genTypesMap = {
-			{GeometryGeneratorTypes::JITTER_FORK, "Jitter + Fork"},
-			{GeometryGeneratorTypes::STREAMER, "Streamer"}
-		};
-
-		ImGui::Text(("Current Method: " + genTypesMap[genType]).c_str());
-
+		ImGui::Text("Current Generator: ");
+		ImGui::Indent();
+			ImGui::Text(("- " + currentGenerator).c_str());
+		ImGui::Unindent();
+				
 		//Transform stages:
 		ImGui::Text("Active Transformers: ");
 		ImGui::Indent();
@@ -232,55 +257,57 @@ void App1::Gui()
 		ImGui::Unindent();
 
 		//Renderers:
-		ImGui::Text("Active Renderers: ");
+		ImGui::Text("Active Rendering Stages: ");
 		ImGui::Indent();
-			if (settings->IsLineRendererActive())
+			if (settings->IsBlurRenderingActive())
 			{
-				ImGui::Text("- Line Renderer");
+				ImGui::Text("- Blur Rendering");
 			}
-			if (settings->IsCylinderRendererActive())
+			if (settings->IsLineRenderingActive())
 			{
-				ImGui::Text("- Cylinder Renderer");
+				ImGui::Text("- Line Rendering");
+			}
+			if (settings->IsCylinderRenderingActive())
+			{
+				ImGui::Text("- Cylinder Rendering");
 			}			
 		ImGui::Unindent();
+						
+		//Geometry Generator:
+		static std::map<std::string, GeometryGeneratorTypes> genTypesMap = {
+				{"Jitter + Fork", GeometryGeneratorTypes::JITTER_FORK},
+				{"Streamer", GeometryGeneratorTypes::STREAMER}
+		};
+
+		if(ImGui::CollapsingHeader("Select Geometry Generator"))
+		{
+			bool changeNow = false;
+			changeNow = GuiListBox(&changeNow, genTypesMap, "Geometry Generator", &currentGenerator);
+			
+			if (changeNow)
+			{
+				settings->SetGeometryGeneratorType(genTypesMap[currentGenerator]);
+			}
+		}
 
 		// Toggle pipeline stages
-		if (ImGui::CollapsingHeader("Toggle Pipeline Stages"))
+		if (ImGui::CollapsingHeader("Toggle Transformer Stages On/Off"))
 		{
-			ImGui::ListBoxHeader("Geometry Generators");
-			for (const auto& pair : genTypesMap)
-			{
-				std::string name = pair.second;
-				GeometryGeneratorTypes type = pair.first;
-
-				if (ImGui::Selectable(name.c_str()))
-				{
-					pipelineMgr->SetGeometryGeneratorType(type);
-				}
-			}
-			ImGui::ListBoxFooter();
-
-			std::string buttonMsgNow = "Toggle Diameter Transformer ";
-			buttonMsgNow.append((settings->IsDiameterTransformerActive()) ? "Off" : "On");
-			if (ImGui::Button(buttonMsgNow.c_str()))					
+			if (GuiToggleButton("Toggle Diameter Transformer", settings->IsDiameterTransformerActive()))
 			{
 				pipelineMgr->SetDiameterTransformerActive(
 					!(settings->IsDiameterTransformerActive())
 				);
 			}
 			
-			buttonMsgNow = "Toggle Whole Transformer ";
-			buttonMsgNow.append((settings->IsWholeTransformerActive()) ? "Off" : "On");
-			if (ImGui::Button(buttonMsgNow.c_str()))
+			if (GuiToggleButton("Toggle Whole Transformer", settings->IsWholeTransformerActive()))
 			{
 				pipelineMgr->SetWholeTransformerActive(
 					!(settings->IsWholeTransformerActive())
 				);
 			}
 			
-			buttonMsgNow = "Toggle Electrifier ";
-			buttonMsgNow.append((settings->IsElectrifierActive()) ? "Off" : "On");
-			if (ImGui::Button(buttonMsgNow.c_str()))
+			if (GuiToggleButton("Toggle Electrifier", settings->IsElectrifierActive()))
 			{
 				pipelineMgr->SetElectifierActive(
 					!(settings->IsElectrifierActive())
@@ -289,23 +316,26 @@ void App1::Gui()
 		}
 
 		//Toggle renderers:
-		if (ImGui::CollapsingHeader("Toggle Renderers"))
+		if (ImGui::CollapsingHeader("Toggle Rendering Stages On/Off"))
 		{
-			std::string buttonMsgNow = "Toggle Line Renderer ";
-			buttonMsgNow.append((settings->IsLineRendererActive()) ? "Off" : "On");
-			if (ImGui::Button(buttonMsgNow.c_str()))
+			if (GuiToggleButton("Toggle Blur Rendering", settings->IsBlurRenderingActive()))
 			{
-				pipelineMgr->SetLineRendererActive(
-					!(settings->IsLineRendererActive())
+				pipelineMgr->SetBlurRenderingActive(
+					!(settings->IsBlurRenderingActive())
 				);
 			}
 
-			buttonMsgNow = "Toggle Cylinder Renderer ";
-			buttonMsgNow.append((settings->IsCylinderRendererActive()) ? "Off" : "On");
-			if (ImGui::Button(buttonMsgNow.c_str()))
+			if (GuiToggleButton("Toggle Line Rendering", settings->IsLineRenderingActive()))
 			{
-				pipelineMgr->SetCylinderRendererActive(
-					!(settings->IsCylinderRendererActive())
+				pipelineMgr->SetLineRenderingActive(
+					!(settings->IsLineRenderingActive())
+				);
+			}
+
+			if (GuiToggleButton("Toggle Cylinder Rendering", settings->IsCylinderRenderingActive()))
+			{
+				pipelineMgr->SetCylinderRenderingActive(
+					!(settings->IsCylinderRenderingActive())
 				);
 			}
 		}
@@ -431,28 +461,51 @@ void App1::Gui()
 		}
 	}
 
-	//Adjust blur parameters:
+	//Adjust Line Renderer Parameters:
 	{
-		static bool blurActiveNow            = DEFAULT_BLUR_ACTIVE;
-		static float blurExtent              = DEFAULT_BLUR_EXTENT;
-		static float blurRange               = DEFAULT_BLUR_RANGE;
-		static XMFLOAT4 blurBackgroundColour = DEFAULT_BLUR_BACKGROUND_COLOUR;
+		static std::string lineColour = DEFAULT_LINE_COLOUR;
 
-		if (ImGui::CollapsingHeader("Set Blur Parameters"))
+		if (ImGui::CollapsingHeader("Set Line Renderer Parameters"))
+		{
+			bool changeNow = false;
+			changeNow = GuiListBox(&changeNow, COLOUR_OPTIONS, "Line Colour", &lineColour);
+						
+			if (changeNow)
+			{
+				pipelineMgr->InitLineRenderer(
+					COLOUR_OPTIONS[lineColour]
+				);
+			}
+		}
+	}
+
+
+	//Adjust Cylinder Renderer Parameters:
+	{
+		static std::string blurColour           = DEFAULT_BLUR_COLOUR;
+		static std::string blurBackgroundColour = DEFAULT_BLUR_BACKGROUND_COLOUR;
+		static std::string cylinderColour       = DEFAULT_CYLINDER_COLOUR;
+		static float blurExtent                 = DEFAULT_BLUR_EXTENT;
+		static float blurRange                  = DEFAULT_BLUR_RANGE;
+		
+		if (ImGui::CollapsingHeader("Set Cylinder Renderer Parameters"))
 		{
 
 			bool changeNow = false;
-			changeNow = GuiCheckBox(&changeNow, "Blur active", &blurActiveNow);
+			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Blur Colour", &blurColour);
+			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Blur Background Colour", &blurBackgroundColour);
+			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Cylinder Colour", &cylinderColour);
 			changeNow = GuiSliderFloat(&changeNow, "Blur extent", &blurExtent, BLUR_MIN_EXTENT, BLUR_MAX_EXTENT);
 			changeNow = GuiSliderFloat(&changeNow, "Blur range", &blurRange, BLUR_MIN_RANGE, BLUR_MAX_RANGE);
 
 			if (changeNow)
 			{
-				pipelineMgr->SetBlurParameters(
-					blurActiveNow,
+				pipelineMgr->InitCylinderRenderer(
+					COLOUR_OPTIONS[blurColour],
+					COLOUR_OPTIONS[blurBackgroundColour],
+					COLOUR_OPTIONS[cylinderColour],
 					blurExtent,
-					blurRange,
-					blurBackgroundColour
+					blurRange
 				);
 			}
 		}
@@ -464,17 +517,23 @@ void App1::Gui()
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 }
 
-bool App1::GuiCheckBox(bool* changeFlag, const char* msg, bool* b)
+bool App1::GuiToggleButton(std::string buttonMsg, bool currentlyOn)
 {
-	return ImGui::Checkbox(msg, b) || *changeFlag;
+	buttonMsg.append(currentlyOn ? " to Off" : " to On");
+	return ImGui::Button(buttonMsg.c_str());
 }
 
-bool App1::GuiSliderInt(bool* changeFlag, const char* msg, int* i, int min, int max)
+bool App1::GuiCheckBox(bool changeFlag, const char* msg, bool* b)
 {
-	return ImGui::SliderInt(msg, i, min, max) || *changeFlag;
+	return ImGui::Checkbox(msg, b) || changeFlag;
 }
 
-bool App1::GuiSliderFloat(bool* changeFlag, const char* msg, float* f, float min, float max)
+bool App1::GuiSliderInt(bool changeFlag, const char* msg, int* i, int min, int max)
 {
-	return ImGui::SliderFloat(msg, f, min, max) || *changeFlag;
+	return ImGui::SliderInt(msg, i, min, max) || changeFlag;
+}
+
+bool App1::GuiSliderFloat(bool changeFlag, const char* msg, float* f, float min, float max)
+{
+	return ImGui::SliderFloat(msg, f, min, max) || changeFlag;
 }
