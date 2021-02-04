@@ -30,6 +30,8 @@
 
 
 MyFloat3 CrossProduct(const MyFloat3& u, const MyFloat3& v);
+float DotProduct(const MyFloat3& u, const MyFloat3& v);
+
 MyFloat3 operator+(const MyFloat3& a, const MyFloat3& b);
 MyFloat3 operator-(const MyFloat3& minuend, const MyFloat3& subtrahend);
 

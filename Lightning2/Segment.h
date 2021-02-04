@@ -38,8 +38,8 @@ public:
 	inline std::vector<Segment*>* GetChildren() { return &children; };
 	inline Segment* GetChild(size_t index) { return children[index]; };
 
-	inline void SetNumDescendants(size_t num) { numDescendants = num; };
-	inline size_t GetNumDescendants() { return numDescendants; };
+	//inline void SetNumDescendants(size_t num) { numDescendants = num; };
+	//inline size_t GetNumDescendants() { return numDescendants; };
 
 	inline void SetDistanceFromRoot(Segment* root) { distanceFromRoot = Magnitude(endPoint - root->GetStartPoint()); };
 	inline float GetDistanceFromRoot() { return distanceFromRoot; };
@@ -60,7 +60,7 @@ private:
 	Segment* parent;
 	std::vector<Segment*> children;
 
-	size_t numDescendants;
+	//size_t numDescendants;
 	float distanceFromRoot;
 	float farthestDistOnThisPath;
 	SegmentStatuses status;

@@ -24,6 +24,11 @@ MyFloat3 CrossProduct(const MyFloat3& u, const MyFloat3& v)
 	return res;
 }
 
+float DotProduct(const MyFloat3& u, const MyFloat3& v)
+{
+	return (u.x * v.x) + (u.y * v.y) + (u.z * v.z);
+}
+
 MyFloat3 operator+(const MyFloat3& a, const MyFloat3& b)
 {
 	MyFloat3 res;
