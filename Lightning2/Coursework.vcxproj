@@ -194,6 +194,7 @@
     <ClCompile Include="Segment.cpp" />
     <ClCompile Include="StreamerGenerator.cpp" />
     <ClCompile Include="TextureShader.cpp" />
+    <ClCompile Include="WholeTransformer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App1.h" />
@@ -225,6 +226,7 @@
     <ClInclude Include="Segment.h" />
     <ClInclude Include="StreamerGenerator.h" />
     <ClInclude Include="TextureShader.h" />
+    <ClInclude Include="WholeTransformer.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="blur_ps.hlsl">

@@ -12,7 +12,7 @@ public:
 
 private:
 	void FarthestDistOnPathSetterRecurs(Segment* root, Segment* currentSegment);
-	void StatusSetterRecurs(Segment* currentSegments);
+	void StatusSetterRecurs(Segment* currentSegment);
 
 	std::vector<Segment*>* segments;
 };
