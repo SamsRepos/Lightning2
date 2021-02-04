@@ -11,11 +11,8 @@ public:
 	void Run();
 
 private:
-	void DescendantCounterRecurs(Segment* currentSegment);
-	void StatusSetterRecursByDescendants(Segment* currentSegment);
-	
-	void DistFromRootSetterRecurs(Segment* root, Segment* currentSegment);
-	void StatusSetterRecursByDistFromRoot(Segment* currentSegments);
+	void FarthestDistOnPathSetterRecurs(Segment* root, Segment* currentSegment);
+	void StatusSetterRecurs(Segment* currentSegments);
 
 	std::vector<Segment*>* segments;
 };

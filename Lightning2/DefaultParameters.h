@@ -14,7 +14,7 @@
 // Jitter+Fork Generator
 const MyFloat3 DEFAULT_JFG_START_PT            = MyFloat3(0.f, 100.f, 0.f);
 const MyFloat3 DEFAULT_JFG_END_PT              = MyFloat3(0.f, 0.f, 0.f);
-const size_t   DEFAULT_JFG_ITERATIONS          = 10;
+const size_t   DEFAULT_JFG_ITERATIONS          = 4;
 const float    DEFAULT_JFG_CHAOS_MEAN          = .1f;
 const float    DEFAULT_JFG_CHAOS_STDDEV        = .05f;
 const float    DEFAULT_JFG_MIDPOINT_STDDEV     = .1f;

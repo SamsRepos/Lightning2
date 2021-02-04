@@ -19,32 +19,46 @@ void DebugWriteCsv(std::vector<Segment*>* segments, std::string filePath)
 	assert(outFile.is_open());
 
 	//3. Output relevant data:
+
+	//Column headings:
+	outFile << "SEG NUM, PARENT, CHILDREN, DIST 2 ROOT, MAX DIST 2 ROOT, \n";
+
 	for (Segment* segment : *segments)
 	{
-		outFile << "SEG: " << intMap[segment] << ", ";
+		//SEG NUM
+		outFile << intMap[segment] << ", ";
 
+		//PARENT
 		if (segment->GetParent())
 		{
-			outFile << "PAR: " << intMap[segment->GetParent()] << ", ";
+			outFile << intMap[segment->GetParent()] << ", ";
 		}
 		else
 		{
-			outFile << "NO PAR, ";
+			outFile << "NO PARENT, ";
 		}
 
+		//CHILDREN
 		if (segment->GetChildren()->size() > 0)
 		{
-			outFile << "CH: ";
 			for (Segment* child : *(segment->GetChildren()))
 			{
+				outFile << ((child->GetStatus() == SegmentStatuses::PRIMARY) ? "pr: " : "sec: ");
 				outFile << intMap[child] << " ";
 			}
 			outFile << ", ";
 		}
 		else
 		{
-			outFile << "NO CH, ";
+			outFile << "NO CHILDREN, ";
 		}
+
+		//DIST 2 ROOT:
+		outFile << segment->GetDistanceFromRoot() << ", ";
+
+		//MAX DIST 2 ROOT:
+		outFile << segment->GetFarthestDistanceOnThisPath() << ", ";
+
 
 		outFile << '\n';
 	}
