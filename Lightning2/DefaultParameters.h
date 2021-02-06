@@ -77,7 +77,6 @@ const float JFG_MAX_BASELINE_FORK_PROB = 1.f;
 const float JFG_MIN_FORK_PROB_SCALEDOWN = 0.f;
 const float JFG_MAX_FORK_PROB_SCALEDOWN = 1.f;
 
-
 // Streamer Generator
 const float SG_MIN_INITIAL_VOLTAGE = 0.f;
 const float SG_MAX_INITIAL_VOLTAGE = 10000.f;

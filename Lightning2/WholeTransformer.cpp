@@ -28,7 +28,14 @@ void WholeTransformer::Run()
 	AlignSegments(desiredDirection, currentDirection);
 
 	// 3. scale to start->end magnitude
+	float scaleFactor = desiredDirection.Magnitude() / currentDirection.Magnitude();
+	if (scaleFactor != 0.f)
+	{
+		ScaleSegments(scaleFactor);
+	}
+
 	// 4. transform to start point
+	TranslateRecurs(root, startPoint);
 }
 
 struct MyFloat4
@@ -92,12 +99,15 @@ MyFloat4 operator*(const MyFloat4& vec, const MyMatrix44& mat)
 
 MyFloat3 operator*(const MyFloat3& vec, const MyMatrix44& mat)
 {
-	MyFloat4 res = MyFloat4(vec) * mat;
-	return MyFloat3(
-		res.x / res.w,
-		res.y / res.w,
-		res.z / res.w
-	);
+	MyFloat4 res4 = MyFloat4(vec) * mat;
+	MyFloat3 res = MyFloat3(res4.x, res4.y, res4.z);
+
+	if (res4.w != 0.f)
+	{
+		res = res / res4.w;
+	}
+
+	return res;
 }
 
 void WholeTransformer::TranslateRecurs(Segment* currentSegment, MyFloat3 currentStartPoint)
@@ -147,7 +157,7 @@ void WholeTransformer::AlignSegments(MyFloat3 desiredDirection, MyFloat3 current
 	float betaGamma  = beta * gamma;
 
 	float cosTheta = DotProduct(desiredDirection.Normalised(), currentDirection.Normalised());
-	float theta    = acos(cosTheta);
+	float theta    = -acos(cosTheta);
 	float sinTheta = sin(theta);
 
 	float rotationValues[] = {
@@ -165,4 +175,26 @@ void WholeTransformer::AlignSegments(MyFloat3 desiredDirection, MyFloat3 current
 		segment->SetEndPoint(segment->GetEndPoint() * rotationMatrix);
 	}
 
+}
+
+void WholeTransformer::ScaleSegments(float factor)
+{
+	for (Segment* segment : *segments)
+	{
+		segment->SetStartPoint(
+			MyFloat3(
+				segment->GetStartPoint().x * factor,
+				segment->GetStartPoint().y * factor,
+				segment->GetStartPoint().z * factor
+			)
+		);
+		segment->SetEndPoint(
+			MyFloat3(
+				segment->GetEndPoint().x * factor,
+				segment->GetEndPoint().y * factor,
+				segment->GetEndPoint().z * factor
+			)
+		);
+		segment->SetDiameter(segment->GetDiameter() * factor);
+	}
 }
