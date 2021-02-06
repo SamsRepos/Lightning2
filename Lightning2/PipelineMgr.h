@@ -7,6 +7,7 @@
 
 #include "PathIdentifier.h"
 #include "DiameterTransformer.h"
+#include "WholeTransformer.h"
 #include "Electrifier.h"
 
 #include "LineRenderer.h"
@@ -50,7 +51,10 @@ public:
 		size_t maxNumBranchLevels
 	);
 
-	//todo whole transformer
+	void InitWholeTransformer(
+		MyFloat3 startPoint,
+		MyFloat3 endPoint
+	);
 
 	void InitElectrifier(
 		float maxSegmentLength,
@@ -99,7 +103,6 @@ public:
 	);
 
 private:
-
 	void InitProcess();
 
 	//Settings:
@@ -115,7 +118,7 @@ private:
 	//Geometry transformers:
 	PathIdentifier pathIdentifier;
 	DiameterTransformer diameterTransformer;
-	//TODO whole output transformer
+	WholeTransformer wholeTransformer;
 	Electrifier electrifier;
 
 	//Graphics renderers:

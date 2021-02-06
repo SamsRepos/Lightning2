@@ -77,7 +77,16 @@ void PipelineMgr::InitDiameterTransformer(
 	);
 }
 
-//todo whole transformer
+void PipelineMgr::InitWholeTransformer(
+	MyFloat3  startPoint,
+	MyFloat3 endPoint
+)
+{
+	wholeTransformer.InitParameters(
+		startPoint,
+		endPoint
+	);
+}
 
 void PipelineMgr::InitElectrifier(
 	float maxSegmentLength,
@@ -146,7 +155,8 @@ void PipelineMgr::RunProcess()
 	}
 	if (settings->IsWholeTransformerActive())
 	{
-
+		wholeTransformer.SetSegments(segments);
+		wholeTransformer.Run();
 	}
 	if (settings->IsElectrifierActive())
 	{

@@ -95,6 +95,11 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 		DEFAULT_DT_MAX_NUM_BRANCH_LEVELS
 	);
 
+	pipelineMgr->InitWholeTransformer(
+		DEFAULT_WT_START_POINT,
+		DEFAULT_WT_END_POINT
+	);
+
 	pipelineMgr->InitElectrifier(
 		DEFAULT_E_MAX_SEG_LENGTH,
 		DEFAULT_E_CHAOS_MEAN,
@@ -449,6 +454,26 @@ void App1::Gui()
 					initialDiameter,
 					diameterScaledown,
 					maxNumBranchLevels
+				);
+			}
+		}
+	}
+
+	//Adjust Whole Transformer Parameters:
+	{
+		static MyFloat3 startPoint = DEFAULT_WT_START_POINT;
+		static MyFloat3 endPoint   = DEFAULT_WT_END_POINT;
+
+		if (ImGui::CollapsingHeader("Set Whole Transformer Parameters"))
+		{
+			bool changeNow = false;
+				//
+
+			if (changeNow)
+			{
+				pipelineMgr->InitWholeTransformer(
+					startPoint,
+					endPoint
 				);
 			}
 		}

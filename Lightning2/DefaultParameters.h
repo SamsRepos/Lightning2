@@ -34,6 +34,10 @@ const float  DEFAULT_DT_INITIAL_DIAMETER      = .2f;
 const float  DEFAULT_DT_DIAMETER_SCALEDOWN    = .5f;
 const size_t DEFAULT_DT_MAX_NUM_BRANCH_LEVELS = 4;
 
+// Whole Transformer:
+const MyFloat3 DEFAULT_WT_START_POINT = MyFloat3(0.f, 100.f, 0.f);
+const MyFloat3 DEFAULT_WT_END_POINT = MyFloat3(0.f, 0.f, 0.f);
+
 // Electrifier
 const float DEFAULT_E_MAX_SEG_LENGTH   = 1.f;
 const float DEFAULT_E_CHAOS_MEAN       = .1f;
