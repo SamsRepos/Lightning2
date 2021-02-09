@@ -64,6 +64,17 @@ void PipelineMgr::InitStreamerGenerator(
 	);
 }
 
+void PipelineMgr::InitWholeTransformer(
+	MyFloat3  startPoint,
+	MyFloat3 endPoint
+)
+{
+	wholeTransformer.InitParameters(
+		startPoint,
+		endPoint
+	);
+}
+
 void PipelineMgr::InitDiameterTransformer(
 	float initialDiameter,
 	float diameterScaledown,
@@ -74,17 +85,6 @@ void PipelineMgr::InitDiameterTransformer(
 		initialDiameter,
 		MyClamp(diameterScaledown, 0.f, 1.f),
 		maxNumBranchLevels
-	);
-}
-
-void PipelineMgr::InitWholeTransformer(
-	MyFloat3  startPoint,
-	MyFloat3 endPoint
-)
-{
-	wholeTransformer.InitParameters(
-		startPoint,
-		endPoint
 	);
 }
 
@@ -148,16 +148,16 @@ void PipelineMgr::RunProcess()
 		pathIdentifier.SetSegments(segments);
 		pathIdentifier.Run();
 	}
-	if (settings->IsDiameterTransformerActive())
-	{
-		diameterTransformer.SetSegments(segments);
-		diameterTransformer.Run();
-	}
 	if (settings->IsWholeTransformerActive())
 	{
 		wholeTransformer.SetSegments(segments);
 		wholeTransformer.Run();
 	}
+	if (settings->IsDiameterTransformerActive())
+	{
+		diameterTransformer.SetSegments(segments);
+		diameterTransformer.Run();
+	}	
 	if (settings->IsElectrifierActive())
 	{
 		electrifier.SetSegments(segments);

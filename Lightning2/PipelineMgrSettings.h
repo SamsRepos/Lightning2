@@ -8,8 +8,8 @@ enum GeometryGeneratorTypes
 
 struct PipelineMgrDefaultSettings {
 	GeometryGeneratorTypes geometryGenerator;
-	bool diameterTransformerActive;
 	bool wholeTransformerActive;
+	bool diameterTransformerActive;
 	bool electrifierActive;
 	bool blurRenderingActive;
 	bool lineRenderingActive;
@@ -24,13 +24,13 @@ public:
 	inline void SetGeometryGeneratorType(GeometryGeneratorTypes type) { currentGeometryGenerator = type; };
 	inline GeometryGeneratorTypes GetGeometryGeneratorType() { return currentGeometryGenerator; };
 
-	inline void SetDiameterTransformerActive(bool active) { diameterTransformerActive = active; };
 	inline void SetWholeTransformerActive(bool active) { wholeTransformerActive = active; };
+	inline void SetDiameterTransformerActive(bool active) { diameterTransformerActive = active; };
 	inline void SetElectifierActive(bool active) { electrifierActive = active; };
 
 	inline bool IsPathIdentifierActive() { return (diameterTransformerActive || wholeTransformerActive); };
-	inline bool IsDiameterTransformerActive() { return diameterTransformerActive; };
 	inline bool IsWholeTransformerActive() { return wholeTransformerActive; };
+	inline bool IsDiameterTransformerActive() { return diameterTransformerActive; };
 	inline bool IsElectrifierActive() { return electrifierActive; };
 
 	inline void SetBlurRenderingActive(bool active) { blurRenderingActive = active; };
@@ -43,8 +43,8 @@ public:
 
 private:
 	GeometryGeneratorTypes currentGeometryGenerator;
-	bool diameterTransformerActive;
 	bool wholeTransformerActive;
+	bool diameterTransformerActive;
 	bool electrifierActive;
 	bool blurRenderingActive;
 	bool lineRenderingActive;

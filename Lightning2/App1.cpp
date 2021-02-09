@@ -55,8 +55,8 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	// Pipeline manager:
 	PipelineMgrDefaultSettings defaultSettings;
 	defaultSettings.geometryGenerator         = GeometryGeneratorTypes::STREAMER;
-	defaultSettings.diameterTransformerActive = true;
 	defaultSettings.wholeTransformerActive    = false;
+	defaultSettings.diameterTransformerActive = false;
 	defaultSettings.electrifierActive         = false;
 	defaultSettings.blurRenderingActive       = true;
 	defaultSettings.lineRenderingActive       = true;
@@ -83,21 +83,21 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	pipelineMgr->InitStreamerGenerator(
 		DEFAULT_SG_START_PT,
 		DEFAULT_SG_INITIAL_DIRECTION,
-		DEFAULT_SG_INITIAL_VOLTAGE,
+		DEFAULT_SG_VOLTAGE,
 		DEFAULT_SG_INITIAL_PRESSURE,
 		DEFAULT_SG_PRESSURE_GRADIENT,
 		DEFAULT_SG_MAX_NUM_LAYERS
+	);
+	
+	pipelineMgr->InitWholeTransformer(
+		DEFAULT_WT_START_POINT + MyFloat3(1.f, 1.f, 1.f), //TODO sort this out
+		DEFAULT_WT_END_POINT
 	);
 
 	pipelineMgr->InitDiameterTransformer(
 		DEFAULT_DT_INITIAL_DIAMETER,
 		DEFAULT_DT_DIAMETER_SCALEDOWN,
 		DEFAULT_DT_MAX_NUM_BRANCH_LEVELS
-	);
-
-	pipelineMgr->InitWholeTransformer(
-		DEFAULT_WT_START_POINT + MyFloat3(1.f, 1.f, 1.f),
-		DEFAULT_WT_END_POINT
 	);
 
 	pipelineMgr->InitElectrifier(
@@ -265,13 +265,13 @@ void App1::Gui()
 			{
 				ImGui::Text("- Path Identifier (auto)");
 			}
-			if (settings->IsDiameterTransformerActive())
-			{
-				ImGui::Text("- Diameter Transformer");
-			}
 			if (settings->IsWholeTransformerActive())
 			{
 				ImGui::Text("- Whole Transformer");
+			}
+			if (settings->IsDiameterTransformerActive())
+			{
+				ImGui::Text("- Diameter Transformer");
 			}
 			if (settings->IsElectrifierActive())
 			{
@@ -316,17 +316,17 @@ void App1::Gui()
 		// Toggle pipeline stages
 		if (ImGui::CollapsingHeader("Toggle Transformer Stages On/Off"))
 		{
-			if (GuiToggleButton("Toggle Diameter Transformer", settings->IsDiameterTransformerActive()))
-			{
-				pipelineMgr->SetDiameterTransformerActive(
-					!(settings->IsDiameterTransformerActive())
-				);
-			}
-			
 			if (GuiToggleButton("Toggle Whole Transformer", settings->IsWholeTransformerActive()))
 			{
 				pipelineMgr->SetWholeTransformerActive(
 					!(settings->IsWholeTransformerActive())
+				);
+			}
+
+			if (GuiToggleButton("Toggle Diameter Transformer", settings->IsDiameterTransformerActive()))
+			{
+				pipelineMgr->SetDiameterTransformerActive(
+					!(settings->IsDiameterTransformerActive())
 				);
 			}
 			
@@ -406,7 +406,7 @@ void App1::Gui()
 	{
 		static MyFloat3 startPt          = DEFAULT_SG_START_PT;
 		static MyFloat3 initialDirection = DEFAULT_SG_INITIAL_DIRECTION;
-		static float initialVoltage      = DEFAULT_SG_INITIAL_VOLTAGE;
+		static float voltage             = DEFAULT_SG_VOLTAGE;
 		static float initialPressure     = DEFAULT_SG_INITIAL_PRESSURE;
 		static float pressureGradient    = DEFAULT_SG_PRESSURE_GRADIENT;
 		static int   maxNumLayers        = DEFAULT_SG_MAX_NUM_LAYERS;
@@ -416,7 +416,7 @@ void App1::Gui()
 
 			bool changeNow = false;
 			//TODO MyFloat3 gui
-			changeNow = GuiSliderFloat(&changeNow, "SG initial voltage", &initialVoltage, SG_MIN_INITIAL_VOLTAGE, SG_MAX_INITIAL_VOLTAGE);
+			changeNow = GuiSliderFloat(&changeNow, "SG initial voltage", &voltage, SG_MIN_VOLTAGE, SG_MAX_VOLTAGE);
 			changeNow = GuiSliderFloat(&changeNow, "SG initial pressure", &initialPressure, SG_MIN_INITIAL_PRESSURE, SG_MAX_INITIAL_PRESSURE);
 			changeNow = GuiSliderFloat(&changeNow, "SG pressure gradient", &pressureGradient, SG_MIN_PRESSURE_GRADIENT, SG_MAX_PRESSURE_GRADIENT);
 			changeNow = GuiSliderInt(&changeNow, "SG max num layers", &maxNumLayers, SG_MIN_MAX_NUM_LAYERS, SG_MAX_MAX_NUM_LAYERS);
@@ -426,13 +426,33 @@ void App1::Gui()
 				pipelineMgr->InitStreamerGenerator(
 					startPt,
 					initialDirection,
-					initialVoltage,
+					voltage,
 					initialPressure,
 					pressureGradient,
 					maxNumLayers
 				);
 			}
 		}		
+	}
+
+	//Adjust Whole Transformer Parameters:
+	{
+		static MyFloat3 startPoint = DEFAULT_WT_START_POINT;
+		static MyFloat3 endPoint   = DEFAULT_WT_END_POINT;
+
+		if (ImGui::CollapsingHeader("Set Whole Transformer Parameters"))
+		{
+			bool changeNow = false;
+			//
+
+			if (changeNow)
+			{
+				pipelineMgr->InitWholeTransformer(
+					startPoint,
+					endPoint
+				);
+			}
+		}
 	}
 
 	//Adjust Diameter Transformer Parameters
@@ -458,27 +478,7 @@ void App1::Gui()
 			}
 		}
 	}
-
-	//Adjust Whole Transformer Parameters:
-	{
-		static MyFloat3 startPoint = DEFAULT_WT_START_POINT;
-		static MyFloat3 endPoint   = DEFAULT_WT_END_POINT;
-
-		if (ImGui::CollapsingHeader("Set Whole Transformer Parameters"))
-		{
-			bool changeNow = false;
-				//
-
-			if (changeNow)
-			{
-				pipelineMgr->InitWholeTransformer(
-					startPoint,
-					endPoint
-				);
-			}
-		}
-	}
-
+	
 	//Adjust Electrifier Parameters
 	{
 		static float maxSegmentLength = DEFAULT_E_MAX_SEG_LENGTH;

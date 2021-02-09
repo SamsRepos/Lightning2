@@ -10,14 +10,17 @@
 
 StreamerGenerator::StreamerGenerator()
 {
-	diameterToLengthGaussianGen.SetMean(DIAMETER_TO_LENGTH_MEAN);
-	diameterToLengthGaussianGen.SetStdDev(DIAMETER_TO_LENGTH_STDDEV);
+	diameterToLengthCoeffGen.SetMean(DIAMETER_TO_LENGTH_MEAN);
+	diameterToLengthCoeffGen.SetStdDev(DIAMETER_TO_LENGTH_STDDEV);
+
+	pressureToMinDiameterCoeffGen.SetMean(PRESSURE_TO_MIN_DIAMETER_MEAN);
+	pressureToMinDiameterCoeffGen.SetStdDev(PRESSURE_TO_MIN_DIAMETER_STDDEV);
 }
 
 void StreamerGenerator::InitParameters(
 	MyFloat3 _startPoint,
 	MyFloat3 _initDirection,
-	float _initVoltage,
+	float _voltage,
 	float _initPressure,
 	float _pressureGradient,
 	size_t _maxNumLayers
@@ -25,7 +28,7 @@ void StreamerGenerator::InitParameters(
 {
 	startPoint       = _startPoint;
 	initDirection    = _initDirection.Normalised();
-	initVoltage      = _initVoltage;
+	voltage          = _voltage;
 	initPressure     = _initPressure;
 	pressureGradient = _pressureGradient;
 	maxNumLayers     = _maxNumLayers;
@@ -36,7 +39,7 @@ void StreamerGenerator::Run()
 	InitAlgorithm();
 
 	//algorithm
-	float rootDiameter = initVoltage * INIT_VOLTAGE_COEFF;
+	float rootDiameter = voltage * INIT_VOLTAGE_COEFF;
 	float rootLength = DiameterToLength(rootDiameter);
 	MyFloat3 rootStartPt = startPoint;
 	MyFloat3 rootEndPt = startPoint + (initDirection * rootLength);

@@ -45,15 +45,15 @@ public:
 		size_t maxNumLayers
 	);
 
+	void InitWholeTransformer(
+		MyFloat3 startPoint,
+		MyFloat3 endPoint
+	);
+
 	void InitDiameterTransformer(
 		float initialDiameter,
 		float diameterScaledown,
 		size_t maxNumBranchLevels
-	);
-
-	void InitWholeTransformer(
-		MyFloat3 startPoint,
-		MyFloat3 endPoint
 	);
 
 	void InitElectrifier(
@@ -80,8 +80,8 @@ public:
 	inline void SetGeometryGeneratorType(GeometryGeneratorTypes type) { settings->SetGeometryGeneratorType(type); };
 	
 	//toggle post-generation transform stages
-	inline void SetDiameterTransformerActive(bool active) { settings->SetDiameterTransformerActive(active); };
 	inline void SetWholeTransformerActive(bool active) { settings->SetWholeTransformerActive(active); };
+	inline void SetDiameterTransformerActive(bool active) { settings->SetDiameterTransformerActive(active); };
 	inline void SetElectifierActive(bool active) { settings->SetElectifierActive(active); };
 
 	//set current renderer
@@ -117,8 +117,8 @@ private:
 
 	//Geometry transformers:
 	PathIdentifier pathIdentifier;
-	DiameterTransformer diameterTransformer;
 	WholeTransformer wholeTransformer;
+	DiameterTransformer diameterTransformer;
 	Electrifier electrifier;
 
 	//Graphics renderers:

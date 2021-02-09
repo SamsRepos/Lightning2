@@ -24,8 +24,8 @@ const float    DEFAULT_JFG_FORK_PROB_SCALEDOWN = .6f;
 // Streamer Generator
 const MyFloat3 DEFAULT_SG_START_PT          = MyFloat3(0.f, 100.f, 0.f);
 const MyFloat3 DEFAULT_SG_INITIAL_DIRECTION = MyFloat3(0.f, -1.f, 0.f);
-const float    DEFAULT_SG_INITIAL_VOLTAGE   = 7000.f;
-const float    DEFAULT_SG_INITIAL_PRESSURE  = 35.f;
+const float    DEFAULT_SG_VOLTAGE   = 42.f;
+const float    DEFAULT_SG_INITIAL_PRESSURE  = 65.f;
 const float    DEFAULT_SG_PRESSURE_GRADIENT = .5f;
 const size_t   DEFAULT_SG_MAX_NUM_LAYERS    = 10;
 
@@ -50,8 +50,8 @@ const std::string DEFAULT_LINE_COLOUR            = "lightning white";
 const std::string DEFAULT_BLUR_COLOUR            = "lightning blue";
 const std::string DEFAULT_BLUR_BACKGROUND_COLOUR = "background night";
 const std::string DEFAULT_CYLINDER_COLOUR        = "lightning white";
-const float DEFAULT_BLUR_EXTENT = .7f;
-const float DEFAULT_BLUR_RANGE  = 4.f;
+const float DEFAULT_BLUR_EXTENT = 1.f; // .7f;
+const float DEFAULT_BLUR_RANGE  = 20.f; // 4.f;
 
 
 ////
@@ -78,8 +78,8 @@ const float JFG_MIN_FORK_PROB_SCALEDOWN = 0.f;
 const float JFG_MAX_FORK_PROB_SCALEDOWN = 1.f;
 
 // Streamer Generator
-const float SG_MIN_INITIAL_VOLTAGE = 0.f;
-const float SG_MAX_INITIAL_VOLTAGE = 10000.f;
+const float SG_MIN_VOLTAGE = 5.f;
+const float SG_MAX_VOLTAGE = 100.f;
 
 const float SG_MIN_INITIAL_PRESSURE = 0.f;
 const float SG_MAX_INITIAL_PRESSURE = 100.f;

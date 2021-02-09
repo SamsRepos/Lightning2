@@ -3,8 +3,8 @@
 PipelineMgrSettings::PipelineMgrSettings(const PipelineMgrDefaultSettings& defaultSettings)
 	:
 	currentGeometryGenerator(defaultSettings.geometryGenerator),
-	diameterTransformerActive(defaultSettings.diameterTransformerActive),
 	wholeTransformerActive(defaultSettings.wholeTransformerActive),
+	diameterTransformerActive(defaultSettings.diameterTransformerActive),
 	electrifierActive(defaultSettings.electrifierActive),
 	blurRenderingActive(defaultSettings.blurRenderingActive),
 	lineRenderingActive(defaultSettings.lineRenderingActive),
