@@ -15,6 +15,12 @@ StreamerGenerator::StreamerGenerator()
 
 	pressureToMinDiameterCoeffGen.SetMean(PRESSURE_TO_MIN_DIAMETER_MEAN);
 	pressureToMinDiameterCoeffGen.SetStdDev(PRESSURE_TO_MIN_DIAMETER_STDDEV);
+
+	deltaAngleGen.SetMean(DegToRad(DELTA_ANGLE_MEAN));
+	deltaAngleGen.SetStdDev(DegToRad(DELTA_ANGLE_STDDEV));
+
+	innerAngleGen.SetMean(DegToRad(INNER_ANGLE_MEAN));
+	innerAngleGen.SetStdDev(DegToRad(INNER_ANGLE_STDDEV));
 }
 
 void StreamerGenerator::InitParameters(
@@ -111,8 +117,8 @@ Segment* StreamerGenerator::CreateSegment(Segment* parent)
 
 void StreamerGenerator::FixEndPoints(Segment* segA, Segment* segB)
 {
-	float angleA = DegToRad(35.f);
-	float angleB = DegToRad(35.f);
+	float angleA = deltaAngleGen.GetSample();
+	float angleB = deltaAngleGen.GetSample();
 
 	FixEndPoint(segA, angleA);
 	FixEndPoint(segB, angleB);

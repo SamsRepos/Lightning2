@@ -32,11 +32,20 @@ const float PRESSURE_TO_MIN_DIAMETER_MEAN   = .2f;
 const float PRESSURE_TO_MIN_DIAMETER_STDDEV = .02f;
 
 //Could do:
-// Add velocity for animating... v = 0.5 d^2 (Briels et al., 2008b)
-// Multiple gaussian generators for different air pressures...
-//  ... In N2 gas, L / d = 8 +- 4 (Briels et al., 2008a)
-//       And pressure * d_min =
-//  ... Custom user gaussian gen, with arbitrary mean and std dev
+// - Add velocity for animating... v = 0.5 d^2 (Briels et al., 2008b)
+// - Energy output - could govern blur/glow extent
+// - Multiple gaussian generators for different air pressures...
+//   ... In N2 gas, L / d = 8 +- 4
+//                  pressure * d_min = 0.12 +- 0.03
+//                  (Briels et al., 2008a)
+//   ... Custom user gaussian gen, with arbitrary mean and std dev
+
+// ANGLES
+const float DELTA_ANGLE_MEAN   = 35.f;
+const float DELTA_ANGLE_STDDEV = 5.f;
+
+const float INNER_ANGLE_MEAN   = 43.f;
+const float INNER_ANGLE_STDDEV = 12.3f;
 
 class StreamerGenerator
 {
@@ -106,6 +115,9 @@ private:
 
 	BoxMullerGen diameterToLengthCoeffGen;
 	BoxMullerGen pressureToMinDiameterCoeffGen;
+
+	BoxMullerGen deltaAngleGen;
+	BoxMullerGen innerAngleGen;
 
 	std::vector<Segment*>* output;
 };

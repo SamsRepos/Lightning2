@@ -24,13 +24,16 @@ public:
 	inline MyFloat3 GetStartPoint() { return startPoint; };
 	inline void SetEndPoint(MyFloat3 endPt) { endPoint = endPt; };
 	inline MyFloat3 GetEndPoint() { return endPoint; };
+
 	inline MyFloat3 GetDirection() { return endPoint - startPoint; };
+	inline float GetLength() { return (GetDirection().Magnitude()); };
 	inline MyFloat3 GetMidpoint() { return startPoint + (GetDirection() * .5f); };
 	inline MyFloat3 GetOffsetMidpoint(const float& t) { return startPoint + (GetDirection() * t); };
+
 	inline void SetDiameter(float _diameter) { diameter = _diameter; };
 	inline float GetDiameter() const { return diameter; };
+
 	inline float GetMinDiameter() const { return minDiameter; };
-	inline float GetLength() { return (GetDirection().Magnitude()); };
 
 	inline void SetParent(Segment* _parent) { parent = _parent; };
 	inline Segment* GetParent() { return parent; };
