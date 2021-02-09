@@ -84,8 +84,8 @@ const float SG_MAX_VOLTAGE = 100.f;
 const float SG_MIN_INITIAL_PRESSURE = 0.f;
 const float SG_MAX_INITIAL_PRESSURE = 100.f;
 
-const float SG_MIN_PRESSURE_GRADIENT = 0.f;
-const float SG_MAX_PRESSURE_GRADIENT = 2.f;
+const float SG_MIN_PRESSURE_GRADIENT = -1.5f;
+const float SG_MAX_PRESSURE_GRADIENT = 1.5f;
 
 const size_t SG_MIN_MAX_NUM_LAYERS = 1;
 const size_t SG_MAX_MAX_NUM_LAYERS = 20;

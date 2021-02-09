@@ -26,12 +26,14 @@ const float INIT_VOLTAGE_COEFF = DIAMETER_RISE / VOLTAGE_RUN;
 const float DIAMETER_TO_LENGTH_MEAN   = 11.f;
 const float DIAMETER_TO_LENGTH_STDDEV = 4.f;
 
-// In ambient air, pressure * dmin = 0.20 +- 0.02 (Briels et al., 2008a)
+// PRESSURE => MINIMUM DIAMETER
+//  In ambient air, pressure * dmin = 0.20 +- 0.02 (Briels et al., 2008a)
 const float PRESSURE_TO_MIN_DIAMETER_MEAN   = .2f;
 const float PRESSURE_TO_MIN_DIAMETER_STDDEV = .02f;
 
 //Could do:
 // Add velocity for animating... v = 0.5 d^2 (Briels et al., 2008b)
+// Multiple gaussian generators for different air pressures
 
 class StreamerGenerator
 {
@@ -56,30 +58,39 @@ private:
 	void FixEndPoints(Segment* segA, Segment* segB);
 
 	// DIAMETER => LENGTH
+	//  L / d = 11 +- 4 (Briels et al., 2008a)
 	inline float DiameterToLength(const float& diameter)
 	{ 
 		return diameter * diameterToLengthCoeffGen.GetSample(); 
 	};
 	
 	// LOCAL PRESSURE
+	//  My relation: pressure = initial pressure + (pressure gradient * delta-Y)
+	//  Vector from initial_y to start_y = this_y - initial_y
+	//  Negative vector used, for the negative y-direction to be the positive direction of the lightning
 	inline float CalculateLocalPressure(const float& y)
 	{ 
-		return initPressure + (pressureGradient *  (y - startPoint.y)); 
+		return initPressure + (pressureGradient *  -(y - startPoint.y)); 
 	};
 	
 	// PRESSURE => MINIMUM DIAMETER
+	// In ambient air, pressure * dmin = 0.20 +- 0.02 (Briels et al., 2008a)
 	inline float PressureToMinDiameter(const float& pressure)
 	{ 
 		return (1.f / pressure) * pressureToMinDiameterCoeffGen.GetSample();
 	};
 	
-	// DIAMETER
+	// PARENT'S DIAMETER AND MINIMUM DIAMETERS => DIAMETER
+	//  d_new = sqrt(1/2) * d_parent * (d_min,new / d_min,parent)
+	//  So, segments should get smaller but, ...
+	//   ... 1. Get relatively smaller when mobving into higher pressures
+	//   ... 2. Get relitively larger when moving into lower pressures
+	//   (Bailey et al., 2014)
 	inline float CalculateDiameter(Segment* parent, const float& thisMinDiameter) 
 	{
 		return SQRT_A_HALF * parent->GetDiameter() * (thisMinDiameter / parent->GetMinDiameter()) ; 
 	};
-
-
+	
 
 	void FixEndPoint(Segment* seg, float angle);
 

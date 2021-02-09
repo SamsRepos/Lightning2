@@ -87,16 +87,17 @@ void StreamerGenerator::CreateChildren(Segment* parent, size_t parentLayerNum)
 
 Segment* StreamerGenerator::CreateSegment(Segment* parent)
 {
-	MyFloat3 startPoint = parent->GetEndPoint();
+	MyFloat3 thisStartPoint = parent->GetEndPoint();
 
-	float minDiameter = PressureToMinDiameter(CalculateLocalPressure(startPoint.y));
-	float diameter = CalculateDiameter(parent, minDiameter);
+	float localPressure = CalculateLocalPressure(thisStartPoint.y);
+	float minDiameter   = PressureToMinDiameter(localPressure);
+	float diameter      = CalculateDiameter(parent, minDiameter);
 
 	MyFloat3 direction = parent->GetDirection().Normalised() * DiameterToLength(diameter);
-	MyFloat3 endPoint = startPoint + direction;
+	MyFloat3 endPoint  = thisStartPoint + direction;
 
 	Segment* newSegment = new Segment(
-		startPoint,
+		thisStartPoint,
 		endPoint,
 		diameter,
 		minDiameter
