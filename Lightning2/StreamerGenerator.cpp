@@ -39,19 +39,19 @@ void StreamerGenerator::Run()
 	InitAlgorithm();
 
 	//algorithm
-	float rootDiameter = voltage * INIT_VOLTAGE_COEFF;
-	float rootLength = DiameterToLength(rootDiameter);
+	float rootDiameter   = voltage * INIT_VOLTAGE_COEFF;
+	float rootLength     = DiameterToLength(rootDiameter);
 	MyFloat3 rootStartPt = startPoint;
-	MyFloat3 rootEndPt = startPoint + (initDirection * rootLength);
+	MyFloat3 rootEndPt   = startPoint + (initDirection * rootLength);
 
-	float rootLocalPressure = initPressure;
+	float rootLocalPressure   = initPressure;
 	float rootMinimumDiamater = PressureToMinDiameter(rootLocalPressure);
 
 	Segment* rootSegment = new Segment(rootStartPt, rootEndPt, rootDiameter, rootMinimumDiamater);
 
 	output->push_back(rootSegment);
 
-	CreateChildren(rootSegment, 0);
+	CreateChildrenRecurs(rootSegment, 0);
 }
 
 ////
@@ -64,7 +64,7 @@ void StreamerGenerator::InitAlgorithm()
 	numLayers = 0;	
 }
 
-void StreamerGenerator::CreateChildren(Segment* parent, size_t parentLayerNum)
+void StreamerGenerator::CreateChildrenRecurs(Segment* parent, size_t parentLayerNum)
 {
 	size_t thisLayerNum = parentLayerNum + 1;
 
@@ -78,10 +78,8 @@ void StreamerGenerator::CreateChildren(Segment* parent, size_t parentLayerNum)
 		
 		FixEndPoints(childA, childB);
 				
-		CreateChildren(childA, thisLayerNum);
-		CreateChildren(childB, thisLayerNum);
-
-		//TODO fix: this is going to be one-sided due to recursion, if max segment limit is hit
+		CreateChildrenRecurs(childA, thisLayerNum);
+		CreateChildrenRecurs(childB, thisLayerNum);
 	}
 }
 
@@ -93,12 +91,12 @@ Segment* StreamerGenerator::CreateSegment(Segment* parent)
 	float minDiameter   = PressureToMinDiameter(localPressure);
 	float diameter      = CalculateDiameter(parent, minDiameter);
 
-	MyFloat3 direction = parent->GetDirection().Normalised() * DiameterToLength(diameter);
-	MyFloat3 endPoint  = thisStartPoint + direction;
+	MyFloat3 direction     = parent->GetDirection().Normalised() * DiameterToLength(diameter);
+	MyFloat3 thisEndPoint  = thisStartPoint + direction;
 
 	Segment* newSegment = new Segment(
 		thisStartPoint,
-		endPoint,
+		thisEndPoint,
 		diameter,
 		minDiameter
 	);

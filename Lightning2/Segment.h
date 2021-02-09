@@ -30,7 +30,7 @@ public:
 	inline void SetDiameter(float _diameter) { diameter = _diameter; };
 	inline float GetDiameter() const { return diameter; };
 	inline float GetMinDiameter() const { return minDiameter; };
-	inline float GetLength() { return Magnitude(GetDirection()); };
+	inline float GetLength() { return (GetDirection().Magnitude()); };
 
 	inline void SetParent(Segment* _parent) { parent = _parent; };
 	inline Segment* GetParent() { return parent; };
@@ -41,7 +41,7 @@ public:
 	//inline void SetNumDescendants(size_t num) { numDescendants = num; };
 	//inline size_t GetNumDescendants() { return numDescendants; };
 
-	inline void SetDistanceFromRoot(Segment* root) { distanceFromRoot = Magnitude(endPoint - root->GetStartPoint()); };
+	inline void SetDistanceFromRoot(Segment* root) { distanceFromRoot = (endPoint - root->GetStartPoint()).Magnitude() ; };
 	inline float GetDistanceFromRoot() { return distanceFromRoot; };
 
 	inline void SetFarthestDistanceOnThisPath(float dist) { farthestDistOnThisPath = dist; };
