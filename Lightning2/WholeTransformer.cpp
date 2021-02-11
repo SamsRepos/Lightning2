@@ -21,12 +21,15 @@ void WholeTransformer::Run()
 
 	Segment* root = segments->front();
 
+	MyFloat3 desiredDirection = endPoint - startPoint;
+	MyFloat3 currentDirection = GetFarthestEndPointRecurs(root) - root->GetStartPoint();
+
+	I'M HERE, struggling to figure out why this isn't working properly
+
 	// 1. transform to origin
 	TranslateRecurs(root, MyFloat3(0.f, 0.f, 0.f));
 
-	// 2. align along start->end vector
-	MyFloat3 desiredDirection = endPoint - startPoint;
-	MyFloat3 currentDirection = GetFarthestEndPointRecurs(root);
+	// 2. align along start->end vector	
 	AlignSegments(desiredDirection, currentDirection);
 
 	// 3. scale to start->end magnitude
@@ -75,7 +78,7 @@ void WholeTransformer::AlignSegments(MyFloat3 desiredDirection, MyFloat3 current
 	MyFloat3 rotationAxis = CrossProduct(desiredDirection, currentDirection).Normalised();
 	
 	float cosAngle = DotProduct(desiredDirection.Normalised(), currentDirection.Normalised());
-	float angle = -acos(cosAngle);
+	float angle    = acos(cosAngle);
 
 	MyMatrix44 rotationMatrix = RotationMatrix(rotationAxis, angle);
 

@@ -14,27 +14,20 @@ float MyFloat3::Magnitude()
 
 MyFloat3 MyFloat3::Normalised()
 {
-	if (Magnitude() == 0.f)
+	float magnitude = Magnitude();
+
+	if (magnitude == 0.f)
 	{
 		return MyFloat3(*this);
 	}
 	else
 	{
-		return (*this) / Magnitude();
+		return (*this) / magnitude;
 	}	
 }
 
 MyFloat3 CrossProduct(const MyFloat3& u, const MyFloat3& v)
-{
-	/*
-	MyFloat3 res;
-	res.x = (u.y * v.z) - (u.z * v.y);
-	assert(!isnan(res.x));
-	res.y = (u.z * v.x) - (u.x * v.z);
-	assert(!isnan(res.y));
-	res.z = (u.x * v.y) - (u.y * v.x);
-	assert(!isnan(res.z));
-*/
+{	
 	return MyFloat3(
 		((u.y * v.z) - (u.z * v.y)),
 	    ((u.z * v.x) - (u.x * v.z)),
@@ -83,14 +76,21 @@ MyFloat3 operator/(const MyFloat3& vector, const float denominator)
 	return res;
 }
 
-#define EPSILON 0.001f
-
 bool operator==(const MyFloat3& a, const MyFloat3& b)
 {
+#if 0
+	const static float EPSILON = 0.0001f;
 	return (
 		(fabsf(a.x - b.x) < EPSILON) && 
 		(fabsf(a.y - b.y) < EPSILON) && 
 		(fabsf(a.z - b.z) < EPSILON)
+	);
+#endif
+
+	return(		
+		(a.x == b.x) &&
+		(a.y == b.y) &&
+		(a.z == b.z)		
 	);
 }
 

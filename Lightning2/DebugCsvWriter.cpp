@@ -21,7 +21,7 @@ void DebugWriteCsv(std::vector<Segment*>* segments, std::string filePath)
 	//3. Output relevant data:
 
 	//Column headings:
-	outFile << "SEG NUM, PARENT, CHILDREN, DIST 2 ROOT, MAX DIST 2 ROOT, \n";
+	outFile << "SEG NUM, PARENT, CHILDREN, START X, START Y, START X, END X, END Y, END Z, DIST 2 ROOT, MAX DIST 2 ROOT, \n";
 
 	for (Segment* segment : *segments)
 	{
@@ -52,6 +52,19 @@ void DebugWriteCsv(std::vector<Segment*>* segments, std::string filePath)
 		{
 			outFile << "NO CHILDREN, ";
 		}
+
+		//START X
+		outFile << segment->GetStartPoint().x << ", ";
+		//START Y
+		outFile << segment->GetStartPoint().y << ", ";
+		//START Z
+		outFile << segment->GetStartPoint().z << ", ";
+		//END X
+		outFile << segment->GetEndPoint().x << ", ";
+		//END Y
+		outFile << segment->GetEndPoint().y << ", ";
+		//END Z
+		outFile << segment->GetEndPoint().z << ", ";
 
 		//DIST 2 ROOT:
 		outFile << segment->GetDistanceFromRoot() << ", ";

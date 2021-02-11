@@ -65,6 +65,10 @@ private:
 	XMMATRIX planeMatrix;
 
 	PipelineMgr* pipelineMgr;
+
+	std::vector<Segment*> testSegments;
+	PathIdentifier testPi;
+	WholeTransformer testWt;
 };
 
 #endif

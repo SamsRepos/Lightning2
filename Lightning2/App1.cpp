@@ -122,6 +122,25 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 		DEFAULT_BLUR_EXTENT,
 		DEFAULT_BLUR_RANGE
 	);
+
+	
+	Segment* testSeg1 = new Segment(MyFloat3(0.f, 100.f, 0.f), MyFloat3(0.f, 80.f, 20.f));
+	Segment* testSeg2 = new Segment(MyFloat3(0.f, 80.f, 20.f), MyFloat3(10.f, 30.f, 15.f));
+	
+	testSeg2->SetParent(testSeg1);
+	testSeg1->AddChild(testSeg2);
+	
+	testSegments.push_back(testSeg1);
+	testSegments.push_back(testSeg2);	
+
+	testPi.SetSegments(&testSegments);
+	testPi.Run();
+
+	testWt.InitParameters(MyFloat3(0.f, 100.f, 0.f), MyFloat3(0.f, 0.f, 0.f));
+	testWt.SetSegments(&testSegments);
+	testWt.Run();
+
+	DebugWriteCsv(&testSegments);
 }
 
 App1::~App1()
@@ -222,7 +241,7 @@ void App1::Gui()
 	if (ImGui::Button("Run whole process"))
 	{
 		pipelineMgr->RunProcess();
-		DebugWriteCsv(pipelineMgr->GetSegments());
+		//DebugWriteCsv(pipelineMgr->GetSegments());
 	}
 	
 	static bool zappy = false;
