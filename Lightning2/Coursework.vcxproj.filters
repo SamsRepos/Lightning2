@@ -138,6 +138,9 @@
     <ClCompile Include="WholeTransformer.cpp">
       <Filter>Source Files\GeometryTransformers</Filter>
     </ClCompile>
+    <ClCompile Include="DiameterThinner.cpp">
+      <Filter>Source Files\GeometryTransformers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App1.h">
@@ -228,6 +231,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WholeTransformer.h">
+      <Filter>Header Files\GeometryTransformers</Filter>
+    </ClInclude>
+    <ClInclude Include="DiameterThinner.h">
       <Filter>Header Files\GeometryTransformers</Filter>
     </ClInclude>
   </ItemGroup>

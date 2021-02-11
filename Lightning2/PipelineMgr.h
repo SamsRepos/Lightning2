@@ -5,6 +5,7 @@
 #include "JitterForkGenerator.h"
 #include "StreamerGenerator.h"
 
+#include "DiameterThinner.h"
 #include "PathIdentifier.h"
 #include "DiameterTransformer.h"
 #include "WholeTransformer.h"
@@ -45,6 +46,10 @@ public:
 		size_t maxNumLayers
 	);
 
+	void InitDiameterThinner(
+		float scale
+	);
+
 	void InitWholeTransformer(
 		MyFloat3 startPoint,
 		MyFloat3 endPoint
@@ -80,6 +85,7 @@ public:
 	inline void SetGeometryGeneratorType(GeometryGeneratorTypes type) { settings->SetGeometryGeneratorType(type); };
 	
 	//toggle post-generation transform stages
+	inline void SetDiameterThinnerActive(bool active) { settings->SetDiameterThinnerActive(active); };
 	inline void SetWholeTransformerActive(bool active) { settings->SetWholeTransformerActive(active); };
 	inline void SetDiameterTransformerActive(bool active) { settings->SetDiameterTransformerActive(active); };
 	inline void SetElectifierActive(bool active) { settings->SetElectifierActive(active); };
@@ -116,6 +122,7 @@ private:
 	StreamerGenerator streamGen;
 
 	//Geometry transformers:
+	DiameterThinner diameterThinner;
 	PathIdentifier pathIdentifier;
 	WholeTransformer wholeTransformer;
 	DiameterTransformer diameterTransformer;

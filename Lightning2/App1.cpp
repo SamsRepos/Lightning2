@@ -55,6 +55,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	// Pipeline manager:
 	PipelineMgrDefaultSettings defaultSettings;
 	defaultSettings.geometryGenerator         = GeometryGeneratorTypes::STREAMER;
+	defaultSettings.diameterThinnerActive     = false;
 	defaultSettings.wholeTransformerActive    = false;
 	defaultSettings.diameterTransformerActive = false;
 	defaultSettings.electrifierActive         = false;
@@ -87,6 +88,10 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 		DEFAULT_SG_INITIAL_PRESSURE,
 		DEFAULT_SG_PRESSURE_GRADIENT,
 		DEFAULT_SG_MAX_NUM_LAYERS
+	);
+
+	pipelineMgr->InitDiameterThinner(
+		DEFAULT_DTHIN_SCALEDOWN
 	);
 	
 	pipelineMgr->InitWholeTransformer(
@@ -261,6 +266,10 @@ void App1::Gui()
 		//Transform stages:
 		ImGui::Text("Active Transformers: ");
 		ImGui::Indent();
+			if (settings->IsDiameterThinnerActive())
+			{
+				ImGui::Text("- Diameter Thinner");
+			}
 			if (settings->IsPathIdentifierActive())
 			{
 				ImGui::Text("- Path Identifier (auto)");
@@ -316,6 +325,13 @@ void App1::Gui()
 		// Toggle pipeline stages
 		if (ImGui::CollapsingHeader("Toggle Transformer Stages On/Off"))
 		{
+			if (GuiToggleButton("Toggle Diameter Thinner", settings->IsDiameterThinnerActive()))
+			{
+				pipelineMgr->SetDiameterThinnerActive(
+					!(settings->IsDiameterThinnerActive())
+				);
+			}
+
 			if (GuiToggleButton("Toggle Whole Transformer", settings->IsWholeTransformerActive()))
 			{
 				pipelineMgr->SetWholeTransformerActive(
@@ -435,6 +451,24 @@ void App1::Gui()
 		}		
 	}
 
+	//Adjust Diameter Thinner Parameters:
+	{
+		static float scaledown = DEFAULT_DTHIN_SCALEDOWN;
+
+		if (ImGui::CollapsingHeader("Set Diameter Thinner Parameters"))
+		{
+			bool changeNow = false;
+			changeNow = GuiSliderFloat(changeNow, "DTHIN scaledown", &scaledown, DTHIN_MIN_SCALEDOWN, DTHIN_MAX_SCALEDOWN);
+
+			if (changeNow)
+			{
+				pipelineMgr->InitDiameterThinner(
+					scaledown
+				);
+			}
+		}
+	}
+	
 	//Adjust Whole Transformer Parameters:
 	{
 		static MyFloat3 startPoint = DEFAULT_WT_START_POINT;

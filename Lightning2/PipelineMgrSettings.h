@@ -8,6 +8,7 @@ enum GeometryGeneratorTypes
 
 struct PipelineMgrDefaultSettings {
 	GeometryGeneratorTypes geometryGenerator;
+	bool diameterThinnerActive;
 	bool wholeTransformerActive;
 	bool diameterTransformerActive;
 	bool electrifierActive;
@@ -24,10 +25,12 @@ public:
 	inline void SetGeometryGeneratorType(GeometryGeneratorTypes type) { currentGeometryGenerator = type; };
 	inline GeometryGeneratorTypes GetGeometryGeneratorType() { return currentGeometryGenerator; };
 
+	inline void SetDiameterThinnerActive(bool active) { diameterThinnerActive = active; };
 	inline void SetWholeTransformerActive(bool active) { wholeTransformerActive = active; };
 	inline void SetDiameterTransformerActive(bool active) { diameterTransformerActive = active; };
 	inline void SetElectifierActive(bool active) { electrifierActive = active; };
 
+	inline bool IsDiameterThinnerActive() { return diameterThinnerActive; };
 	inline bool IsPathIdentifierActive() { return (diameterTransformerActive || wholeTransformerActive); };
 	inline bool IsWholeTransformerActive() { return wholeTransformerActive; };
 	inline bool IsDiameterTransformerActive() { return diameterTransformerActive; };
@@ -43,6 +46,7 @@ public:
 
 private:
 	GeometryGeneratorTypes currentGeometryGenerator;
+	bool diameterThinnerActive;
 	bool wholeTransformerActive;
 	bool diameterTransformerActive;
 	bool electrifierActive;

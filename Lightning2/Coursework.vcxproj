@@ -176,6 +176,7 @@
     <ClCompile Include="CylinderRenderer.cpp" />
     <ClCompile Include="CylinderShader.cpp" />
     <ClCompile Include="DebugCsvWriter.cpp" />
+    <ClCompile Include="DiameterThinner.cpp" />
     <ClCompile Include="DiameterTransformer.cpp" />
     <ClCompile Include="JitterForkGenerator.cpp" />
     <ClCompile Include="LightShader.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="CylinderShader.h" />
     <ClInclude Include="DebugCsvWriter.h" />
     <ClInclude Include="DefaultParameters.h" />
+    <ClInclude Include="DiameterThinner.h" />
     <ClInclude Include="DiameterTransformer.h" />
     <ClInclude Include="JitterForkGenerator.h" />
     <ClInclude Include="LightShader.h" />

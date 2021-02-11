@@ -29,14 +29,17 @@ const float    DEFAULT_SG_INITIAL_PRESSURE  = 65.f;
 const float    DEFAULT_SG_PRESSURE_GRADIENT = .5f;
 const size_t   DEFAULT_SG_MAX_NUM_LAYERS    = 10;
 
-// Diameter Transformer
-const float  DEFAULT_DT_INITIAL_DIAMETER      = .2f;
-const float  DEFAULT_DT_DIAMETER_SCALEDOWN    = .5f;
-const size_t DEFAULT_DT_MAX_NUM_BRANCH_LEVELS = 4;
+// Diameter Thinner:
+const float DEFAULT_DTHIN_SCALEDOWN = .5f;
 
 // Whole Transformer:
 const MyFloat3 DEFAULT_WT_START_POINT = MyFloat3(0.f, 100.f, 0.f);
 const MyFloat3 DEFAULT_WT_END_POINT = MyFloat3(0.f, 0.f, 0.f);
+
+// Diameter Transformer
+const float  DEFAULT_DT_INITIAL_DIAMETER      = .2f;
+const float  DEFAULT_DT_DIAMETER_SCALEDOWN    = .5f;
+const size_t DEFAULT_DT_MAX_NUM_BRANCH_LEVELS = 4;
 
 // Electrifier
 const float DEFAULT_E_MAX_SEG_LENGTH   = 1.f;
@@ -89,6 +92,10 @@ const float SG_MAX_PRESSURE_GRADIENT = 1.5f;
 
 const size_t SG_MIN_MAX_NUM_LAYERS = 1;
 const size_t SG_MAX_MAX_NUM_LAYERS = 20;
+
+// Diameter Thinner
+const float DTHIN_MIN_SCALEDOWN = .0f;
+const float DTHIN_MAX_SCALEDOWN = 1.f;
 
 // Diameter Transformer
 const float DT_MIN_INITIAL_DIAMETER = .1f;

@@ -64,6 +64,15 @@ void PipelineMgr::InitStreamerGenerator(
 	);
 }
 
+void PipelineMgr::InitDiameterThinner(
+	float scale
+)
+{
+	diameterThinner.InitParameters(
+		scale
+	);
+}
+
 void PipelineMgr::InitWholeTransformer(
 	MyFloat3  startPoint,
 	MyFloat3 endPoint
@@ -131,6 +140,7 @@ void PipelineMgr::RunProcess()
 {
 	InitProcess();
 
+	// Generating Geometry:
 	switch (settings->GetGeometryGeneratorType())
 	{
 	case (GeometryGeneratorTypes::JITTER_FORK):
@@ -143,6 +153,12 @@ void PipelineMgr::RunProcess()
 		break;
 	}
 
+	// Transforming Geometry:
+	if (settings->IsDiameterThinnerActive())
+	{
+		diameterThinner.SetSegments(segments);
+		diameterThinner.Run();
+	}
 	if (settings->IsPathIdentifierActive())
 	{
 		pathIdentifier.SetSegments(segments);
@@ -164,6 +180,7 @@ void PipelineMgr::RunProcess()
 		electrifier.Run();		
 	}
 
+	// Building Meshes:
 	lineRenderer->Build(segments);
 	cylRenderer->Build(segments);
 }
