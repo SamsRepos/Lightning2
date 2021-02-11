@@ -1,5 +1,7 @@
 #include "WholeTransformer.h"
 
+#include "MyMatrix44.h"
+
 void WholeTransformer::InitParameters(
 	MyFloat3 _startPoint,
 	MyFloat3 _endPoint
@@ -36,78 +38,6 @@ void WholeTransformer::Run()
 
 	// 4. transform to start point
 	TranslateRecurs(root, startPoint);
-}
-
-struct MyFloat4
-{
-	float x;
-	float y;
-	float z;
-	float w;
-
-	MyFloat4()
-	{
-		x = y = z = 0.f;
-		w = 1.f;
-	}
-
-	MyFloat4(float _x, float _y, float _z, float _w = 1.f)
-	{
-		x = _x;
-		y = _y;
-		z = _z;
-		w = _w;
-	}
-
-	MyFloat4(MyFloat3 float3, float _w = 1.f)
-	{
-		x = float3.x;
-		y = float3.y;
-		z = float3.z;
-		w = _w;
-	}
-
-	float Magnitude();
-	
-	MyFloat3 Normalised();
-};
-
-struct MyMatrix44
-{
-	MyFloat4 values[4];
-
-	MyMatrix44(const float *m) 
-	{
-		values[0] = MyFloat4(m[0], m[1], m[2], m[3]);
-		values[1] = MyFloat4(m[4], m[5], m[6], m[7]);
-		values[2] = MyFloat4(m[8], m[9], m[10], m[11]);
-		values[3] = MyFloat4(m[12], m[13], m[14], m[15]);
-	}	
-};
-
-MyFloat4 operator*(const MyFloat4& vec, const MyMatrix44& mat)
-{
-	MyFloat4 res;
-
-	res.x = (vec.x * mat.values[0].x) + (vec.y * mat.values[1].x) + (vec.z * mat.values[2].x) + (vec.w * mat.values[3].x);
-	res.y = (vec.x * mat.values[0].y) + (vec.y * mat.values[1].y) + (vec.z * mat.values[2].y) + (vec.w * mat.values[3].y);
-	res.z = (vec.x * mat.values[0].z) + (vec.y * mat.values[1].z) + (vec.z * mat.values[2].z) + (vec.w * mat.values[3].z);
-	res.w = (vec.x * mat.values[0].w) + (vec.y * mat.values[1].w) + (vec.z * mat.values[2].w) + (vec.w * mat.values[3].w);
-	
-	return res;
-}
-
-MyFloat3 operator*(const MyFloat3& vec, const MyMatrix44& mat)
-{
-	MyFloat4 res4 = MyFloat4(vec) * mat;
-	MyFloat3 res = MyFloat3(res4.x, res4.y, res4.z);
-
-	if (res4.w != 0.f)
-	{
-		res = res / res4.w;
-	}
-
-	return res;
 }
 
 void WholeTransformer::TranslateRecurs(Segment* currentSegment, MyFloat3 currentStartPoint)

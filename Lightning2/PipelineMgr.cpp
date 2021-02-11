@@ -20,7 +20,7 @@ PipelineMgr::PipelineMgr(
 	settings = new PipelineMgrSettings(defaultSettings);
 
 	lineRenderer = new LineRenderer(renderer, hwnd);
-	cylRenderer = new CylinderRenderer(renderer, hwnd, screenWidth, screenHeight);
+	cylRenderer  = new CylinderRenderer(renderer, hwnd, screenWidth, screenHeight);
 }
 
 void PipelineMgr::InitJitterForkGenerator(

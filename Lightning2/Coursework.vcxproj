@@ -185,6 +185,8 @@
     <ClCompile Include="LineShader.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MyFloat3.cpp" />
+    <ClCompile Include="MyFloat4.cpp" />
+    <ClCompile Include="MyMatrix44.cpp" />
     <ClCompile Include="PipelineMgr.cpp" />
     <ClCompile Include="PipelineMgrSettings.cpp" />
     <ClCompile Include="SceneObject.cpp" />
@@ -216,7 +218,9 @@
     <ClInclude Include="LineShader.h" />
     <ClInclude Include="MyClamp.h" />
     <ClInclude Include="MyFloat3.h" />
+    <ClInclude Include="MyFloat4.h" />
     <ClInclude Include="MyMath.h" />
+    <ClInclude Include="MyMatrix44.h" />
     <ClInclude Include="MyVectorUtil.h" />
     <ClInclude Include="PipelineMgr.h" />
     <ClInclude Include="PipelineMgrSettings.h" />

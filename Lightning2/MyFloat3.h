@@ -1,32 +1,26 @@
 #pragma once
 
-#if 1
-	struct MyFloat3
+struct MyFloat3
+{
+	float x;
+	float y;
+	float z;
+
+	MyFloat3()
 	{
-		float x;
-		float y;
-		float z;
+		x = y = z = 0.f;
+	}
 
-		MyFloat3()
-		{
-			x = y = z = 0.f;
-		}
+	MyFloat3(float _x, float _y, float _z)
+	{
+		x = _x;
+		y = _y;
+		z = _z;
+	}
 
-		MyFloat3(float _x, float _y, float _z)
-		{
-			x = _x;
-			y = _y;
-			z = _z;
-		}
-
-		float Magnitude();
-		MyFloat3 Normalised();
-
-	};
-#else
-	#include "DXF.h"
-	typedef XMFLOAT3 MyFloat3;
-#endif
+	float Magnitude();
+	MyFloat3 Normalised();
+};
 
 
 MyFloat3 CrossProduct(const MyFloat3& u, const MyFloat3& v);

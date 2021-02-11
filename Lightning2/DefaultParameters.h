@@ -94,7 +94,7 @@ const size_t SG_MIN_MAX_NUM_LAYERS = 1;
 const size_t SG_MAX_MAX_NUM_LAYERS = 20;
 
 // Diameter Thinner
-const float DTHIN_MIN_SCALEDOWN = .0f;
+const float DTHIN_MIN_SCALEDOWN = 0.f;
 const float DTHIN_MAX_SCALEDOWN = 1.f;
 
 // Diameter Transformer

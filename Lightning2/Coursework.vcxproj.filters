@@ -58,6 +58,12 @@
     <Filter Include="Resource Files\Texture Shaders">
       <UniqueIdentifier>{c4fcff88-018c-471b-85a0-c3c982de767a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Maths">
+      <UniqueIdentifier>{4e7ef4b2-7a73-4cd7-83d4-36cd84466af5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Maths">
+      <UniqueIdentifier>{2e85e2ac-4307-427f-9398-5869b9d05713}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App1.cpp">
@@ -75,12 +81,6 @@
     <ClCompile Include="Segment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RandFloatGen.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="MyFloat3.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="JitterForkGenerator.cpp">
       <Filter>Source Files\GeometryGenerators</Filter>
     </ClCompile>
@@ -89,9 +89,6 @@
     </ClCompile>
     <ClCompile Include="Electrifier.cpp">
       <Filter>Source Files\GeometryTransformers</Filter>
-    </ClCompile>
-    <ClCompile Include="BoxMullerGen.cpp">
-      <Filter>Source Files\Utils</Filter>
     </ClCompile>
     <ClCompile Include="PathIdentifier.cpp">
       <Filter>Source Files\GeometryTransformers</Filter>
@@ -141,6 +138,21 @@
     <ClCompile Include="DiameterThinner.cpp">
       <Filter>Source Files\GeometryTransformers</Filter>
     </ClCompile>
+    <ClCompile Include="MyFloat3.cpp">
+      <Filter>Source Files\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="RandFloatGen.cpp">
+      <Filter>Source Files\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxMullerGen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyMatrix44.cpp">
+      <Filter>Source Files\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="MyFloat4.cpp">
+      <Filter>Source Files\Maths</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App1.h">
@@ -155,12 +167,6 @@
     <ClInclude Include="Segment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RandFloatGen.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="MyFloat3.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="JitterForkGenerator.h">
       <Filter>Header Files\GeometryGenerators</Filter>
     </ClInclude>
@@ -170,17 +176,8 @@
     <ClInclude Include="Electrifier.h">
       <Filter>Header Files\GeometryTransformers</Filter>
     </ClInclude>
-    <ClInclude Include="BoxMullerGen.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="MyClamp.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="PathIdentifier.h">
       <Filter>Header Files\GeometryTransformers</Filter>
-    </ClInclude>
-    <ClInclude Include="MyMath.h">
-      <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="DiameterTransformer.h">
       <Filter>Header Files\GeometryTransformers</Filter>
@@ -235,6 +232,27 @@
     </ClInclude>
     <ClInclude Include="DiameterThinner.h">
       <Filter>Header Files\GeometryTransformers</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxMullerGen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyMath.h">
+      <Filter>Header Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="MyFloat3.h">
+      <Filter>Header Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="MyClamp.h">
+      <Filter>Header Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="RandFloatGen.h">
+      <Filter>Header Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="MyMatrix44.h">
+      <Filter>Header Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="MyFloat4.h">
+      <Filter>Header Files\Maths</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
