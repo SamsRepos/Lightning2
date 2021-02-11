@@ -95,7 +95,7 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	);
 	
 	pipelineMgr->InitWholeTransformer(
-		DEFAULT_WT_START_POINT + MyFloat3(1.f, 1.f, 1.f), //TODO sort this out
+		DEFAULT_WT_START_POINT, // +MyFloat3(1.f, 1.f, 1.f), //TODO sort this out
 		DEFAULT_WT_END_POINT
 	);
 

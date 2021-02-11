@@ -17,3 +17,5 @@ struct MyMatrix44
 
 MyFloat4 operator*(const MyFloat4& vec, const MyMatrix44& mat);
 MyFloat3 operator*(const MyFloat3& vec, const MyMatrix44& mat);
+
+MyMatrix44 RotationMatrix(const MyFloat3& axisThroughOrigin, const float& angle);

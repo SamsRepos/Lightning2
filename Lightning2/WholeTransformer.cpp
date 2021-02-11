@@ -73,36 +73,19 @@ MyFloat3 WholeTransformer::GetFarthestEndPointRecurs(Segment* currentSegment)
 void WholeTransformer::AlignSegments(MyFloat3 desiredDirection, MyFloat3 currentDirection)
 {
 	MyFloat3 rotationAxis = CrossProduct(desiredDirection, currentDirection).Normalised();
+	
+	float cosAngle = DotProduct(desiredDirection.Normalised(), currentDirection.Normalised());
+	float angle = -acos(cosAngle);
 
-	float alpha = rotationAxis.x;
-	float beta  = rotationAxis.y;
-	float gamma = rotationAxis.z;
-
-	float alphaSquared = alpha * alpha;
-	float betaSquared  = beta * beta;
-	float gammaSquared = gamma * gamma;
-
-	float alphaBeta  = alpha * beta;
-	float alphaGamma = alpha * gamma;
-	float betaGamma  = beta * gamma;
-
-	float cosTheta = DotProduct(desiredDirection.Normalised(), currentDirection.Normalised());
-	float theta    = -acos(cosTheta);
-	float sinTheta = sin(theta);
-
-	float rotationValues[] = {
-		(alphaSquared * (1 - cosTheta) + cosTheta),      (alphaBeta * (1 - cosTheta) + gamma * sinTheta), (alphaGamma * (1 - cosTheta) - beta * sinTheta), 0.f,
-		(alphaBeta * (1 - cosTheta) - gamma * sinTheta), (betaSquared * (1 - cosTheta) + cosTheta),       (betaGamma * (1 - cosTheta) - alpha * sinTheta), 0.f,
-		(alphaGamma * (1 - cosTheta) + beta * sinTheta), (betaGamma * (1 - cosTheta) - alpha * sinTheta), (gammaSquared * (1 - cosTheta) + cosTheta),      0.f,
-		0.f,                                             0.f,                                             0.f,                                             1.f
-	};	
-
-	MyMatrix44 rotationMatrix(rotationValues);
+	MyMatrix44 rotationMatrix = RotationMatrix(rotationAxis, angle);
 
 	for (Segment* segment : *segments)
 	{
-		segment->SetStartPoint(segment->GetStartPoint() * rotationMatrix);
-		segment->SetEndPoint(segment->GetEndPoint() * rotationMatrix);
+		MyFloat3 newStartPoint = segment->GetStartPoint() * rotationMatrix;
+		segment->SetStartPoint(newStartPoint);
+
+		MyFloat3 newEndPoint = segment->GetEndPoint() * rotationMatrix;
+		segment->SetEndPoint(newEndPoint);
 	}
 
 }

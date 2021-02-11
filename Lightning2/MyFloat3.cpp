@@ -3,6 +3,8 @@
 #include <math.h>
 #include <random>
 
+#include <cassert>
+
 float MyFloat3::Magnitude()
 {
 	return sqrt(
@@ -12,16 +14,32 @@ float MyFloat3::Magnitude()
 
 MyFloat3 MyFloat3::Normalised()
 {
-	return (*this) / Magnitude();
+	if (Magnitude() == 0.f)
+	{
+		return MyFloat3(*this);
+	}
+	else
+	{
+		return (*this) / Magnitude();
+	}	
 }
 
 MyFloat3 CrossProduct(const MyFloat3& u, const MyFloat3& v)
 {
+	/*
 	MyFloat3 res;
 	res.x = (u.y * v.z) - (u.z * v.y);
+	assert(!isnan(res.x));
 	res.y = (u.z * v.x) - (u.x * v.z);
+	assert(!isnan(res.y));
 	res.z = (u.x * v.y) - (u.y * v.x);
-	return res;
+	assert(!isnan(res.z));
+*/
+	return MyFloat3(
+		((u.y * v.z) - (u.z * v.y)),
+	    ((u.z * v.x) - (u.x * v.z)),
+		((u.x * v.y) - (u.y * v.x))
+	);
 }
 
 float DotProduct(const MyFloat3& u, const MyFloat3& v)
@@ -63,6 +81,17 @@ MyFloat3 operator/(const MyFloat3& vector, const float denominator)
 	res.y = vector.y / denominator;
 	res.z = vector.z / denominator;
 	return res;
+}
+
+#define EPSILON 0.001f
+
+bool operator==(const MyFloat3& a, const MyFloat3& b)
+{
+	return (
+		(fabsf(a.x - b.x) < EPSILON) && 
+		(fabsf(a.y - b.y) < EPSILON) && 
+		(fabsf(a.z - b.z) < EPSILON)
+	);
 }
 
 MyFloat3 RandomNormalisedVector(int resolution)

@@ -32,6 +32,8 @@ MyFloat3 operator-(const MyFloat3& minuend, const MyFloat3& subtrahend);
 MyFloat3 operator*(const MyFloat3& vector, const float scale);
 MyFloat3 operator/(const MyFloat3& vector, const float denominator);
 
+bool operator==(const MyFloat3& a, const MyFloat3& b);
+
 #define DEFAULT_RANDOM_VECTOR_RESOLUTION 1000
 MyFloat3 RandomNormalisedVector(int resolution);
 MyFloat3 RandomNormalisedVector();
