@@ -24,20 +24,18 @@ void WholeTransformer::Run()
 	MyFloat3 desiredDirection = endPoint - startPoint;
 	MyFloat3 currentDirection = GetFarthestEndPointRecurs(root) - root->GetStartPoint();
 
-	I'M HERE, struggling to figure out why this isn't working properly
-
 	// 1. transform to origin
 	TranslateRecurs(root, MyFloat3(0.f, 0.f, 0.f));
 
 	// 2. align along start->end vector	
 	AlignSegments(desiredDirection, currentDirection);
 
+	// updating current direction, which fixes scaling:
+	// TODO: find out why. This shouldn't be necessary. Something must be wrong with rotation.
+	currentDirection = GetFarthestEndPointRecurs(root) - root->GetStartPoint();
+
 	// 3. scale to start->end magnitude
-	float scaleFactor = desiredDirection.Magnitude() / currentDirection.Magnitude();
-	if (scaleFactor != 0.f)
-	{
-		ScaleSegments(scaleFactor);
-	}
+	ScaleSegments(desiredDirection.Magnitude(), currentDirection.Magnitude());
 
 	// 4. transform to start point
 	TranslateRecurs(root, startPoint);
@@ -73,10 +71,10 @@ MyFloat3 WholeTransformer::GetFarthestEndPointRecurs(Segment* currentSegment)
 	}
 }
 
-void WholeTransformer::AlignSegments(MyFloat3 desiredDirection, MyFloat3 currentDirection)
+void WholeTransformer::AlignSegments(const MyFloat3& desiredDirection, const MyFloat3& currentDirection)
 {
 	MyFloat3 rotationAxis = CrossProduct(desiredDirection, currentDirection).Normalised();
-	
+		
 	float cosAngle = DotProduct(desiredDirection.Normalised(), currentDirection.Normalised());
 	float angle    = acos(cosAngle);
 
@@ -90,27 +88,24 @@ void WholeTransformer::AlignSegments(MyFloat3 desiredDirection, MyFloat3 current
 		MyFloat3 newEndPoint = segment->GetEndPoint() * rotationMatrix;
 		segment->SetEndPoint(newEndPoint);
 	}
-
 }
 
-void WholeTransformer::ScaleSegments(float factor)
+void WholeTransformer::ScaleSegments(const float& desiredMagnitude, const float& currentMagnitude)
 {
+	float factor;
+	if (currentMagnitude != 0.f)
+	{
+		factor = desiredMagnitude / currentMagnitude;
+	}
+	else
+	{
+		return;
+	}
+
 	for (Segment* segment : *segments)
 	{
-		segment->SetStartPoint(
-			MyFloat3(
-				segment->GetStartPoint().x * factor,
-				segment->GetStartPoint().y * factor,
-				segment->GetStartPoint().z * factor
-			)
-		);
-		segment->SetEndPoint(
-			MyFloat3(
-				segment->GetEndPoint().x * factor,
-				segment->GetEndPoint().y * factor,
-				segment->GetEndPoint().z * factor
-			)
-		);
+		segment->SetStartPoint(segment->GetStartPoint() * factor);
+		segment->SetEndPoint(segment->GetEndPoint() * factor);
 		segment->SetDiameter(segment->GetDiameter() * factor);
 	}
 }

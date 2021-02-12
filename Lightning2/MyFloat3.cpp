@@ -5,14 +5,14 @@
 
 #include <cassert>
 
-float MyFloat3::Magnitude()
+float MyFloat3::Magnitude() const
 {
 	return sqrt(
 		(x * x) + (y * y) + (z * z)
 	);
 }
 
-MyFloat3 MyFloat3::Normalised()
+MyFloat3 MyFloat3::Normalised() const
 {
 	float magnitude = Magnitude();
 

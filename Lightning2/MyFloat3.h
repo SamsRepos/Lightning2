@@ -18,8 +18,8 @@ struct MyFloat3
 		z = _z;
 	}
 
-	float Magnitude();
-	MyFloat3 Normalised();
+	float Magnitude() const;
+	MyFloat3 Normalised() const;
 };
 
 

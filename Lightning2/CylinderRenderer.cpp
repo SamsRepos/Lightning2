@@ -12,8 +12,8 @@ CylinderRenderer::CylinderRenderer(D3D* renderer, HWND hwnd, int _screenWidth, i
 		renderer->getDevice(),
 		renderer->getDeviceContext(),
 		.5f,
-		.5f //diameter of 1, which matches defaylt height
-		//leave resolution as default for now
+		.5f, //diameter of 1, which matches defaylt height
+		5 // resolution
 	);
 
 	//Scene objects:

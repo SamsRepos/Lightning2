@@ -124,14 +124,14 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	);
 
 	
-	Segment* testSeg1 = new Segment(MyFloat3(0.f, 100.f, 0.f), MyFloat3(0.f, 80.f, 20.f));
-	Segment* testSeg2 = new Segment(MyFloat3(0.f, 80.f, 20.f), MyFloat3(10.f, 30.f, 15.f));
-	
-	testSeg2->SetParent(testSeg1);
-	testSeg1->AddChild(testSeg2);
+	Segment* testSeg1 = new Segment(MyFloat3(200.f, 55.f, 0.f), MyFloat3(15.f, 80.f, 30.f));
+	//Segment* testSeg2 = new Segment(MyFloat3(15.f, 80.f, 0.f), MyFloat3(10.f, 30.f, 10.f));
+		
+	//testSeg2->SetParent(testSeg1);
+	//testSeg1->AddChild(testSeg2);
 	
 	testSegments.push_back(testSeg1);
-	testSegments.push_back(testSeg2);	
+	//testSegments.push_back(testSeg2);	
 
 	testPi.SetSegments(&testSegments);
 	testPi.Run();
@@ -185,11 +185,13 @@ bool App1::render()
 	XMMATRIX viewMatrix = camera->getViewMatrix();
 	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
 
-#if 0
-	planeMesh->sendData(renderer->getDeviceContext());
-	lightShader->setShaderParameters(renderer->getDeviceContext(), planeMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"metal"), light);
-	lightShader->render(renderer->getDeviceContext(), planeMesh->getIndexCount());
-#endif
+	if (!(pipelineMgr->GetSettings()->IsBlurRenderingActive()))
+	{
+		planeMesh->sendData(renderer->getDeviceContext());
+		lightShader->setShaderParameters(renderer->getDeviceContext(), planeMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"metal"), light);
+		lightShader->render(renderer->getDeviceContext(), planeMesh->getIndexCount());
+	}
+
 
 	pipelineMgr->RenderOutput(
 		renderer,
@@ -241,7 +243,7 @@ void App1::Gui()
 	if (ImGui::Button("Run whole process"))
 	{
 		pipelineMgr->RunProcess();
-		//DebugWriteCsv(pipelineMgr->GetSegments());
+		DebugWriteCsv(pipelineMgr->GetSegments());
 	}
 	
 	static bool zappy = false;
@@ -257,6 +259,7 @@ void App1::Gui()
 		{
 			currentTime = 0.f;
 			pipelineMgr->RunProcess();
+			DebugWriteCsv(pipelineMgr->GetSegments());
 		}
 	}
 

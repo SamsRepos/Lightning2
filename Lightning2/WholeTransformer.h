@@ -16,8 +16,8 @@ public:
 private:
 	void TranslateRecurs(Segment* currentSegment, MyFloat3 currentStartPoint);
 	MyFloat3 GetFarthestEndPointRecurs(Segment* currentSegment);
-	void AlignSegments(MyFloat3 desiredDirection, MyFloat3 currentDirection);
-	void ScaleSegments(float factor);
+	void AlignSegments(const MyFloat3& desiredDirection, const MyFloat3& currentDirection);
+	void ScaleSegments(const float& desiredMagnitude, const float& currentMagnitude);
 
 	std::vector<Segment*>* segments;
 
