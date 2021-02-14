@@ -165,10 +165,17 @@ void TestState::TestStreamerLayers(const char* rawFilePath, const char* meansFil
 {
 	std::ofstream rawOutFile(rawFilePath);
 	assert(rawOutFile.is_open());
-	rawOutFile << "ITS PER TEST:, " << iterationsPerTest << '\n' << '\n';
-	
+
 	std::ofstream meansOutFile(meansFilePath);
 	assert(meansOutFile.is_open());
+
+#ifdef _DEBUG
+	rawOutFile << "DEBUG, \n";
+	meansOutFile << "DEBUG, \n";
+#endif
+
+	rawOutFile << "ITS PER TEST:, " << iterationsPerTest << '\n' << '\n';
+		
 	meansOutFile << "ITS PER TEST:, " << iterationsPerTest << '\n' << '\n';
 	meansOutFile << "NUM LAYERS, TIME (MS), NUM SEGMENTS, \n";
 
