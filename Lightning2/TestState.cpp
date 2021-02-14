@@ -49,7 +49,7 @@ void TestState::Init()
 	InitPipelineMgr();
 
 	iterationsPerTest = 100;
-	iterationsDone = 0;
+	iterationsDone    = 0;
 	testRunning = false;
 }
 
@@ -161,12 +161,16 @@ void TestState::TestEnd()
 	testRunning = false;
 }
 
-void TestState::TestStreamerLayers(std::string filePath)
+void TestState::TestStreamerLayers(const char* rawFilePath, const char* meansFilePath)
 {
-	std::ofstream outFile(filePath);
-	assert(outFile.is_open());
-
-	outFile << "ITS PER TEST:, " << iterationsPerTest << '\n' << '\n';
+	std::ofstream rawOutFile(rawFilePath);
+	assert(rawOutFile.is_open());
+	rawOutFile << "ITS PER TEST:, " << iterationsPerTest << '\n' << '\n';
+	
+	std::ofstream meansOutFile(meansFilePath);
+	assert(meansOutFile.is_open());
+	meansOutFile << "ITS PER TEST:, " << iterationsPerTest << '\n' << '\n';
+	meansOutFile << "NUM LAYERS, TIME (MS), NUM SEGMENTS, \n";
 
 	for (size_t numLayers = SG_MIN_MAX_NUM_LAYERS; numLayers < SG_MAX_MAX_NUM_LAYERS; numLayers++)
 	{
@@ -179,20 +183,15 @@ void TestState::TestStreamerLayers(std::string filePath)
 			numLayers
 		);
 
-		outFile << "LAYERS:, " << numLayers << '\n';
+		rawOutFile << "LAYERS:, " << numLayers << '\n';
 
-		outFile << "TIME (MS), SEGMENTS, \n";
+		rawOutFile << "TIME (MS), NUM SEGMENTS, \n";
+
+		float timeRunningTotal      = 0.f;
+		int numSegmentsRunningTotal = 0;
 		for (size_t i = 0; i < iterationsPerTest; i++)
 		{
-			timer.Start();
-			pipelineMgr->RunProcess();
-			timer.Stop();
-
-			outFile << timer.GetDurationMs() << ", ";
-			outFile << pipelineMgr->GetSegments()->size() << ", ";
-			outFile << '\n';
-
-			//updating info for gui:
+			//updating info for gui about where we're at, before testing:
 			{
 				UL lock(infoMutex);
 				currentTestInfo.clear();
@@ -208,8 +207,27 @@ void TestState::TestStreamerLayers(std::string filePath)
 				}
 			}
 
+			timer.Start();
+				pipelineMgr->RunProcess();
+			timer.Stop();
+
+			//Raw data output:
+			rawOutFile << timer.GetDurationMs() << ", ";
+			rawOutFile << pipelineMgr->GetSegments()->size() << ", ";
+			rawOutFile << '\n';
+
+			//For means output:
+			timeRunningTotal += timer.GetDurationMs();
+			numSegmentsRunningTotal += pipelineMgr->GetSegments()->size();
 		}
-		outFile << '\n';		
+		rawOutFile << '\n';
+
+		float meanTime        = timeRunningTotal / float(iterationsPerTest);
+		float meanNumSegments = numSegmentsRunningTotal / float(iterationsPerTest);
+		meansOutFile << numLayers << ", ";
+		meansOutFile << meanTime << ", ";
+		meansOutFile << meanNumSegments << ", ";
+		meansOutFile << '\n';
 	}
 }
 

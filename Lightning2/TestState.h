@@ -49,7 +49,7 @@ private:
 
 	std::vector<std::string> currentTestInfo;
 
-	void TestStreamerLayers(std::string filePath = "testResStreamerLevels.csv");
+	void TestStreamerLayers(const char* rawFilePath = "../csv/testResStreamerLayers.csv", const char* meansFilePath = "../csv/testMeansStreamerLayers.csv");
 	
 	void ThreadFunction();
 };

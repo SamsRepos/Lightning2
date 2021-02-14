@@ -4,7 +4,7 @@
 #include <cassert>
 #include <map>
 
-void DebugWriteCsv(std::vector<Segment*>* segments, std::string filePath)
+void DebugWriteCsv(std::vector<Segment*>* segments, const char* filePath)
 {
 	//1. Initialising a map, where each segment is named with a number
 	std::map<Segment*, int> intMap;
