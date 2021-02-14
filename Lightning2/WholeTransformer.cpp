@@ -55,20 +55,15 @@ void WholeTransformer::TranslateRecurs(Segment* currentSegment, MyFloat3 current
 
 MyFloat3 WholeTransformer::GetFarthestEndPointRecurs(Segment* currentSegment)
 {
-	if (currentSegment->GetChildren()->size() == 0)
+	for (Segment* child : *(currentSegment->GetChildren()))
 	{
-		return currentSegment->GetEndPoint();
-	}
-	else
-	{
-		for (Segment* child : *(currentSegment->GetChildren()))
+		if (child->GetStatus() == SegmentStatuses::PRIMARY)
 		{
-			if (child->GetStatus() == SegmentStatuses::PRIMARY)
-			{
-				return GetFarthestEndPointRecurs(child);
-			}
+			return GetFarthestEndPointRecurs(child);
 		}
 	}
+	
+	return currentSegment->GetEndPoint();	
 }
 
 void WholeTransformer::AlignSegments(const MyFloat3& desiredDirection, const MyFloat3& currentDirection)
