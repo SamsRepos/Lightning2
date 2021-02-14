@@ -5,14 +5,9 @@
 // Includes
 #include "BaseApplication.h"
 
-#include "Lightshader.h"
-#include "LineShader.h"
-
-#include "Light.h"
-
-#include "PlaneMesh.h"
-
-#include "PipelineMgr.h"
+#include "BaseState.h"
+#include "PlayState.h"
+#include "TestState.h"
 
 class App1 : public BaseApplication
 {
@@ -25,19 +20,11 @@ public:
 	
 private:
 	void Gui();
-	
-	//Shaders:
-	LightShader* lightShader;
-	
-	//Lights:
-	Light* light;
 
-	//Meshes:
-	PlaneMesh* planeMesh;
-	
-	XMMATRIX planeMatrix;
+	BaseState* currentState;
 
-	PipelineMgr* pipelineMgr;
+	PlayState* playState;
+	TestState* testState;
 };
 
 #endif
