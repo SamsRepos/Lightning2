@@ -54,7 +54,7 @@ float4 calculateGaussian(float2 inputTex, int extent, float range)
 	//this pixel first:
 	outColour += texture0.Sample(Sampler0, inputTex) * weight;
 
-	for (int i = 0; i < (range * .5f); i++)
+	for (int i = 0; i < range; i++)
 	{
 		weight *= extent; // extent is used as a scaledown
 		float2 sourceTex;

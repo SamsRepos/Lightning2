@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App1.cpp" />
+    <ClCompile Include="BaseState.cpp" />
     <ClCompile Include="BlurShader.cpp" />
     <ClCompile Include="BoxMullerGen.cpp" />
     <ClCompile Include="CylinderMesh.cpp" />
@@ -186,9 +187,11 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MyFloat3.cpp" />
     <ClCompile Include="MyFloat4.cpp" />
+    <ClCompile Include="MyGuiUtil.cpp" />
     <ClCompile Include="MyMatrix44.cpp" />
     <ClCompile Include="PipelineMgr.cpp" />
     <ClCompile Include="PipelineMgrSettings.cpp" />
+    <ClCompile Include="PlayState.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SegmentRemoval.cpp" />
     <ClCompile Include="PathIdentifier.cpp" />
@@ -196,11 +199,13 @@
     <ClCompile Include="Electrifier.cpp" />
     <ClCompile Include="Segment.cpp" />
     <ClCompile Include="StreamerGenerator.cpp" />
+    <ClCompile Include="TestState.cpp" />
     <ClCompile Include="TextureShader.cpp" />
     <ClCompile Include="WholeTransformer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App1.h" />
+    <ClInclude Include="BaseState.h" />
     <ClInclude Include="BlurShader.h" />
     <ClInclude Include="BoxMullerGen.h" />
     <ClInclude Include="ColourValues.h" />
@@ -219,11 +224,14 @@
     <ClInclude Include="MyClamp.h" />
     <ClInclude Include="MyFloat3.h" />
     <ClInclude Include="MyFloat4.h" />
+    <ClInclude Include="MyGuiUtil.h" />
     <ClInclude Include="MyMath.h" />
     <ClInclude Include="MyMatrix44.h" />
+    <ClInclude Include="MyTimer.h" />
     <ClInclude Include="MyVectorUtil.h" />
     <ClInclude Include="PipelineMgr.h" />
     <ClInclude Include="PipelineMgrSettings.h" />
+    <ClInclude Include="PlayState.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SegmentRemoval.h" />
     <ClInclude Include="PathIdentifier.h" />
@@ -231,21 +239,30 @@
     <ClInclude Include="Electrifier.h" />
     <ClInclude Include="Segment.h" />
     <ClInclude Include="StreamerGenerator.h" />
+    <ClInclude Include="TestState.h" />
     <ClInclude Include="TextureShader.h" />
     <ClInclude Include="WholeTransformer.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="blur_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="blur_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="cyl_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="cyl_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="light_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -269,9 +286,13 @@
     </FxCompile>
     <FxCompile Include="texture_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="texture_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

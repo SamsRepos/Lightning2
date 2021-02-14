@@ -64,6 +64,15 @@
     <Filter Include="Source Files\Maths">
       <UniqueIdentifier>{2e85e2ac-4307-427f-9398-5869b9d05713}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Performance">
+      <UniqueIdentifier>{177fa36d-10e1-45fb-a83b-c8e516279ce3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AppStates">
+      <UniqueIdentifier>{fabbf44b-d7fa-45ff-941d-2770e4ca30a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AppStates">
+      <UniqueIdentifier>{fc0e7ada-9591-48bb-8903-bdf0ab4f2665}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App1.cpp">
@@ -152,6 +161,18 @@
     </ClCompile>
     <ClCompile Include="MyFloat4.cpp">
       <Filter>Source Files\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseState.cpp">
+      <Filter>Source Files\AppStates</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayState.cpp">
+      <Filter>Source Files\AppStates</Filter>
+    </ClCompile>
+    <ClCompile Include="TestState.cpp">
+      <Filter>Source Files\AppStates</Filter>
+    </ClCompile>
+    <ClCompile Include="MyGuiUtil.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +274,21 @@
     </ClInclude>
     <ClInclude Include="MyFloat4.h">
       <Filter>Header Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="MyTimer.h">
+      <Filter>Header Files\Performance</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseState.h">
+      <Filter>Header Files\AppStates</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayState.h">
+      <Filter>Header Files\AppStates</Filter>
+    </ClInclude>
+    <ClInclude Include="TestState.h">
+      <Filter>Header Files\AppStates</Filter>
+    </ClInclude>
+    <ClInclude Include="MyGuiUtil.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
