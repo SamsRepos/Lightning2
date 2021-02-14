@@ -24,6 +24,7 @@ private:
 	TextureManager* textureMgr;
 
 	// Pipeline Manager:
+	PipelineMgrDefaultSettings defaultSettings;
 	PipelineMgr* pipelineMgr;
 
 	// Plane Mesh:

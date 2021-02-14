@@ -11,20 +11,13 @@ using std::chrono::milliseconds;
 
 typedef std::chrono::steady_clock the_clock;
 
-class MyTimer {
-	the_clock::time_point startTime;
-	float duration;
+class MyTimer {	
 public:
+	inline void Start() { startTime = the_clock::now(); };
+	inline void Stop() { durationMs = duration_cast<milliseconds>(the_clock::now() - startTime).count(); };
+	inline float GetDurationMs() { return durationMs; };
 
-	inline void start() {
-		startTime = the_clock::now();
-	}
-
-	inline void stop() {
-		duration = duration_cast<milliseconds>(the_clock::now() - startTime).count();
-	}
-
-	inline float getDuration() {
-		return duration;
-	}
+private:
+	the_clock::time_point startTime;
+	float durationMs;
 };

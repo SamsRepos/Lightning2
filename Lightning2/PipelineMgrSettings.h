@@ -21,6 +21,8 @@ class PipelineMgrSettings
 {
 public:
 	PipelineMgrSettings(const PipelineMgrDefaultSettings& defaultSettings);
+	
+	void Init(const PipelineMgrDefaultSettings& defaultSettings);
 
 	inline void SetGeometryGeneratorType(GeometryGeneratorTypes type) { currentGeometryGenerator = type; };
 	inline GeometryGeneratorTypes GetGeometryGeneratorType() { return currentGeometryGenerator; };

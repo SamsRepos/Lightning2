@@ -9,29 +9,29 @@ PlayState::PlayState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHe
 	:
 	BaseState::BaseState(_renderer, _hwnd, _screenWidth, _screenHeight),
 	pipelineMgr(NULL),
+	lightShader(NULL),
+	light(NULL),
 	planeMesh(NULL),
 	camera(_camera),
 	textureMgr(_textureMgr)
 {
-}
+	//PIPELINE MANAGER:
+	defaultSettings.geometryGenerator         = GeometryGeneratorTypes::STREAMER;
+	defaultSettings.diameterThinnerActive     = false;
+	defaultSettings.wholeTransformerActive    = false;
+	defaultSettings.diameterTransformerActive = false;
+	defaultSettings.electrifierActive         = false;
+	defaultSettings.blurRenderingActive       = true;
+	defaultSettings.lineRenderingActive       = true;
+	defaultSettings.cylinderRenderingActive   = true;
 
-PlayState::~PlayState()
-{
-	if (pipelineMgr)
-	{
-		delete pipelineMgr;
-		pipelineMgr = NULL;
-	}
-
-	if (planeMesh)
-	{
-		delete planeMesh;
-		planeMesh = NULL;
-	}
-}
-
-void PlayState::Init()
-{
+	pipelineMgr = new PipelineMgr(
+		defaultSettings,
+		renderer,
+		hwnd,
+		screenWidth,
+		screenHeight
+	);
 
 	//PLANE MESH:
 	// Shaders:
@@ -43,27 +43,37 @@ void PlayState::Init()
 	light->setDirection(-.5f, -1.0f, 0.0f);
 	// Mesh
 	planeMesh = new PlaneMesh(renderer->getDevice(), renderer->getDeviceContext());
-	//planeMatrix = DirectX::XMMatrixIdentity();
 	planeMatrix = DirectX::XMMatrixTranslation(-50.f, 0.f, -50.f);
+}
 
+PlayState::~PlayState()
+{
+	if (pipelineMgr)
+	{
+		delete pipelineMgr;
+		pipelineMgr = NULL;
+	}
 
-	//PIPELINE MANAGER:
-	PipelineMgrDefaultSettings defaultSettings;
-	defaultSettings.geometryGenerator = GeometryGeneratorTypes::STREAMER;
-	defaultSettings.diameterThinnerActive = false;
-	defaultSettings.wholeTransformerActive = false;
-	defaultSettings.diameterTransformerActive = false;
-	defaultSettings.electrifierActive = false;
-	defaultSettings.blurRenderingActive = true;
-	defaultSettings.lineRenderingActive = true;
-	defaultSettings.cylinderRenderingActive = true;
-	pipelineMgr = new PipelineMgr(
-		defaultSettings,
-		renderer,
-		hwnd,
-		screenWidth,
-		screenHeight
-	);
+	if (lightShader)
+	{
+		delete lightShader;
+		lightShader = NULL;
+	}
+	if (light)
+	{
+		delete light;
+		light = NULL;
+	}
+	if (planeMesh)
+	{
+		delete planeMesh;
+		planeMesh = NULL;
+	}
+}
+
+void PlayState::Init()
+{
+	pipelineMgr->GetSettings()->Init(defaultSettings);	
 
 	pipelineMgr->InitJitterForkGenerator(
 		DEFAULT_JFG_START_PT,
@@ -137,7 +147,6 @@ void PlayState::Render()
 		lightShader->render(renderer->getDeviceContext(), planeMesh->getIndexCount());
 	}
 
-
 	pipelineMgr->RenderOutput(
 		renderer,
 		camera,
@@ -149,6 +158,7 @@ void PlayState::Render()
 
 void PlayState::Gui()
 {
+	ImGui::Text("PLAY STATE");
 
 	//TODO consider this:
 #if 0
@@ -159,7 +169,6 @@ void PlayState::Gui()
 		lineMesh->GetLineCount()
 	);
 #endif
-
 
 	static bool debugCsv = true;
 	ImGui::Checkbox("Write debug CSV", &debugCsv);
