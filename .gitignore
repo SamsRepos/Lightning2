@@ -27,7 +27,7 @@ bld/
 [Ll]og/
 
 #Force inlcude
-#!*/lib/*
+!*/lib/*
 !*/lib/[Rr]elease
 !*/lib/[Dd]ebug
 
