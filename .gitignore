@@ -27,9 +27,10 @@ bld/
 [Ll]og/
 
 #Force inlcude
-!*/lib/*
-!*/lib/[Rr]elease
-!*/lib/[Dd]ebug
+#!*/lib/*
+#!*/lib/[Rr]elease
+#!*/lib/[Dd]ebug
+!lib/*
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -70,10 +71,10 @@ StyleCopReport.xml
 *_i.h
 *.ilk
 *.meta
-#*.obj
+*.obj
 *.iobj
-#*.pch
-#*.pdb
+*.pch
+*.pdb
 *.ipdb
 *.pgc
 *.pgd
