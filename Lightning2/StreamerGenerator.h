@@ -34,11 +34,14 @@ const float PRESSURE_TO_MIN_DIAMETER_STDDEV = .02f;
 //Could do:
 // - Add velocity for animating... v = 0.5 d^2 (Briels et al., 2008b)
 // - Energy output - could govern blur/glow extent
+//     Overall energy would be easy
+//     Energy of segment is proportional to length - could use in glow/brightness 
 // - Multiple gaussian generators for different air pressures...
-//   ... In N2 gas, L / d = 8 +- 4
-//                  pressure * d_min = 0.12 +- 0.03
-//                  (Briels et al., 2008a)
-//   ... Custom user gaussian gen, with arbitrary mean and std dev
+//    ... In N2 gas, L / d = 8 +- 4
+//                   pressure * d_min = 0.12 +- 0.03
+//                   (Briels et al., 2008a)
+//    ... Custom user gaussian gen, with arbitrary mean and std dev
+// - User controls on overall streamer shape / direction
 
 // ANGLES
 const float DELTA_ANGLE_MEAN   = 35.f;

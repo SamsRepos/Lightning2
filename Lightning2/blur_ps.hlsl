@@ -34,7 +34,7 @@ struct InputType
 //	  FUNCTIONS:	//
 //////////////////////
 
-float4 calculateGaussian(float2 inputTex, int extent, float range)
+float4 calculateGaussian(float2 inputTex, float extent, float range)
 {
 	
 	if (range <= 1.f)
@@ -56,7 +56,7 @@ float4 calculateGaussian(float2 inputTex, int extent, float range)
 
 	for (int i = 0; i < range; i++)
 	{
-		weight *= extent; // extent is used as a scaledown
+		weight = weight * extent; // extent is used as a scaledown
 		float2 sourceTex;
 
 		//above

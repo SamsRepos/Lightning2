@@ -119,7 +119,7 @@ const float E_MAX_CHAOS_STDDEV = .3f;
 
 // Blur parameters for cylinder renderer
 const float BLUR_MIN_EXTENT = 0.f;
-const float BLUR_MAX_EXTENT = 1.f;
+const float BLUR_MAX_EXTENT = 1.5f;
 
 const float BLUR_MIN_RANGE = 1.f;
 const float BLUR_MAX_RANGE = 20.f;
