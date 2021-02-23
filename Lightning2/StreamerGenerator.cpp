@@ -1,6 +1,7 @@
 #include "StreamerGenerator.h"
 
 #include "MyMath.h"
+#include "MyMatrix44.h"
 
 //#include <algorithm>
 
@@ -143,13 +144,21 @@ void StreamerGenerator::FixEndPoints(Segment* segA, Segment* segB)
 	// segA gets to keep its end-point, determined by the cone method
 	// segB has its direction changed, relative to segA, using inner the angle
 	
-	float innerAngle = innerAngleGen.GetSample();
+	float innerAngle      = innerAngleGen.GetSample();
 	MyFloat3 rotationAxis = CrossProduct(segA->GetDirection(), segB->GetDirection()).Normalised();
-	
+	MyMatrix44 rotationMatrix = RotationMatrix(rotationAxis, innerAngle);
+
+	// 1. Get new end point:
+	// Initially...
+	// ... it has the direction of segment a, with the magnitude of segment b itself
+	// ... it is translated to the origin, for rotation
+	MyFloat3 localEndPointB = (segA->GetDirection().Normalised() * segB->GetLength());
+
+	// 2. Rotate segment b:
+	localEndPointB = localEndPointB * rotationMatrix;
+		
 	segB->SetEndPoint(
-		segB->GetStartPoint() + (segA->GetDirection().Normalised() * segB->GetLength())
+		segB->GetStartPoint() + localEndPointB
 	);
-
-
 }
 

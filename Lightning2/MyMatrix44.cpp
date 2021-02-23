@@ -43,24 +43,22 @@ MyMatrix44 RotationMatrix(const MyFloat3& axisThroughOrigin, const float& angle)
 	float alphaGamma = alpha * gamma;
 	float betaGamma  = beta * gamma;
 		
-	float cosTheta = cos(angle);
-	float sinTheta = sin(angle);
+	float cosTheta         = cos(angle);
+	float sinTheta         = sin(angle);
+	float oneMinusCosTheta = 1.f - cosTheta;
 	
 	/*float rotationValues[] = {
-		(alphaSquared * (1 - cosTheta)) + cosTheta,        (alphaBeta * (1 - cosTheta)) + (gamma * sinTheta), (alphaGamma * (1 - cosTheta)) - (beta * sinTheta), 0.f,
-		(alphaBeta * (1 - cosTheta)) - (gamma * sinTheta), (betaSquared * (1 - cosTheta)) + cosTheta,         (betaGamma * (1 - cosTheta)) - (alpha * sinTheta), 0.f,
-		(alphaGamma * (1 - cosTheta)) + (beta * sinTheta), (betaGamma * (1 - cosTheta)) - (alpha * sinTheta), (gammaSquared * (1 - cosTheta)) + cosTheta,        0.f,
+		(alphaSquared * oneMinusCosTheta) + cosTheta,        (alphaBeta * oneMinusCosTheta) + (gamma * sinTheta), (alphaGamma * oneMinusCosTheta) - (beta * sinTheta), 0.f,
+		(alphaBeta * oneMinusCosTheta) - (gamma * sinTheta), (betaSquared * oneMinusCosTheta) + cosTheta,         (betaGamma * oneMinusCosTheta) - (alpha * sinTheta), 0.f,
+		(alphaGamma * oneMinusCosTheta) + (beta * sinTheta), (betaGamma * oneMinusCosTheta) - (alpha * sinTheta), (gammaSquared * oneMinusCosTheta) + cosTheta,        0.f,
 		0.f,                                               0.f,                                               0.f,                                               1.f
 	};*/
 
 	float rotationValues[] = {
-		(alphaSquared * (1 - cosTheta)) + cosTheta,       (alphaBeta * (1 - cosTheta)) - (gamma * sinTheta), 	(alphaGamma * (1 - cosTheta)) + (beta * sinTheta), 		0.f,                                               
-
-		(alphaBeta * (1 - cosTheta)) + (gamma * sinTheta), 	(betaSquared * (1 - cosTheta)) + cosTheta,         	(betaGamma * (1 - cosTheta)) - (alpha * sinTheta), 		0.f,                                               
-		
-		(alphaGamma * (1 - cosTheta)) - (beta * sinTheta), (betaGamma * (1 - cosTheta)) - (alpha * sinTheta), (gammaSquared * (1 - cosTheta)) + cosTheta, 0.f,
-
-		0.f, 0.f, 0.f, 1.f
+		(alphaSquared * oneMinusCosTheta) + cosTheta,        (alphaBeta * oneMinusCosTheta) - (gamma * sinTheta), (alphaGamma * oneMinusCosTheta) + (beta * sinTheta), 		0.f,
+		(alphaBeta * oneMinusCosTheta) + (gamma * sinTheta), (betaSquared * oneMinusCosTheta) + cosTheta,         (betaGamma * oneMinusCosTheta) - (alpha * sinTheta), 		0.f,		
+		(alphaGamma * oneMinusCosTheta) - (beta * sinTheta), (betaGamma * oneMinusCosTheta) - (alpha * sinTheta), (gammaSquared * oneMinusCosTheta) + cosTheta,             0.f,
+		0.f,                                                 0.f,                                               0.f,                                                        1.f
 	};
 
 	return MyMatrix44(rotationValues);
