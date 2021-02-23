@@ -48,7 +48,7 @@ void TestState::Init()
 {
 	InitPipelineMgr();
 
-	iterationsPerTest = 100;
+	iterationsPerTest = 10;
 	iterationsDone    = 0;
 	testRunning = false;
 }
@@ -295,10 +295,34 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 	std::ofstream meansOutFile(meansFilePath);
 	InitOfsream(&meansOutFile);
 
-	meansOutFile << " , , GEN: JITTER + FORK, , , GEN: STREAMER, \n";
-	meansOutFile << " , MAX SEG LEN, TIME (MS), NUM SEGMENTS, , TIME (MS), NUM SEGMENTS, \n";
+	// Gen type row:
+	meansOutFile << " , , ";
+	meansOutFile << "GEN: JITTER + FORK, , , ";
+	meansOutFile << "GEN: STREAMER, , , ";
+	meansOutFile << "GEN: STREAMER, , , ";
+	meansOutFile << '\n';
+
+	// Branch culling row:
+	meansOutFile << " , , ";
+	meansOutFile << "BRANCH CULLING: OFF, , , ";
+	meansOutFile << "BRANCH CULLING: OFF, , , ";
+	meansOutFile << "BRANCH CULLING: 3, , , ";
+	meansOutFile << "\n";
+
+	// Output row:
+	meansOutFile << "MAX SEG LEN, , ";
+	meansOutFile << "TIME(MS), NUM SEGMENTS, , ";
+	meansOutFile << "TIME(MS), NUM SEGMENTS, , ";
+	meansOutFile << "TIME(MS), NUM SEGMENTS, , ";
+	meansOutFile << '\n';
 	
 	pipelineMgr->SetElectifierActive(true);
+
+	pipelineMgr->InitDiameterTransformer(
+		DEFAULT_DT_INITIAL_DIAMETER,
+		DEFAULT_DT_DIAMETER_SCALEDOWN,
+		3
+	);
 
 	int numSamples = 20;
 	float delta = (E_MAX_MAX_SEG_LENGTH - E_MIN_MAX_SEG_LENGTH) / float(numSamples);	
@@ -317,13 +341,30 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 		);
 
 		rawOutFile << "MAX SEG LEN: " << maxSegLength << '\n';
-		rawOutFile << "GEN: JITTER + FORK, , , GEN: STREAMER, \n";
-		rawOutFile << "TIME (MS), NUM SEGMENTS, , TIME (MS), NUM SEGMENTS, \n";
+		rawOutFile << "GEN: JITTER + FORK, , , ";
+		rawOutFile << "GEN: STREAMER, , , ";
+		rawOutFile << "GEN: STREAMER, , , ";
+		rawOutFile << '\n';
 
-		float jitterForkTimeRunningTotal   = 0.f;
-		int jitterForkSegmentsRunningTotal = 0;
-		float streamerTimeRunningTotal     = 0.f;
-		int streamerSegmentsRunningTotal   = 0;
+		// Branch culling row:
+		rawOutFile << "BRANCH CULLING: OFF, , , ";
+		rawOutFile << "BRANCH CULLING: OFF, , , ";
+		rawOutFile << "BRANCH CULLING: 3, , , ";
+		rawOutFile << "\n";
+
+		// Output row:
+		rawOutFile << "TIME(MS), NUM SEGMENTS, , ";
+		rawOutFile << "TIME(MS), NUM SEGMENTS, , ";
+		rawOutFile << "TIME(MS), NUM SEGMENTS, , ";
+		rawOutFile << '\n';
+
+		float jitterForkTimeRunningTotal       = 0.f;
+		int jitterForkSegmentsRunningTotal     = 0;
+		float streamerNoCullTimeRunningTotal   = 0.f;
+		int streamerNoCullSegmentsRunningTotal = 0;
+		float streamerCullTimeRunningTotal     = 0.f;
+		int streamerCullSegmentsRunningTotal   = 0;
+
 		for (size_t i = 0; i < iterationsPerTest; i++)
 		{
 
@@ -343,6 +384,8 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 				}
 			}
 			
+
+			pipelineMgr->SetDiameterTransformerActive(false);
 
 			// JITTER-FORK:
 			pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::JITTER_FORK);
@@ -365,20 +408,36 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 			//Raw data output:
 			rawOutFile << timer.GetDurationMs() << ", ";
 			rawOutFile << pipelineMgr->GetSegments()->size() << ", ";
+			rawOutFile << ", ";
+			//For means output:
+			streamerNoCullTimeRunningTotal     += timer.GetDurationMs();
+			streamerNoCullSegmentsRunningTotal += pipelineMgr->GetSegments()->size();
+			
+			pipelineMgr->SetDiameterTransformerActive(true);
+
+			timer.Start();
+				pipelineMgr->RunProcess();
+			timer.Stop();
+			//Raw data output:
+			rawOutFile << timer.GetDurationMs() << ", ";
+			rawOutFile << pipelineMgr->GetSegments()->size() << ", ";
 			rawOutFile << '\n';
 			//For means output:
-			streamerTimeRunningTotal     += timer.GetDurationMs();
-			streamerSegmentsRunningTotal += pipelineMgr->GetSegments()->size();
+			streamerCullTimeRunningTotal       += timer.GetDurationMs();
+			streamerCullSegmentsRunningTotal   += pipelineMgr->GetSegments()->size();
 		}
 		rawOutFile << '\n';
 		
-		meansOutFile << ", ";
 		meansOutFile << maxSegLength << ", ";
+		meansOutFile << " , ";
 		meansOutFile << jitterForkTimeRunningTotal / float(iterationsPerTest) << ", ";
 		meansOutFile << jitterForkSegmentsRunningTotal / float(iterationsPerTest) << ", ";
-		meansOutFile << ", " << ", ";
-		meansOutFile << streamerTimeRunningTotal / float(iterationsPerTest) << ", ";
-		meansOutFile << streamerSegmentsRunningTotal / float(iterationsPerTest) << ", ";
+		meansOutFile << " , ";
+		meansOutFile << streamerNoCullTimeRunningTotal / float(iterationsPerTest) << ", ";
+		meansOutFile << streamerNoCullSegmentsRunningTotal / float(iterationsPerTest) << ", ";
+		meansOutFile << " , ";
+		meansOutFile << streamerCullTimeRunningTotal / float(iterationsPerTest) << ", ";
+		meansOutFile << streamerCullSegmentsRunningTotal / float(iterationsPerTest) << ", ";
 		meansOutFile << '\n';
 	}
 }
