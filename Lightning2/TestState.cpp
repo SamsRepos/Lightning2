@@ -90,6 +90,12 @@ void TestState::Gui()
 			currentTest = TestTypes::STREAMER_LAYERS;
 			testCv.notify_all();
 		}
+		if (ImGui::Button("Run Electrifier Test"))
+		{
+			currentTest = TestTypes::ELECTRIFIER_BY_GEN_TYPE;
+			testCv.notify_all();
+		}
+
 	}	
 }
 
@@ -166,22 +172,54 @@ void TestState::TestEnd()
 	testRunning = false;
 }
 
+void TestState::ThreadFunction()
+{
+	do {
+		//WAITING FOR ACTIVATION:
+		{
+			UL lock(infoMutex);
+			while (!testRunning)
+			{
+				testCv.wait(lock);
+				TestBegin();
+			}
+		}
+
+		//RUNNING TESTS:
+		switch (currentTest)
+		{
+		case(TestTypes::STREAMER_LAYERS):
+			TestStreamerLayers();
+			break;
+		case(TestTypes::ELECTRIFIER_BY_GEN_TYPE):
+			TestElectrifierByGenType();
+			break;
+		}
+
+		TestEnd();
+
+	} while(true);
+}
+
+void TestState::InitOfsream(std::ofstream* stream)
+{
+	assert(stream->is_open());
+
+#ifdef _DEBUG
+	(*stream) << "DEBUG, \n";
+#endif
+
+	(*stream) << "ITS PER TEST: " << iterationsPerTest << '\n' << '\n';
+}
+
 void TestState::TestStreamerLayers(const char* rawFilePath, const char* meansFilePath)
 {
 	std::ofstream rawOutFile(rawFilePath);
-	assert(rawOutFile.is_open());
+	InitOfsream(&rawOutFile);
 
 	std::ofstream meansOutFile(meansFilePath);
-	assert(meansOutFile.is_open());
-
-#ifdef _DEBUG
-	rawOutFile << "DEBUG, \n";
-	meansOutFile << "DEBUG, \n";
-#endif
-
-	rawOutFile << "ITS PER TEST:, " << iterationsPerTest << '\n' << '\n';
-		
-	meansOutFile << "ITS PER TEST:, " << iterationsPerTest << '\n' << '\n';
+	InitOfsream(&meansOutFile);	
+	
 	meansOutFile << "NUM LAYERS, TIME (MS), NUM SEGMENTS, \n";
 
 	for (size_t numLayers = SG_MIN_MAX_NUM_LAYERS; numLayers < SG_MAX_MAX_NUM_LAYERS; numLayers++)
@@ -214,7 +252,7 @@ void TestState::TestStreamerLayers(const char* rawFilePath, const char* meansFil
 				}
 				{
 					SS ss;
-					ss << "ITERATIONS: " << i + 1 << " of " << iterationsPerTest;
+					ss << "ITERATION: " << i + 1 << " of " << iterationsPerTest;
 					currentTestInfo.push_back(ss.str());
 				}
 
@@ -249,30 +287,98 @@ void TestState::TestStreamerLayers(const char* rawFilePath, const char* meansFil
 	}
 }
 
-void TestState::ThreadFunction()
+void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* meansFilePath)
 {
+	std::ofstream rawOutFile(rawFilePath);
+	InitOfsream(&rawOutFile);
+
+	std::ofstream meansOutFile(meansFilePath);
+	InitOfsream(&meansOutFile);
+
+	meansOutFile << " , , GEN: JITTER + FORK, , , GEN: STREAMER, \n";
+	meansOutFile << " , MAX SEG LEN, TIME (MS), NUM SEGMENTS, , TIME (MS), NUM SEGMENTS, \n";
 	
-	do {
-		//WAITING FOR ACTIVATION:
+	pipelineMgr->SetElectifierActive(true);
+
+	int numSamples = 20;
+	float delta = (E_MAX_MAX_SEG_LENGTH - E_MIN_MAX_SEG_LENGTH) / float(numSamples);	
+
+	int currentSample = 0;
+	for (
+		float maxSegLength = E_MAX_MAX_SEG_LENGTH;
+		maxSegLength >= E_MIN_MAX_SEG_LENGTH &&    currentSample < numSamples;
+		maxSegLength -= delta,                     currentSample++ 
+	)
+	{
+		pipelineMgr->InitElectrifier(
+			maxSegLength,
+			DEFAULT_E_CHAOS_MEAN,
+			DEFAULT_E_CHAOS_STDDEV
+		);
+
+		rawOutFile << "MAX SEG LEN: " << maxSegLength << '\n';
+		rawOutFile << "GEN: JITTER + FORK, , , GEN: STREAMER, \n";
+		rawOutFile << "TIME (MS), NUM SEGMENTS, , TIME (MS), NUM SEGMENTS, \n";
+
+		float jitterForkTimeRunningTotal   = 0.f;
+		int jitterForkSegmentsRunningTotal = 0;
+		float streamerTimeRunningTotal     = 0.f;
+		int streamerSegmentsRunningTotal   = 0;
+		for (size_t i = 0; i < iterationsPerTest; i++)
 		{
-			UL lock(infoMutex);
-			while (!testRunning)
+
+			//updating info for the gui:
 			{
-				testCv.wait(lock);
-				TestBegin();
+				UL lock(infoMutex);
+				currentTestInfo.clear();
+				{
+					SS ss;
+					ss << "MAX SEG LEN: " << maxSegLength << " (" << (currentSample + 1) << " of " << numSamples << ")";
+					currentTestInfo.push_back(ss.str());
+				}
+				{
+					SS ss;
+					ss << "ITERATION: " << (i + 1) << " of " << iterationsPerTest;
+					currentTestInfo.push_back(ss.str());
+				}
 			}
+			
+
+			// JITTER-FORK:
+			pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::JITTER_FORK);
+			timer.Start();
+				pipelineMgr->RunProcess();
+			timer.Stop();
+			//Raw data output:
+			rawOutFile << timer.GetDurationMs() << ", ";
+			rawOutFile << pipelineMgr->GetSegments()->size() << ", ";
+			rawOutFile << ", ";
+			//For means output:
+			jitterForkTimeRunningTotal     += timer.GetDurationMs();
+			jitterForkSegmentsRunningTotal += pipelineMgr->GetSegments()->size();
+
+			// STREAMER:
+			pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::STREAMER);
+			timer.Start();
+				pipelineMgr->RunProcess();
+			timer.Stop();
+			//Raw data output:
+			rawOutFile << timer.GetDurationMs() << ", ";
+			rawOutFile << pipelineMgr->GetSegments()->size() << ", ";
+			rawOutFile << '\n';
+			//For means output:
+			streamerTimeRunningTotal     += timer.GetDurationMs();
+			streamerSegmentsRunningTotal += pipelineMgr->GetSegments()->size();
 		}
+		rawOutFile << '\n';
 		
-		//RUNNING TESTS:
-		switch (currentTest)
-		{
-		case(TestTypes::STREAMER_LAYERS):
-			TestStreamerLayers();
-			break;
-		}
-
-		TestEnd();
-
-	} while (true);
-
+		meansOutFile << ", ";
+		meansOutFile << maxSegLength << ", ";
+		meansOutFile << jitterForkTimeRunningTotal / float(iterationsPerTest) << ", ";
+		meansOutFile << jitterForkSegmentsRunningTotal / float(iterationsPerTest) << ", ";
+		meansOutFile << ", " << ", ";
+		meansOutFile << streamerTimeRunningTotal / float(iterationsPerTest) << ", ";
+		meansOutFile << streamerSegmentsRunningTotal / float(iterationsPerTest) << ", ";
+		meansOutFile << '\n';
+	}
 }

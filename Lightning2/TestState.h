@@ -13,7 +13,8 @@ typedef std::stringstream SS;
 
 enum TestTypes
 {
-	STREAMER_LAYERS
+	STREAMER_LAYERS,
+	ELECTRIFIER_BY_GEN_TYPE
 };
 
 class TestState : public BaseState
@@ -28,6 +29,18 @@ public:
 	void Gui();
 
 private:
+	void InitPipelineMgr();
+
+	void TestBegin();
+	void TestEnd();
+
+	void ThreadFunction();
+
+	void InitOfsream(std::ofstream* stream);
+
+	void TestStreamerLayers(const char* rawFilePath = "../csv/testResStreamerLayers.csv", const char* meansFilePath = "../csv/testMeansStreamerLayers.csv");
+	void TestElectrifierByGenType(const char* rawFilePath = "../csv/testResElecByGenType.csv", const char* meansFilePath = "../csv/testMeansElecByGenType.csv");
+	
 	PipelineMgrDefaultSettings defaultSettings;
 	PipelineMgr* pipelineMgr;
 
@@ -42,15 +55,6 @@ private:
 	std::mutex infoMutex;
 	std::condition_variable testCv;
 
-	void InitPipelineMgr();
-
-	void TestBegin();
-	void TestEnd();
-
-	std::vector<std::string> currentTestInfo;
-
-	void TestStreamerLayers(const char* rawFilePath = "../csv/testResStreamerLayers.csv", const char* meansFilePath = "../csv/testMeansStreamerLayers.csv");
-	
-	void ThreadFunction();
+	std::vector<std::string> currentTestInfo;	
 };
 
