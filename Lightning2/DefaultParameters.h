@@ -24,9 +24,9 @@ const float    DEFAULT_JFG_FORK_PROB_SCALEDOWN = .6f;
 // Streamer Generator
 const MyFloat3 DEFAULT_SG_START_PT          = MyFloat3(0.f, 100.f, 0.f);
 const MyFloat3 DEFAULT_SG_INITIAL_DIRECTION = MyFloat3(0.f, -1.f, 0.f);
-const float    DEFAULT_SG_VOLTAGE   = 42.f;
+const float    DEFAULT_SG_VOLTAGE           = 42.f;
 const float    DEFAULT_SG_INITIAL_PRESSURE  = 65.f;
-const float    DEFAULT_SG_PRESSURE_GRADIENT = .5f;
+const float    DEFAULT_SG_PRESSURE_GRADIENT = -.5f;
 const size_t   DEFAULT_SG_MAX_NUM_LAYERS    = 10;
 
 // Diameter Thinner:

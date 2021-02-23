@@ -82,13 +82,14 @@ void StreamerGenerator::CreateChildrenRecurs(Segment* parent, size_t parentLayer
 		Segment* childA = CreateSegment(parent);
 		Segment* childB = CreateSegment(parent);
 		
-		FixEndPoints(childA, childB);
+		//FixEndPoints(childA, childB);
 				
 		CreateChildrenRecurs(childA, thisLayerNum);
 		CreateChildrenRecurs(childB, thisLayerNum);
 	}
 }
 
+// Creates a new segment, which is parallel to its parent:
 Segment* StreamerGenerator::CreateSegment(Segment* parent)
 {
 	MyFloat3 thisStartPoint = parent->GetEndPoint();
@@ -107,6 +108,11 @@ Segment* StreamerGenerator::CreateSegment(Segment* parent)
 		minDiameter
 	);
 
+	// Angle fix:
+	float angle = deltaAngleGen.GetSample();
+	MoveEndPointToConeEdge(newSegment, angle);
+	
+	// Parent/childing:
 	newSegment->SetParent(parent);
 	parent->AddChild(newSegment);
 
@@ -115,35 +121,35 @@ Segment* StreamerGenerator::CreateSegment(Segment* parent)
 	return newSegment;
 }
 
-void StreamerGenerator::FixEndPoints(Segment* segA, Segment* segB)
+// Moves end point using cone method
+void StreamerGenerator::MoveEndPointToConeEdge(Segment* seg, float angle)
 {
-	float angleA = deltaAngleGen.GetSample();
-	float angleB = deltaAngleGen.GetSample();
-
-	FixEndPoint(segA, angleA);
-	FixEndPoint(segB, angleB);
-
-}
-
-void StreamerGenerator::FixEndPoint(Segment* seg, float angle)
-{
+	//Preserving current length
 	float length = seg->GetLength();
 
-	//1. bring back end point to Lcos(angle) from the start point
+	//1. Bring back end point to Lcos(angle) from the start point
 	seg->SetEndPoint(
-		seg->GetStartPoint() +
-		(
-			seg->GetDirection().Normalised() *  // direction normalised
-			length * cos(angle)                 // magnitude
-		)
+		seg->GetStartPoint() + (seg->GetDirection().Normalised() * length * cos(angle))
 	);
 
-	//2. move out end point by Lsin(angle) in a random direction, perpendicular to direction
+	//2. Move out end point by Lsin(angle) in a random direction, perpendicular to current direction
 	seg->SetEndPoint(
-		seg->GetEndPoint() +
-		(
-			RandomPerpendicularUnitVector(seg->GetDirection()) * // direction normalised
-			length * sin(angle)                                  // magnitude
-		)
+		seg->GetEndPoint() + (RandomPerpendicularUnitVector(seg->GetDirection()) * length * sin(angle))
 	);
 }
+
+void StreamerGenerator::FixEndPoints(Segment* segA, Segment* segB)
+{
+	// segA gets to keep its end-point, determined by the cone method
+	// segB has its direction changed, relative to segA, using inner the angle
+	
+	float innerAngle = innerAngleGen.GetSample();
+	MyFloat3 rotationAxis = CrossProduct(segA->GetDirection(), segB->GetDirection()).Normalised();
+	
+	segB->SetEndPoint(
+		segB->GetStartPoint() + (segA->GetDirection().Normalised() * segB->GetLength())
+	);
+
+
+}
+

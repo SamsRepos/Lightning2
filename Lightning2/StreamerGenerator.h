@@ -31,7 +31,14 @@ const float DIAMETER_TO_LENGTH_STDDEV = 4.f;
 const float PRESSURE_TO_MIN_DIAMETER_MEAN   = .2f;
 const float PRESSURE_TO_MIN_DIAMETER_STDDEV = .02f;
 
-//Could do:
+// ANGLES
+const float DELTA_ANGLE_MEAN   = 35.f;
+const float DELTA_ANGLE_STDDEV = 5.f;
+
+const float INNER_ANGLE_MEAN   = 43.f;
+const float INNER_ANGLE_STDDEV = 12.3f;
+
+// COULD DO:
 // - Add velocity for animating... v = 0.5 d^2 (Briels et al., 2008b)
 // - Energy output - could govern blur/glow extent
 //     Overall energy would be easy
@@ -42,13 +49,6 @@ const float PRESSURE_TO_MIN_DIAMETER_STDDEV = .02f;
 //                   (Briels et al., 2008a)
 //    ... Custom user gaussian gen, with arbitrary mean and std dev
 // - User controls on overall streamer shape / direction
-
-// ANGLES
-const float DELTA_ANGLE_MEAN   = 35.f;
-const float DELTA_ANGLE_STDDEV = 5.f;
-
-const float INNER_ANGLE_MEAN   = 43.f;
-const float INNER_ANGLE_STDDEV = 12.3f;
 
 class StreamerGenerator
 {
@@ -69,8 +69,9 @@ private:
 	void InitAlgorithm();
 
 	void CreateChildrenRecurs(Segment* parent, size_t parentLayer);
+
+	// Creates a new segment, which is parallel to its parent
 	Segment* CreateSegment(Segment* parent);
-	void FixEndPoints(Segment* segA, Segment* segB);
 
 	// DIAMETER => LENGTH
 	//  L / d = 11 +- 4 (Briels et al., 2008a)
@@ -105,8 +106,12 @@ private:
 	{
 		return SQRT_A_HALF * parent->GetDiameter() * (thisMinDiameter / parent->GetMinDiameter()); 
 	};
-	
-	void FixEndPoint(Segment* seg, float angle);
+
+	// Moves end point using cone method
+	void MoveEndPointToConeEdge(Segment* seg, float angle);
+
+	// Gives new segments appropriate directions:
+	void FixEndPoints(Segment* segA, Segment* segB);
 
 	MyFloat3 startPoint;
 	MyFloat3 initDirection;
