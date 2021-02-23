@@ -170,7 +170,7 @@ void PlayState::Gui()
 	);
 #endif
 
-	static bool debugCsv = true;
+	static bool debugCsv = false;
 	ImGui::Checkbox("Write debug CSV", &debugCsv);
 
 	if (ImGui::Button("Run whole process"))
@@ -182,7 +182,7 @@ void PlayState::Gui()
 		}
 	}
 
-	static bool zappy = false;
+	static bool zappy = true;
 	ImGui::Checkbox("ZAPPY", &zappy);
 	if (zappy)
 	{

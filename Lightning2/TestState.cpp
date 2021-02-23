@@ -75,6 +75,11 @@ void TestState::Gui()
 		{
 			ImGui::Text(txt.c_str());
 		}
+
+		if (ImGui::Button("STOP TESTS"))
+		{
+			testRunning = false;
+		}
 	}
 	else
 	{
@@ -212,6 +217,12 @@ void TestState::TestStreamerLayers(const char* rawFilePath, const char* meansFil
 					ss << "ITERATIONS: " << i + 1 << " of " << iterationsPerTest;
 					currentTestInfo.push_back(ss.str());
 				}
+
+				// tests may have been cancelled in gui:
+				if (!testRunning)
+				{
+					return;
+				}
 			}
 
 			timer.Start();
@@ -242,7 +253,6 @@ void TestState::ThreadFunction()
 {
 	
 	do {
-
 		//WAITING FOR ACTIVATION:
 		{
 			UL lock(infoMutex);
