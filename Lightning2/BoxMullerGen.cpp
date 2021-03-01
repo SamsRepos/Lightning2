@@ -1,10 +1,9 @@
 #include "BoxMullerGen.h"
 
-
 BoxMullerGen::BoxMullerGen(float mean, float stdDev)
 	:
 	mean(mean),
-	stdDev(stdDev)	
+	stdDev(stdDev)
 {
 }
 

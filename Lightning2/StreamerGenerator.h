@@ -24,13 +24,19 @@ const float INIT_VOLTAGE_COEFF = DIAMETER_RISE / VOLTAGE_RUN;
 
 // DIAMETER => LENGTH
 //  In ambient air, L / d = 11 +- 4 (Briels et al., 2008a)
-const float DIAMETER_TO_LENGTH_MEAN   = 11.f;
-const float DIAMETER_TO_LENGTH_STDDEV = 4.f;
+const float AIR_DIAMETER_TO_LENGTH_MEAN   = 11.f;
+const float AIR_DIAMETER_TO_LENGTH_STDDEV = 4.f;
+// In N2 Gas, L / d = 8 +- 4
+const float N2_DIAMETER_TO_LENGTH_MEAN   = 8.f;
+const float N2_DIAMETER_TO_LENGTH_STDDEV = 4.f;
 
 // PRESSURE => MINIMUM DIAMETER
 //  In ambient air, pressure * d_min = 0.20 +- 0.02 (Briels et al., 2008a)
-const float PRESSURE_TO_MIN_DIAMETER_MEAN   = .2f;
-const float PRESSURE_TO_MIN_DIAMETER_STDDEV = .02f;
+const float AIR_PRESSURE_TO_MIN_DIAMETER_MEAN   = .2f;
+const float AIR_PRESSURE_TO_MIN_DIAMETER_STDDEV = .02f;
+// In N2 Gas, pressure * d_min = 0.12 += 0.03
+const float N2_PRESSURE_TO_MIN_DIAMETER_MEAN   = .12f;
+const float N2_PRESSURE_TO_MIN_DIAMETER_STDDEV = .03f;
 
 // ANGLES
 const float DELTA_ANGLE_MEAN   = 35.f;
@@ -44,11 +50,7 @@ const float INNER_ANGLE_STDDEV = 12.3f;
 // - Energy output - could govern blur/glow extent
 //     Overall energy would be easy
 //     Energy of segment is proportional to length - could use in glow/brightness 
-// - Multiple gaussian generators for different air pressures...
-//    ... In N2 gas, L / d = 8 +- 4
-//                   pressure * d_min = 0.12 +- 0.03
-//                   (Briels et al., 2008a)
-//    ... Custom user gaussian gen, with arbitrary mean and std dev
+// - Custom user gaussian gens, with arbitrary mean and std dev
 // - User controls on overall streamer shape / direction
 
 class StreamerGenerator
@@ -62,18 +64,17 @@ public:
 		float _initPressure,
 		float _pressureGradient,
 		size_t _maxNumLayers,
-		AngleFixMethods _angleFixMethod
+		AngleFixMethods _angleFixMethod,
+		GasCompositions _gasComposition
 	);
 	void Run();
 	inline std::vector<Segment*>* GetOutput() { return output; };
 
 private:
+	void SetGasComposition(GasCompositions gasCompoisition);
 	void InitAlgorithm();
-
 	void CreateChildrenRecurs(Segment* parent, size_t parentLayer);
-
-	// Creates a new segment, which is parallel to its parent
-	Segment* CreateSegment(Segment* parent);
+	Segment* CreateSegment(Segment* parent); // Creates a new segment, which is parallel to its parent
 
 	// DIAMETER => LENGTH
 	//  L / d = 11 +- 4 (Briels et al., 2008a)
@@ -123,7 +124,7 @@ private:
 	size_t maxNumLayers;
 	size_t numLayers;
 	AngleFixMethods angleFixMethod;
-
+	
 	BoxMullerGen diameterToLengthCoeffGen;
 	BoxMullerGen pressureToMinDiameterCoeffGen;
 

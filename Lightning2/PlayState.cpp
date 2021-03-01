@@ -93,7 +93,8 @@ void PlayState::Init()
 		DEFAULT_SG_INITIAL_PRESSURE,
 		DEFAULT_SG_PRESSURE_GRADIENT,
 		DEFAULT_SG_MAX_NUM_LAYERS,
-		ANGLE_FIX_OPTIONS.at(DEFAULT_SG_ANGLE_FIX)
+		ANGLE_FIX_OPTIONS.at(DEFAULT_SG_ANGLE_FIX),
+		GAS_COMPOSITION_OPTIONS.at(DEFAULT_SG_GAS_COMPOSITION)
 	);
 
 	pipelineMgr->InitDiameterThinner(
@@ -389,8 +390,7 @@ void PlayState::Gui()
 		static float pressureGradient = DEFAULT_SG_PRESSURE_GRADIENT;
 		static int   maxNumLayers = DEFAULT_SG_MAX_NUM_LAYERS;
 		static std::string angleFixMethod = DEFAULT_SG_ANGLE_FIX;
-
-		
+		static std::string gasComposition = DEFAULT_SG_GAS_COMPOSITION;
 
 		if (ImGui::CollapsingHeader("Set Streamer Parameters"))
 		{
@@ -402,6 +402,7 @@ void PlayState::Gui()
 			changeNow = GuiSliderFloat(changeNow, "SG pressure gradient", &pressureGradient, SG_MIN_PRESSURE_GRADIENT, SG_MAX_PRESSURE_GRADIENT);
 			changeNow = GuiSliderInt(changeNow, "SG max num layers", &maxNumLayers, SG_MIN_MAX_NUM_LAYERS, SG_MAX_MAX_NUM_LAYERS);
 			changeNow = GuiListBox(changeNow, ANGLE_FIX_OPTIONS, "SG angle fix", &angleFixMethod);
+			changeNow = GuiListBox(changeNow, GAS_COMPOSITION_OPTIONS, "SG gas composition", &gasComposition);
 
 			if (changeNow)
 			{
@@ -412,7 +413,8 @@ void PlayState::Gui()
 					initialPressure,
 					pressureGradient,
 					maxNumLayers,
-					ANGLE_FIX_OPTIONS.at(angleFixMethod)
+					ANGLE_FIX_OPTIONS.at(angleFixMethod),
+					GAS_COMPOSITION_OPTIONS.at(gasComposition)
 				);
 			}
 		}

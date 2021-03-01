@@ -11,12 +11,6 @@
 
 StreamerGenerator::StreamerGenerator()
 {
-	diameterToLengthCoeffGen.SetMean(DIAMETER_TO_LENGTH_MEAN);
-	diameterToLengthCoeffGen.SetStdDev(DIAMETER_TO_LENGTH_STDDEV);
-
-	pressureToMinDiameterCoeffGen.SetMean(PRESSURE_TO_MIN_DIAMETER_MEAN);
-	pressureToMinDiameterCoeffGen.SetStdDev(PRESSURE_TO_MIN_DIAMETER_STDDEV);
-
 	deltaAngleGen.SetMean(DegToRad(DELTA_ANGLE_MEAN));
 	deltaAngleGen.SetStdDev(DegToRad(DELTA_ANGLE_STDDEV));
 
@@ -31,7 +25,8 @@ void StreamerGenerator::InitParameters(
 	float _initPressure,
 	float _pressureGradient,
 	size_t _maxNumLayers,
-	AngleFixMethods _angleFixMethod
+	AngleFixMethods _angleFixMethod,
+	GasCompositions _gasComposition
 )
 {
 	startPoint       = _startPoint;
@@ -41,6 +36,8 @@ void StreamerGenerator::InitParameters(
 	pressureGradient = _pressureGradient;
 	maxNumLayers     = _maxNumLayers;
 	angleFixMethod   = _angleFixMethod;
+
+	SetGasComposition(_gasComposition);
 }
 
 void StreamerGenerator::Run()
@@ -66,6 +63,27 @@ void StreamerGenerator::Run()
 ////
 // PRIVATE:
 ////
+
+void StreamerGenerator::SetGasComposition(GasCompositions gasComposition)
+{
+	switch (gasComposition)
+	{
+	case(GasCompositions::AIR):
+		diameterToLengthCoeffGen.SetMean(AIR_DIAMETER_TO_LENGTH_MEAN);
+		diameterToLengthCoeffGen.SetStdDev(AIR_DIAMETER_TO_LENGTH_STDDEV);
+
+		pressureToMinDiameterCoeffGen.SetMean(AIR_PRESSURE_TO_MIN_DIAMETER_MEAN);
+		pressureToMinDiameterCoeffGen.SetStdDev(AIR_PRESSURE_TO_MIN_DIAMETER_STDDEV);
+		break;
+	case(GasCompositions::N2):
+		diameterToLengthCoeffGen.SetMean(N2_DIAMETER_TO_LENGTH_MEAN);
+		diameterToLengthCoeffGen.SetStdDev(N2_DIAMETER_TO_LENGTH_STDDEV);
+
+		pressureToMinDiameterCoeffGen.SetMean(N2_PRESSURE_TO_MIN_DIAMETER_MEAN);
+		pressureToMinDiameterCoeffGen.SetStdDev(N2_PRESSURE_TO_MIN_DIAMETER_STDDEV);
+		break;
+	}
+}
 
 void StreamerGenerator::InitAlgorithm()
 {
@@ -190,4 +208,3 @@ void StreamerGenerator::FixEndPoints(Segment* segA, Segment* segB)
 		segB->GetStartPoint() + localEndPointB
 	);
 }
-

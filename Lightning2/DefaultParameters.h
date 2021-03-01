@@ -30,6 +30,7 @@ const float       DEFAULT_SG_INITIAL_PRESSURE  = 65.f;
 const float       DEFAULT_SG_PRESSURE_GRADIENT = -.5f;
 const size_t      DEFAULT_SG_MAX_NUM_LAYERS    = 10;
 const std::string DEFAULT_SG_ANGLE_FIX         = "none";
+const std::string DEFAULT_SG_GAS_COMPOSITION   = "air";
 
 // Diameter Thinner:
 const float DEFAULT_DTHIN_SCALEDOWN = .5f;

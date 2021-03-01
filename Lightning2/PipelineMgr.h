@@ -45,7 +45,8 @@ public:
 		float initialPressure,
 		float pressureGradient,
 		size_t maxNumLayers,
-		AngleFixMethods angleFixMethod
+		AngleFixMethods angleFixMethod,
+		GasCompositions gasComposition
 	);
 
 	void InitDiameterThinner(
