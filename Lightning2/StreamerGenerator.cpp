@@ -119,7 +119,8 @@ Segment* StreamerGenerator::CreateSegment(Segment* parent)
 	float minDiameter   = PressureToMinDiameter(localPressure);
 	float diameter      = CalculateDiameter(parent, minDiameter);
 
-	MyFloat3 direction     = parent->GetDirection().Normalised() * DiameterToLength(diameter);
+	float length = DiameterToLength(diameter);
+	MyFloat3 direction     = parent->GetDirection().Normalised() * length;
 	MyFloat3 thisEndPoint  = thisStartPoint + direction;
 
 	Segment* newSegment = new Segment(
@@ -128,6 +129,8 @@ Segment* StreamerGenerator::CreateSegment(Segment* parent)
 		diameter,
 		minDiameter
 	);
+
+	newSegment->SetEnergy(length * ENERGY_COEFF);
 
 	// Angle fix:
 	float angle = deltaAngleGen.GetSample();

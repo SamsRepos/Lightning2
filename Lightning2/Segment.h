@@ -53,6 +53,9 @@ public:
 	inline void SetStatus(SegmentStatuses _status) { status = _status; };
 	inline SegmentStatuses GetStatus() { return status; };
 
+	inline void SetEnergy(float _energy) { energy = _energy; };
+	inline float GetEnergy() { return energy; };
+
 	void SetToBeCulled();
 	inline bool IsToBeCulled() { return cullMe; };
 	
@@ -67,6 +70,8 @@ private:
 	float distanceFromRoot;
 	float farthestDistOnThisPath;
 	SegmentStatuses status;
+
+	float energy;
 
 	bool cullMe = false;
 };

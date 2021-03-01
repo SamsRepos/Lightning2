@@ -45,11 +45,11 @@ const float DELTA_ANGLE_STDDEV = 5.f;
 const float INNER_ANGLE_MEAN   = 43.f;
 const float INNER_ANGLE_STDDEV = 12.3f;
 
+//ENERGY:
+const float ENERGY_COEFF = 100000; // energy = 10^5 * L (Bailey et al., 2014)
+
 // COULD DO:
 // - Add velocity for animating... v = 0.5 d^2 (Briels et al., 2008b)
-// - Energy output - could govern blur/glow extent
-//     Overall energy would be easy
-//     Energy of segment is proportional to length - could use in glow/brightness 
 // - Custom user gaussian gens, with arbitrary mean and std dev
 // - User controls on overall streamer shape / direction
 
