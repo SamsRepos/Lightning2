@@ -18,6 +18,9 @@ bool GuiListBox(bool changeFlag, std::map<std::string, T> map, std::string heade
 {
 	bool changed = false;
 
+	std::string msg = "Current: " + *current;
+	ImGui::Text(msg.c_str());
+
 	ImGui::ListBoxHeader(header.c_str());
 	for (const auto& pair : map)
 	{

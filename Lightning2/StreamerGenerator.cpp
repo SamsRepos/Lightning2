@@ -178,8 +178,9 @@ void StreamerGenerator::FixEndPoints(Segment* segA, Segment* segB)
 			localEndPointB2;
 		break;
 	case (AngleFixMethods::FARTHEST_FROM_PARENT):
-		MyFloat3 localEndPointB =
-			((localEndPointB1 - segA->GetStartPoint()).Magnitude() > (localEndPointB2 - segA->GetStartPoint()).Magnitude()) ?
+		Segment* parent = segB->GetParent();
+		localEndPointB =
+			((localEndPointB1 - parent->GetStartPoint()).Magnitude() > (localEndPointB2 - parent->GetStartPoint()).Magnitude()) ?
 			localEndPointB1 :
 			localEndPointB2;
 		break;
