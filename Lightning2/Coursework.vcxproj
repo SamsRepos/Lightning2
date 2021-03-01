@@ -199,6 +199,7 @@
     <ClCompile Include="Electrifier.cpp" />
     <ClCompile Include="Segment.cpp" />
     <ClCompile Include="StreamerGenerator.cpp" />
+    <ClCompile Include="StreamerSettings.cpp" />
     <ClCompile Include="TestState.cpp" />
     <ClCompile Include="TextureShader.cpp" />
     <ClCompile Include="WholeTransformer.cpp" />
@@ -239,6 +240,7 @@
     <ClInclude Include="Electrifier.h" />
     <ClInclude Include="Segment.h" />
     <ClInclude Include="StreamerGenerator.h" />
+    <ClInclude Include="StreamerSettings.h" />
     <ClInclude Include="TestState.h" />
     <ClInclude Include="TextureShader.h" />
     <ClInclude Include="WholeTransformer.h" />

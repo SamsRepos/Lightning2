@@ -4,6 +4,7 @@
 
 #include "JitterForkGenerator.h"
 #include "StreamerGenerator.h"
+#include "StreamerSettings.h"
 
 #include "DiameterThinner.h"
 #include "PathIdentifier.h"
@@ -43,7 +44,8 @@ public:
 		float initialVoltage,
 		float initialPressure,
 		float pressureGradient,
-		size_t maxNumLayers
+		size_t maxNumLayers,
+		AngleFixMethods angleFixMethod
 	);
 
 	void InitDiameterThinner(

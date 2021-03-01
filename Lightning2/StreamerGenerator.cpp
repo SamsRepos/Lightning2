@@ -30,7 +30,8 @@ void StreamerGenerator::InitParameters(
 	float _voltage,
 	float _initPressure,
 	float _pressureGradient,
-	size_t _maxNumLayers
+	size_t _maxNumLayers,
+	AngleFixMethods _angleFixMethod
 )
 {
 	startPoint       = _startPoint;
@@ -39,6 +40,7 @@ void StreamerGenerator::InitParameters(
 	initPressure     = _initPressure;
 	pressureGradient = _pressureGradient;
 	maxNumLayers     = _maxNumLayers;
+	angleFixMethod   = _angleFixMethod;
 }
 
 void StreamerGenerator::Run()
@@ -141,21 +143,48 @@ void StreamerGenerator::MoveEndPointToConeEdge(Segment* seg, float angle)
 
 void StreamerGenerator::FixEndPoints(Segment* segA, Segment* segB)
 {
+	if (angleFixMethod == AngleFixMethods::NONE)
+	{
+		return;
+	}
+
 	// segA gets to keep its end-point, determined by the cone method
 	// segB has its direction changed, relative to segA, using inner the angle
 	
-	float innerAngle          = innerAngleGen.GetSample();
-	//MyFloat3 rotationAxis     = CrossProduct(segA->GetDirection(), segB->GetDirection()).Normalised();
-	MyFloat3 rotationAxis = CrossProduct(segB->GetDirection(), segA->GetDirection()).Normalised();
-	MyMatrix44 rotationMatrix = RotationMatrix(rotationAxis, innerAngle);
-
-	// 1. Get new local end point:
-	// Initially, it has the direction of segment a, with the magnitude of segment b itself
-	MyFloat3 localEndPointB = (segA->GetDirection().Normalised() * segB->GetLength());
-
-	// 2. Rotate segment b:
-	localEndPointB = localEndPointB * rotationMatrix;
+	float innerAngle = innerAngleGen.GetSample();
 	
+	// Try rotating with both possible axes:
+	MyFloat3 rotationAxis1 = CrossProduct(segA->GetDirection(), segB->GetDirection()).Normalised();
+	MyFloat3 rotationAxis2 = CrossProduct(segB->GetDirection(), segA->GetDirection()).Normalised();
+	
+	// Initially, each candidite end-point has the direction of segment a, with the magnitude of segment b itself
+	MyFloat3 localEndPointB1 = (segA->GetDirection().Normalised() * segB->GetLength());
+	MyFloat3 localEndPointB2 = localEndPointB1;
+
+	MyMatrix44 rotationMatrix = RotationMatrix(rotationAxis1, innerAngle);
+	localEndPointB1 = localEndPointB1 * rotationMatrix;
+
+	rotationMatrix = RotationMatrix(rotationAxis2, innerAngle);
+	localEndPointB2 = localEndPointB2 * rotationMatrix;
+	
+	MyFloat3 localEndPointB;
+
+	switch (angleFixMethod)
+	{
+	case (AngleFixMethods::LOWEST_Y):
+		localEndPointB =
+			(localEndPointB1.y < localEndPointB2.y) ? 
+			localEndPointB1 : 
+			localEndPointB2;
+		break;
+	case (AngleFixMethods::FARTHEST_FROM_PARENT):
+		MyFloat3 localEndPointB =
+			((localEndPointB1 - segA->GetStartPoint()).Magnitude() > (localEndPointB2 - segA->GetStartPoint()).Magnitude()) ?
+			localEndPointB1 :
+			localEndPointB2;
+		break;
+	}
+
 	segB->SetEndPoint(
 		segB->GetStartPoint() + localEndPointB
 	);

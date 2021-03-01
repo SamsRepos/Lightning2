@@ -4,6 +4,7 @@
 
 #include "Segment.h"
 #include "BoxMullerGen.h"
+#include "StreamerSettings.h"
 
 const float SQRT_A_HALF = 0.70710678118f;
 
@@ -60,7 +61,8 @@ public:
 		float _voltage,
 		float _initPressure,
 		float _pressureGradient,
-		size_t _maxNumLayers
+		size_t _maxNumLayers,
+		AngleFixMethods _angleFixMethod
 	);
 	void Run();
 	inline std::vector<Segment*>* GetOutput() { return output; };
@@ -120,6 +122,7 @@ private:
 	float pressureGradient;
 	size_t maxNumLayers;
 	size_t numLayers;
+	AngleFixMethods angleFixMethod;
 
 	BoxMullerGen diameterToLengthCoeffGen;
 	BoxMullerGen pressureToMinDiameterCoeffGen;

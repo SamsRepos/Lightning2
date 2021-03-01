@@ -2,9 +2,10 @@
 
 #include <map>
 
-#include "MyFloat3.h"
 #include "D3D.h"
 
+#include "MyFloat3.h"
+#include "StreamerSettings.h"
 #include "ColourValues.h"
 
 ////
@@ -22,19 +23,20 @@ const float    DEFAULT_JFG_BASELINE_FORK_PROB  = .7f;
 const float    DEFAULT_JFG_FORK_PROB_SCALEDOWN = .6f;
 
 // Streamer Generator
-const MyFloat3 DEFAULT_SG_START_PT          = MyFloat3(0.f, 100.f, 0.f);
-const MyFloat3 DEFAULT_SG_INITIAL_DIRECTION = MyFloat3(0.f, -1.f, 0.f);
-const float    DEFAULT_SG_VOLTAGE           = 42.f;
-const float    DEFAULT_SG_INITIAL_PRESSURE  = 65.f;
-const float    DEFAULT_SG_PRESSURE_GRADIENT = -.5f;
-const size_t   DEFAULT_SG_MAX_NUM_LAYERS    = 10;
+const MyFloat3    DEFAULT_SG_START_PT          = MyFloat3(0.f, 100.f, 0.f);
+const MyFloat3    DEFAULT_SG_INITIAL_DIRECTION = MyFloat3(0.f, -1.f, 0.f);
+const float       DEFAULT_SG_VOLTAGE           = 42.f;
+const float       DEFAULT_SG_INITIAL_PRESSURE  = 65.f;
+const float       DEFAULT_SG_PRESSURE_GRADIENT = -.5f;
+const size_t      DEFAULT_SG_MAX_NUM_LAYERS    = 10;
+const std::string DEFAULT_SG_ANGLE_FIX         = "none";
 
 // Diameter Thinner:
 const float DEFAULT_DTHIN_SCALEDOWN = .5f;
 
 // Whole Transformer:
 const MyFloat3 DEFAULT_WT_START_POINT = MyFloat3(0.f, 100.f, 0.f);
-const MyFloat3 DEFAULT_WT_END_POINT = MyFloat3(0.f, 0.f, 0.f);
+const MyFloat3 DEFAULT_WT_END_POINT   = MyFloat3(0.f, 0.f, 0.f);
 
 // Diameter Transformer
 const float  DEFAULT_DT_INITIAL_DIAMETER      = .2f;
@@ -42,19 +44,19 @@ const float  DEFAULT_DT_DIAMETER_SCALEDOWN    = .5f;
 const size_t DEFAULT_DT_MAX_NUM_BRANCH_LEVELS = 4;
 
 // Electrifier
-const float DEFAULT_E_MAX_SEG_LENGTH   = 1.f;
-const float DEFAULT_E_CHAOS_MEAN       = .1f;
-const float DEFAULT_E_CHAOS_STDDEV     = .05f;
+const float DEFAULT_E_MAX_SEG_LENGTH = 1.f;
+const float DEFAULT_E_CHAOS_MEAN     = .1f;
+const float DEFAULT_E_CHAOS_STDDEV   = .05f;
 
 // Line Renderer
-const std::string DEFAULT_LINE_COLOUR            = "lightning white";
+const std::string DEFAULT_LINE_COLOUR = "lightning white";
 
 // Cylinder Renderer
 const std::string DEFAULT_BLUR_COLOUR            = "lightning blue";
 const std::string DEFAULT_BLUR_BACKGROUND_COLOUR = "background night";
 const std::string DEFAULT_CYLINDER_COLOUR        = "lightning white";
-const float DEFAULT_BLUR_EXTENT = 1.f; // .7f;
-const float DEFAULT_BLUR_RANGE  = 20.f; // 4.f;
+const float DEFAULT_BLUR_EXTENT                  = 1.f;
+const float DEFAULT_BLUR_RANGE                   = 20.f;
 
 
 ////

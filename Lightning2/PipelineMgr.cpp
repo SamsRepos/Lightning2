@@ -51,7 +51,8 @@ void PipelineMgr::InitStreamerGenerator(
 	float initialVoltage,
 	float initialPressure,
 	float pressureGradient,
-	size_t maxNumLayers
+	size_t maxNumLayers,
+	AngleFixMethods angleFixMethod
 )
 {
 	streamGen.InitParameters(
@@ -60,7 +61,8 @@ void PipelineMgr::InitStreamerGenerator(
 		initialVoltage,
 		initialPressure,
 		pressureGradient,
-		maxNumLayers
+		maxNumLayers,
+		angleFixMethod
 	);
 }
 

@@ -124,7 +124,8 @@ void TestState::InitPipelineMgr()
 		DEFAULT_SG_VOLTAGE,
 		DEFAULT_SG_INITIAL_PRESSURE,
 		DEFAULT_SG_PRESSURE_GRADIENT,
-		DEFAULT_SG_MAX_NUM_LAYERS
+		DEFAULT_SG_MAX_NUM_LAYERS,
+		ANGLE_FIX_OPTIONS.at(DEFAULT_SG_ANGLE_FIX)
 	);
 
 	pipelineMgr->InitDiameterThinner(
@@ -230,7 +231,8 @@ void TestState::TestStreamerLayers(const char* rawFilePath, const char* meansFil
 			DEFAULT_SG_VOLTAGE,
 			DEFAULT_SG_INITIAL_PRESSURE,
 			DEFAULT_SG_PRESSURE_GRADIENT,
-			numLayers
+			numLayers,
+			ANGLE_FIX_OPTIONS.at(DEFAULT_SG_ANGLE_FIX)
 		);
 
 		rawOutFile << "LAYERS:, " << numLayers << '\n';

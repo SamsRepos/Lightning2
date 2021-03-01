@@ -92,7 +92,8 @@ void PlayState::Init()
 		DEFAULT_SG_VOLTAGE,
 		DEFAULT_SG_INITIAL_PRESSURE,
 		DEFAULT_SG_PRESSURE_GRADIENT,
-		DEFAULT_SG_MAX_NUM_LAYERS
+		DEFAULT_SG_MAX_NUM_LAYERS,
+		ANGLE_FIX_OPTIONS.at(DEFAULT_SG_ANGLE_FIX)
 	);
 
 	pipelineMgr->InitDiameterThinner(
@@ -275,7 +276,7 @@ void PlayState::Gui()
 		if (ImGui::CollapsingHeader("Select Geometry Generator"))
 		{
 			bool changeNow = false;
-			changeNow = GuiListBox(&changeNow, genTypesMap, "Geometry Generator", &currentGenerator);
+			changeNow = GuiListBox(changeNow, genTypesMap, "Geometry Generator", &currentGenerator);
 
 			if (changeNow)
 			{
@@ -356,12 +357,12 @@ void PlayState::Gui()
 		{
 			bool changeNow = false;
 			// TODO - gui for Start and End points
-			changeNow = GuiSliderInt(&changeNow, "JFG iterations", &iterations, JFG_MIN_ITERATIONS, JFG_MAX_ITERATIONS);
-			changeNow = GuiSliderFloat(&changeNow, "JFG chaos mean", &chaosMean, JFG_MIN_CHAOS_MEAN, JFG_MAX_CHAOS_MEAN);
-			changeNow = GuiSliderFloat(&changeNow, "JFG chaos std dev", &chaosStdDev, JFG_MIN_CHAOS_STDDEV, JFG_MAX_CHAOS_STDDEV);
-			changeNow = GuiSliderFloat(&changeNow, "JFG midpoint std dev", &midpointStdDev, JFG_MIN_MIDPOINT_STDDEV, JFG_MAX_MIDPOINT_STDDEV);
-			changeNow = GuiSliderFloat(&changeNow, "JFG baseline fork probability", &baselineForkProb, JFG_MIN_BASELINE_FORK_PROB, JFG_MAX_BASELINE_FORK_PROB);
-			changeNow = GuiSliderFloat(&changeNow, "JFG fork prob scaledown", &forkProbScaledown, JFG_MIN_FORK_PROB_SCALEDOWN, JFG_MAX_FORK_PROB_SCALEDOWN);
+			changeNow = GuiSliderInt(changeNow, "JFG iterations", &iterations, JFG_MIN_ITERATIONS, JFG_MAX_ITERATIONS);
+			changeNow = GuiSliderFloat(changeNow, "JFG chaos mean", &chaosMean, JFG_MIN_CHAOS_MEAN, JFG_MAX_CHAOS_MEAN);
+			changeNow = GuiSliderFloat(changeNow, "JFG chaos std dev", &chaosStdDev, JFG_MIN_CHAOS_STDDEV, JFG_MAX_CHAOS_STDDEV);
+			changeNow = GuiSliderFloat(changeNow, "JFG midpoint std dev", &midpointStdDev, JFG_MIN_MIDPOINT_STDDEV, JFG_MAX_MIDPOINT_STDDEV);
+			changeNow = GuiSliderFloat(changeNow, "JFG baseline fork probability", &baselineForkProb, JFG_MIN_BASELINE_FORK_PROB, JFG_MAX_BASELINE_FORK_PROB);
+			changeNow = GuiSliderFloat(changeNow, "JFG fork prob scaledown", &forkProbScaledown, JFG_MIN_FORK_PROB_SCALEDOWN, JFG_MAX_FORK_PROB_SCALEDOWN);
 
 			if (changeNow)
 			{
@@ -387,16 +388,20 @@ void PlayState::Gui()
 		static float initialPressure = DEFAULT_SG_INITIAL_PRESSURE;
 		static float pressureGradient = DEFAULT_SG_PRESSURE_GRADIENT;
 		static int   maxNumLayers = DEFAULT_SG_MAX_NUM_LAYERS;
+		static std::string angleFixMethod = DEFAULT_SG_ANGLE_FIX;
+
+		
 
 		if (ImGui::CollapsingHeader("Set Streamer Parameters"))
 		{
 
 			bool changeNow = false;
 			//TODO MyFloat3 gui
-			changeNow = GuiSliderFloat(&changeNow, "SG initial voltage", &voltage, SG_MIN_VOLTAGE, SG_MAX_VOLTAGE);
-			changeNow = GuiSliderFloat(&changeNow, "SG initial pressure", &initialPressure, SG_MIN_INITIAL_PRESSURE, SG_MAX_INITIAL_PRESSURE);
-			changeNow = GuiSliderFloat(&changeNow, "SG pressure gradient", &pressureGradient, SG_MIN_PRESSURE_GRADIENT, SG_MAX_PRESSURE_GRADIENT);
-			changeNow = GuiSliderInt(&changeNow, "SG max num layers", &maxNumLayers, SG_MIN_MAX_NUM_LAYERS, SG_MAX_MAX_NUM_LAYERS);
+			changeNow = GuiSliderFloat(changeNow, "SG initial voltage", &voltage, SG_MIN_VOLTAGE, SG_MAX_VOLTAGE);
+			changeNow = GuiSliderFloat(changeNow, "SG initial pressure", &initialPressure, SG_MIN_INITIAL_PRESSURE, SG_MAX_INITIAL_PRESSURE);
+			changeNow = GuiSliderFloat(changeNow, "SG pressure gradient", &pressureGradient, SG_MIN_PRESSURE_GRADIENT, SG_MAX_PRESSURE_GRADIENT);
+			changeNow = GuiSliderInt(changeNow, "SG max num layers", &maxNumLayers, SG_MIN_MAX_NUM_LAYERS, SG_MAX_MAX_NUM_LAYERS);
+			changeNow = GuiListBox(changeNow, ANGLE_FIX_OPTIONS, "SG angle fix", &angleFixMethod);
 
 			if (changeNow)
 			{
@@ -406,7 +411,8 @@ void PlayState::Gui()
 					voltage,
 					initialPressure,
 					pressureGradient,
-					maxNumLayers
+					maxNumLayers,
+					ANGLE_FIX_OPTIONS.at(angleFixMethod)
 				);
 			}
 		}
@@ -459,9 +465,9 @@ void PlayState::Gui()
 		if (ImGui::CollapsingHeader("Set Diameter Transformer Parameters"))
 		{
 			bool changeNow = false;
-			changeNow = GuiSliderFloat(&changeNow, "DT initial diameter", &initialDiameter, DT_MIN_INITIAL_DIAMETER, DT_MAX_INITIAL_DIAMETER);
-			changeNow = GuiSliderFloat(&changeNow, "DT diameter scaledown", &diameterScaledown, DT_MIN_DIAMETER_SCALEDOWN, DT_MAX_DIAMETER_SCALEDOWN);
-			changeNow = GuiSliderInt(&changeNow, "DT max num branch levels", &maxNumBranchLevels, DT_MIN_MAX_NUM_BRANCH_LEVELS, DT_MAX_MAX_NUM_BRANCH_LEVELS);
+			changeNow = GuiSliderFloat(changeNow, "DT initial diameter", &initialDiameter, DT_MIN_INITIAL_DIAMETER, DT_MAX_INITIAL_DIAMETER);
+			changeNow = GuiSliderFloat(changeNow, "DT diameter scaledown", &diameterScaledown, DT_MIN_DIAMETER_SCALEDOWN, DT_MAX_DIAMETER_SCALEDOWN);
+			changeNow = GuiSliderInt(changeNow, "DT max num branch levels", &maxNumBranchLevels, DT_MIN_MAX_NUM_BRANCH_LEVELS, DT_MAX_MAX_NUM_BRANCH_LEVELS);
 
 			if (changeNow)
 			{
@@ -484,9 +490,9 @@ void PlayState::Gui()
 		{
 
 			bool changeNow = false;
-			changeNow = GuiSliderFloat(&changeNow, "E max len", &maxSegmentLength, E_MIN_MAX_SEG_LENGTH, E_MAX_MAX_SEG_LENGTH);
-			changeNow = GuiSliderFloat(&changeNow, "E chaos mean", &chaosMean, E_MIN_CHAOS_MEAN, E_MAX_CHAOS_MEAN);
-			changeNow = GuiSliderFloat(&changeNow, "E chaos std dev", &chaosStdDev, E_MIN_CHAOS_STDDEV, E_MAX_CHAOS_STDDEV);
+			changeNow = GuiSliderFloat(changeNow, "E max len", &maxSegmentLength, E_MIN_MAX_SEG_LENGTH, E_MAX_MAX_SEG_LENGTH);
+			changeNow = GuiSliderFloat(changeNow, "E chaos mean", &chaosMean, E_MIN_CHAOS_MEAN, E_MAX_CHAOS_MEAN);
+			changeNow = GuiSliderFloat(changeNow, "E chaos std dev", &chaosStdDev, E_MIN_CHAOS_STDDEV, E_MAX_CHAOS_STDDEV);
 
 			if (changeNow)
 			{
@@ -506,7 +512,7 @@ void PlayState::Gui()
 		if (ImGui::CollapsingHeader("Set Line Renderer Parameters"))
 		{
 			bool changeNow = false;
-			changeNow = GuiListBox(&changeNow, COLOUR_OPTIONS, "Line Colour", &lineColour);
+			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Line Colour", &lineColour);
 
 			if (changeNow)
 			{
@@ -533,8 +539,8 @@ void PlayState::Gui()
 			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Blur Colour", &blurColour);
 			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Blur Background Colour", &blurBackgroundColour);
 			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Cylinder Colour", &cylinderColour);
-			changeNow = GuiSliderFloat(&changeNow, "Blur extent", &blurExtent, BLUR_MIN_EXTENT, BLUR_MAX_EXTENT);
-			changeNow = GuiSliderFloat(&changeNow, "Blur range", &blurRange, BLUR_MIN_RANGE, BLUR_MAX_RANGE);
+			changeNow = GuiSliderFloat(changeNow, "Blur extent", &blurExtent, BLUR_MIN_EXTENT, BLUR_MAX_EXTENT);
+			changeNow = GuiSliderFloat(changeNow, "Blur range", &blurRange, BLUR_MIN_RANGE, BLUR_MAX_RANGE);
 
 			if (changeNow)
 			{
