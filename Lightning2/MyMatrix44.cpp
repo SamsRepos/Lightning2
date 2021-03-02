@@ -42,7 +42,7 @@ MyMatrix44 RotationMatrix(const MyFloat3& axisThroughOrigin, const float& angle)
 	float alphaBeta  = alpha * beta;
 	float alphaGamma = alpha * gamma;
 	float betaGamma  = beta * gamma;
-		
+	
 	float cosTheta         = cos(angle);
 	float sinTheta         = sin(angle);
 	float oneMinusCosTheta = 1.f - cosTheta;

@@ -58,7 +58,7 @@ const std::string DEFAULT_BLUR_BACKGROUND_COLOUR = "background night";
 const std::string DEFAULT_CYLINDER_COLOUR        = "lightning white";
 const float DEFAULT_BLUR_DIRECTIONS = 16.f;
 const float DEFAULT_BLUR_QUALITY    = 30.f;
-const float DEFAULT_BLUR_SIZE       = 10.f;
+const float DEFAULT_BLUR_SIZE       = 30.f;
 const float DEFAULT_BLUR_ADJUSTMENT = 15.f;
 
 ////
@@ -129,7 +129,7 @@ const float BLUR_MIN_QUALITY = 1.f;
 const float BLUR_MAX_QUALITY = 50.f;
 
 const float BLUR_MIN_SIZE = 1.f;
-const float BLUR_MAX_SIZE = 50.f;
+const float BLUR_MAX_SIZE = 100.f;
 
 const float BLUR_MIN_ADJUSTMENT = 0.f;
 const float BLUR_MAX_ADJUSTMENT = 50.f;

@@ -34,14 +34,18 @@ float4 main(InputType input) : SV_TARGET
 	float2 radius = size / screenSize.xy;
 
 	float4 colour = texture0.Sample(Sampler0, input.tex);
-
-	for (float d = 0.f; d < TWO_PI; d += TWO_PI / directions)
+	
+	float deltaTheta = TWO_PI / directions;
+	for (float theta = 0.f; theta < TWO_PI; theta += deltaTheta)
 	{
-		for (float i = 1.f / quality; i < 1.f; i += 1.f / quality)
+		float deltaI = 1.f / quality;
+		for (float i = 1.f / quality; i < 1.f; i += deltaI)
 		{
-			colour += texture0.Sample(
+			float2 deltaTex = float2(cos(theta), sin(theta)) * radius * i;
+
+			colour += texture0.Sample(				
 				Sampler0,
-				input.tex + (float2(cos(d), sin(d)) * radius * i)
+				input.tex + deltaTex
 			);
 		}
 	}
