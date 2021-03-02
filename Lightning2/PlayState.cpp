@@ -164,16 +164,6 @@ void PlayState::Gui()
 {
 	ImGui::Text("PLAY STATE");
 
-	//TODO consider this:
-#if 0
-	ImGui::SliderInt(
-		"Debug lines to render",
-		&linesToRender,
-		0,
-		lineMesh->GetLineCount()
-	);
-#endif
-
 	static bool debugCsv = false;
 	ImGui::Checkbox("Write debug CSV", &debugCsv);
 
@@ -359,7 +349,9 @@ void PlayState::Gui()
 		if (ImGui::CollapsingHeader("Set Jitter+Fork Parameters"))
 		{
 			bool changeNow = false;
-			// TODO - gui for Start and End points
+			
+			changeNow = GuiMyFloat3(changeNow, "JFG start pt", &startPt);
+			changeNow = GuiMyFloat3(changeNow, "JFG end pt", &endPt);
 			changeNow = GuiSliderInt(changeNow, "JFG iterations", &iterations, JFG_MIN_ITERATIONS, JFG_MAX_ITERATIONS);
 			changeNow = GuiSliderFloat(changeNow, "JFG chaos mean", &chaosMean, JFG_MIN_CHAOS_MEAN, JFG_MAX_CHAOS_MEAN);
 			changeNow = GuiSliderFloat(changeNow, "JFG chaos std dev", &chaosStdDev, JFG_MIN_CHAOS_STDDEV, JFG_MAX_CHAOS_STDDEV);
@@ -398,7 +390,9 @@ void PlayState::Gui()
 		{
 
 			bool changeNow = false;
-			//TODO MyFloat3 gui
+
+			changeNow = GuiMyFloat3(changeNow, "SG start pt", &startPt);
+			changeNow = GuiMyFloat3(changeNow, "SG initial direction", &initialDirection);
 			changeNow = GuiSliderFloat(changeNow, "SG initial voltage", &voltage, SG_MIN_VOLTAGE, SG_MAX_VOLTAGE);
 			changeNow = GuiSliderFloat(changeNow, "SG initial pressure", &initialPressure, SG_MIN_INITIAL_PRESSURE, SG_MAX_INITIAL_PRESSURE);
 			changeNow = GuiSliderFloat(changeNow, "SG pressure gradient", &pressureGradient, SG_MIN_PRESSURE_GRADIENT, SG_MAX_PRESSURE_GRADIENT);
@@ -448,7 +442,9 @@ void PlayState::Gui()
 		if (ImGui::CollapsingHeader("Set Whole Transformer Parameters"))
 		{
 			bool changeNow = false;
-			//
+			
+			changeNow = GuiMyFloat3(changeNow, "WT start pt", &startPoint);
+			changeNow = GuiMyFloat3(changeNow, "WT end pt", &endPoint);
 
 			if (changeNow)
 			{

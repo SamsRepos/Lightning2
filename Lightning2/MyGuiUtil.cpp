@@ -20,3 +20,28 @@ bool GuiSliderFloat(bool changeFlag, const char* msg, float* f, float min, float
 {
 	return ImGui::SliderFloat(msg, f, min, max) || changeFlag;
 }
+
+bool GuiMyFloat3(bool changeFlag, const char* msg, MyFloat3* float3)
+{
+	float vals[3] = {
+		float3->x,
+		float3->y,
+		float3->z
+	};
+
+	bool changeNow = ImGui::SliderFloat3(
+		msg,
+		vals,
+		GUI_MY_FLOAT_3_MIN,
+		GUI_MY_FLOAT_3_MAX
+	);
+
+	if (changeNow)
+	{
+		float3->x = vals[0];
+		float3->y = vals[1];
+		float3->z = vals[2];
+	}
+
+	return changeNow || changeFlag;
+}

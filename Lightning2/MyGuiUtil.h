@@ -5,6 +5,11 @@
 #include <string>
 #include <map>
 
+#include "MyFloat3.h"
+
+const float GUI_MY_FLOAT_3_MIN = -100.f;
+const float GUI_MY_FLOAT_3_MAX = 100.f;
+
 bool GuiToggleButton(std::string buttonMsg, bool currentlyOn);
 
 bool GuiCheckBox(bool changeFlag, const char* msg, bool* b);
@@ -38,3 +43,5 @@ bool GuiListBox(bool changeFlag, std::map<std::string, T> map, std::string heade
 
 	return changed || changeFlag;
 }
+
+bool GuiMyFloat3(bool changeFlag, const char* msg, MyFloat3* float3);
