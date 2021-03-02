@@ -73,6 +73,9 @@
     <Filter Include="Header Files\AppStates">
       <UniqueIdentifier>{fc0e7ada-9591-48bb-8903-bdf0ab4f2665}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Performance">
+      <UniqueIdentifier>{69448d67-7d42-4b85-bf3f-a2267148e643}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App1.cpp">
@@ -185,6 +188,9 @@
     </ClCompile>
     <ClCompile Include="MyLerp.cpp">
       <Filter>Source Files\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="MyMemoryMeasurer.cpp">
+      <Filter>Source Files\Performance</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,6 +319,9 @@
     </ClInclude>
     <ClInclude Include="MyLerp.h">
       <Filter>Header Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="MyMemoryMeasurer.h">
+      <Filter>Header Files\Performance</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

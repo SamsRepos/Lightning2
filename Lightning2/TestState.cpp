@@ -2,6 +2,7 @@
 
 #include "DefaultParameters.h"
 #include "MyGuiUtil.h"
+#include "CylinderObject.h"
 
 
 ////
@@ -50,7 +51,10 @@ void TestState::Init()
 
 	iterationsPerTest = 10;
 	iterationsDone    = 0;
-	testRunning = false;
+	testRunning       = false;
+
+	segMeasuerer.SetObjectSize(sizeof(Segment));
+	cylMeasurer.SetObjectSize(sizeof(CylinderObject));
 }
 
 void TestState::Update(float _dt)
@@ -317,9 +321,9 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 
 	// Output row:
 	meansOutFile << "MAX SEG LEN, , ";
-	meansOutFile << "TIME(MS), NUM SEGMENTS, , ";
-	meansOutFile << "TIME(MS), NUM SEGMENTS, , ";
-	meansOutFile << "TIME(MS), NUM SEGMENTS, , ";
+	meansOutFile << "TIME(MS), NUM SEGMENTS, Seg KB, , ";
+	meansOutFile << "TIME(MS), NUM SEGMENTS, Seg KB, , ";
+	meansOutFile << "TIME(MS), NUM SEGMENTS, Seg KB, , ";
 	meansOutFile << '\n';
 	
 	pipelineMgr->SetElectifierActive(true);
@@ -327,7 +331,7 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 	pipelineMgr->InitDiameterTransformer(
 		DEFAULT_DT_INITIAL_DIAMETER,
 		DEFAULT_DT_DIAMETER_SCALEDOWN,
-		3
+		4
 	);
 
 	int numSamples = 20;
@@ -359,17 +363,20 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 		rawOutFile << "\n";
 
 		// Output row:
-		rawOutFile << "TIME(MS), NUM SEGMENTS, , ";
-		rawOutFile << "TIME(MS), NUM SEGMENTS, , ";
-		rawOutFile << "TIME(MS), NUM SEGMENTS, , ";
+		rawOutFile << "TIME(MS), NUM SEGMENTS, Seg KB, , ";
+		rawOutFile << "TIME(MS), NUM SEGMENTS, Seg KB, , ";
+		rawOutFile << "TIME(MS), NUM SEGMENTS, Seg KB, , ";
 		rawOutFile << '\n';
 
 		float jitterForkTimeRunningTotal       = 0.f;
 		int jitterForkSegmentsRunningTotal     = 0;
+		size_t jitterForkKbRunningTotal        = 0;
 		float streamerNoCullTimeRunningTotal   = 0.f;
 		int streamerNoCullSegmentsRunningTotal = 0;
+		size_t streamerNoCullKbRunningTotal    = 0;
 		float streamerCullTimeRunningTotal     = 0.f;
 		int streamerCullSegmentsRunningTotal   = 0;
+		size_t streamerCullKbRunningTotal      = 0;
 
 		for (size_t i = 0; i < iterationsPerTest; i++)
 		{
@@ -398,39 +405,48 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 			timer.Start();
 				pipelineMgr->RunProcess();
 			timer.Stop();
+			segMeasuerer.CalculateMemoryUsed(pipelineMgr->GetSegments()->size());
 			//Raw data output:
 			rawOutFile << timer.GetDurationMs() << ", ";
 			rawOutFile << pipelineMgr->GetSegments()->size() << ", ";
+			rawOutFile << segMeasuerer.GetKbUsed() << ", ";
 			rawOutFile << ", ";
 			//For means output:
 			jitterForkTimeRunningTotal     += timer.GetDurationMs();
 			jitterForkSegmentsRunningTotal += pipelineMgr->GetSegments()->size();
+			jitterForkKbRunningTotal       += segMeasuerer.GetKbUsed();
 
 			// STREAMER:
 			pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::STREAMER);
 			timer.Start();
 				pipelineMgr->RunProcess();
 			timer.Stop();
+			segMeasuerer.CalculateMemoryUsed(pipelineMgr->GetSegments()->size());
 			//Raw data output:
 			rawOutFile << timer.GetDurationMs() << ", ";
 			rawOutFile << pipelineMgr->GetSegments()->size() << ", ";
+			rawOutFile << segMeasuerer.GetKbUsed() << ", ";
 			rawOutFile << ", ";
 			//For means output:
 			streamerNoCullTimeRunningTotal     += timer.GetDurationMs();
 			streamerNoCullSegmentsRunningTotal += pipelineMgr->GetSegments()->size();
-			
+			streamerNoCullKbRunningTotal       += segMeasuerer.GetKbUsed();
+
 			pipelineMgr->SetDiameterTransformerActive(true);
 
 			timer.Start();
 				pipelineMgr->RunProcess();
 			timer.Stop();
+			segMeasuerer.CalculateMemoryUsed(pipelineMgr->GetSegments()->size());
 			//Raw data output:
 			rawOutFile << timer.GetDurationMs() << ", ";
 			rawOutFile << pipelineMgr->GetSegments()->size() << ", ";
+			rawOutFile << segMeasuerer.GetKbUsed() << ", ";
 			rawOutFile << '\n';
 			//For means output:
-			streamerCullTimeRunningTotal       += timer.GetDurationMs();
-			streamerCullSegmentsRunningTotal   += pipelineMgr->GetSegments()->size();
+			streamerCullTimeRunningTotal     += timer.GetDurationMs();
+			streamerCullSegmentsRunningTotal += pipelineMgr->GetSegments()->size();
+			streamerCullKbRunningTotal       += segMeasuerer.GetKbUsed();
 		}
 		rawOutFile << '\n';
 		
@@ -438,12 +454,15 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 		meansOutFile << " , ";
 		meansOutFile << jitterForkTimeRunningTotal / float(iterationsPerTest) << ", ";
 		meansOutFile << jitterForkSegmentsRunningTotal / float(iterationsPerTest) << ", ";
+		meansOutFile << jitterForkKbRunningTotal / float(iterationsPerTest) << ", ";
 		meansOutFile << " , ";
 		meansOutFile << streamerNoCullTimeRunningTotal / float(iterationsPerTest) << ", ";
 		meansOutFile << streamerNoCullSegmentsRunningTotal / float(iterationsPerTest) << ", ";
+		meansOutFile << streamerNoCullKbRunningTotal / float(iterationsPerTest) << ", ";
 		meansOutFile << " , ";
 		meansOutFile << streamerCullTimeRunningTotal / float(iterationsPerTest) << ", ";
 		meansOutFile << streamerCullSegmentsRunningTotal / float(iterationsPerTest) << ", ";
+		meansOutFile << streamerCullKbRunningTotal / float(iterationsPerTest) << ", ";
 		meansOutFile << '\n';
 	}
 }

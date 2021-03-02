@@ -7,6 +7,7 @@
 
 #include "PipelineMgr.h"
 #include "MyTimer.h"
+#include "MyMemoryMeasurer.h"
 
 typedef std::unique_lock<std::mutex> UL;
 typedef std::stringstream SS;
@@ -45,6 +46,8 @@ private:
 	PipelineMgr* pipelineMgr;
 
 	MyTimer timer;
+	MyMemoryMeasurer segMeasuerer;
+	MyMemoryMeasurer cylMeasurer;
 
 	int iterationsPerTest;
 	int iterationsDone;

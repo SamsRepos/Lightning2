@@ -192,6 +192,7 @@
     <ClCompile Include="MyFloat4.cpp" />
     <ClCompile Include="MyGuiUtil.cpp" />
     <ClCompile Include="MyMatrix44.cpp" />
+    <ClCompile Include="MyMemoryMeasurer.cpp" />
     <ClCompile Include="PipelineMgr.cpp" />
     <ClCompile Include="PipelineMgrSettings.cpp" />
     <ClCompile Include="PlayState.cpp" />
@@ -234,6 +235,7 @@
     <ClInclude Include="MyGuiUtil.h" />
     <ClInclude Include="MyMath.h" />
     <ClInclude Include="MyMatrix44.h" />
+    <ClInclude Include="MyMemoryMeasurer.h" />
     <ClInclude Include="MyTimer.h" />
     <ClInclude Include="MyVectorUtil.h" />
     <ClInclude Include="PipelineMgr.h" />
