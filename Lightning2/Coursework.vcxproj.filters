@@ -189,9 +189,6 @@
     <ClCompile Include="MyLerp.cpp">
       <Filter>Source Files\Maths</Filter>
     </ClCompile>
-    <ClCompile Include="MyMemoryMeasurer.cpp">
-      <Filter>Source Files\Performance</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App1.h">

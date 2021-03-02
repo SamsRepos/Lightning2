@@ -21,7 +21,7 @@ void DebugWriteCsv(std::vector<Segment*>* segments, const char* filePath)
 	//3. Output relevant data:
 
 	//Column headings:
-	outFile << "SEG NUM, PARENT, CHILDREN, START X, START Y, START X, END X, END Y, END Z, DIST 2 ROOT, MAX DIST 2 ROOT, ENERGY, \n";
+	outFile << "SEG NUM, PARENT, CHILDREN, START X, START Y, START X, END X, END Y, END Z, DIST 2 ROOT, MAX DIST 2 ROOT, ENERGY, LENGTH, \n";
 
 	for (Segment* segment : *segments)
 	{
@@ -74,6 +74,9 @@ void DebugWriteCsv(std::vector<Segment*>* segments, const char* filePath)
 
 		//ENERGY
 		outFile << segment->GetEnergy() << ", ";
+
+		//LENGTH
+		outFile << segment->GetLength() << ", ";
 
 		outFile << '\n';
 	}

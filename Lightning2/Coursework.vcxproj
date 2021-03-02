@@ -192,7 +192,6 @@
     <ClCompile Include="MyFloat4.cpp" />
     <ClCompile Include="MyGuiUtil.cpp" />
     <ClCompile Include="MyMatrix44.cpp" />
-    <ClCompile Include="MyMemoryMeasurer.cpp" />
     <ClCompile Include="PipelineMgr.cpp" />
     <ClCompile Include="PipelineMgrSettings.cpp" />
     <ClCompile Include="PlayState.cpp" />
