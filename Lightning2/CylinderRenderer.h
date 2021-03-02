@@ -17,8 +17,10 @@ public:
 		const XMFLOAT4& _blurColour,
 		const XMFLOAT4& _backgroundColour,
 		const XMFLOAT4& _cylinderColour,
-		float _blurExtent,
-		float _blurRange
+		float _blurDirections,
+		float _blurQuality,
+		float _blurSize,
+		float _blurFinalAdjustment
 	);
 
 	void Build(
@@ -51,8 +53,10 @@ private:
 	XMFLOAT4 cylinderColour;
 	XMFLOAT4 backgroundColour;
 
-	float blurExtent;
-	float blurRange;
+	float blurDirections;
+	float blurQuality;
+	float blurSize;
+	float blurFinalAdjustment;
 	
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;

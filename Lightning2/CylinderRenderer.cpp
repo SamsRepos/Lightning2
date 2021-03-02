@@ -73,15 +73,20 @@ void CylinderRenderer::InitParameters(
 	const XMFLOAT4& _blurColour,
 	const XMFLOAT4& _backgroundColour,
 	const XMFLOAT4& _cylinderColour,
-	float _blurExtent,
-	float _blurRange
+	float _blurDirections,
+	float _blurQuality,
+	float _blurSize,
+	float _blurFinalAdjustment
 )
 {
 	blurColour       = _blurColour;
 	backgroundColour = _backgroundColour;
 	cylinderColour   = _cylinderColour;
-	blurExtent       = _blurExtent;
-	blurRange        = _blurRange;	
+	
+	blurDirections      = _blurDirections;
+	blurQuality         = _blurQuality;
+	blurSize            = _blurSize;
+	blurFinalAdjustment = _blurFinalAdjustment;
 }
 
 void CylinderRenderer::Build(std::vector<Segment*>* segments, float maxEnergy)
@@ -236,10 +241,12 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera)
 		blurRenderTexture1->getShaderResourceView()
 	);
 
-	blurShader->updateGaussianBlurParameters(
+	blurShader->updateBlurParameters(
 		renderer->getDeviceContext(),
-		blurExtent,
-		blurRange
+		blurDirections,
+		blurQuality,
+		blurSize,
+		blurFinalAdjustment
 	);
 
 	blurShader->render(

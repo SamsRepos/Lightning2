@@ -78,8 +78,10 @@ public:
 		const XMFLOAT4& blurColour,
 		const XMFLOAT4& blurBackgroundColour,
 		const XMFLOAT4& cylinderColour,
-		float blurExtent,
-		float blurRange
+		float blurDirections,
+		float blurQuality,
+		float blurSize,
+		float blurAdjustment
 	);
 
 	inline PipelineMgrSettings* GetSettings() { return settings; };

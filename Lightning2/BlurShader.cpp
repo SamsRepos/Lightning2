@@ -65,16 +65,15 @@ void BlurShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilename
 	renderer->CreateBuffer(&screenSizeBufferDesc, NULL, &screenSizeBuffer);
 
 	//blur info:
-	//gaussian:
 	{
 		D3D11_BUFFER_DESC d;
 		d.Usage = D3D11_USAGE_DYNAMIC;
-		d.ByteWidth = sizeof(GaussianBufferType);
+		d.ByteWidth = sizeof(BlurBufferType);
 		d.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		d.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		d.MiscFlags = 0;
 		d.StructureByteStride = 0;
-		renderer->CreateBuffer(&d, NULL, &gaussianBuffer);
+		renderer->CreateBuffer(&d, NULL, &blurBuffer);
 	}
 
 }
@@ -95,19 +94,27 @@ void BlurShader::setScreenSize(ID3D11DeviceContext* deviceContext, XMINT2 size) 
 
 }
 
-void BlurShader::updateGaussianBlurParameters(ID3D11DeviceContext* deviceContext, float blurExtent, float blurRange) {
-	
-	GaussianBufferType* gaussianPtr;
+void BlurShader::updateBlurParameters(
+	ID3D11DeviceContext* deviceContext,
+	float _directions,
+	float _quality,
+	float _size,
+	float _finalAdjustment
+)
+{	
+	BlurBufferType* blurPtr;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
-	deviceContext->Map(gaussianBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	gaussianPtr = (GaussianBufferType*)mappedResource.pData;
+	deviceContext->Map(blurBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	blurPtr = (BlurBufferType*)mappedResource.pData;
 
-	gaussianPtr->extent = blurExtent;
-	gaussianPtr->range  = blurRange;
+	blurPtr->directions      = _directions;
+	blurPtr->quality         = _quality;
+	blurPtr->size            = _size;
+	blurPtr->finalAdjustment = _finalAdjustment;
 
-	deviceContext->Unmap(gaussianBuffer, 0);
-	deviceContext->PSSetConstantBuffers(1, 1, &gaussianBuffer);
+	deviceContext->Unmap(blurBuffer, 0);
+	deviceContext->PSSetConstantBuffers(1, 1, &blurBuffer);
 
 }
 

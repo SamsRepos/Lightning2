@@ -126,8 +126,10 @@ void PlayState::Init()
 		COLOUR_OPTIONS.at(DEFAULT_BLUR_COLOUR),
 		COLOUR_OPTIONS.at(DEFAULT_BLUR_BACKGROUND_COLOUR),
 		COLOUR_OPTIONS.at(DEFAULT_CYLINDER_COLOUR),
-		DEFAULT_BLUR_EXTENT,
-		DEFAULT_BLUR_RANGE
+		DEFAULT_BLUR_DIRECTIONS,
+		DEFAULT_BLUR_QUALITY,
+		DEFAULT_BLUR_SIZE,
+		DEFAULT_BLUR_ADJUSTMENT
 	);
 }
 
@@ -531,8 +533,10 @@ void PlayState::Gui()
 		static std::string blurColour = DEFAULT_BLUR_COLOUR;
 		static std::string blurBackgroundColour = DEFAULT_BLUR_BACKGROUND_COLOUR;
 		static std::string cylinderColour = DEFAULT_CYLINDER_COLOUR;
-		static float blurExtent = DEFAULT_BLUR_EXTENT;
-		static float blurRange = DEFAULT_BLUR_RANGE;
+		static float blurDirections = DEFAULT_BLUR_DIRECTIONS;
+		static float blurQuality = DEFAULT_BLUR_QUALITY;
+		static float blurSize = DEFAULT_BLUR_SIZE;
+		static float blurAdjustment= DEFAULT_BLUR_ADJUSTMENT;
 
 		if (ImGui::CollapsingHeader("Set Cylinder Renderer Parameters"))
 		{
@@ -541,8 +545,10 @@ void PlayState::Gui()
 			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Blur Colour", &blurColour);
 			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Blur Background Colour", &blurBackgroundColour);
 			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Cylinder Colour", &cylinderColour);
-			changeNow = GuiSliderFloat(changeNow, "Blur extent", &blurExtent, BLUR_MIN_EXTENT, BLUR_MAX_EXTENT);
-			changeNow = GuiSliderFloat(changeNow, "Blur range", &blurRange, BLUR_MIN_RANGE, BLUR_MAX_RANGE);
+			changeNow = GuiSliderFloat(changeNow, "Blur directions", &blurDirections, BLUR_MIN_DIRECTIONS, BLUR_MAX_DIRECTIONS);
+			changeNow = GuiSliderFloat(changeNow, "Blur quality", &blurQuality, BLUR_MIN_QUALITY, BLUR_MAX_QUALITY);
+			changeNow = GuiSliderFloat(changeNow, "Blur size", &blurSize, BLUR_MIN_SIZE, BLUR_MAX_SIZE);
+			changeNow = GuiSliderFloat(changeNow, "Blur final adjustment", &blurAdjustment, BLUR_MIN_ADJUSTMENT, BLUR_MAX_ADJUSTMENT);
 
 			if (changeNow)
 			{
@@ -550,8 +556,10 @@ void PlayState::Gui()
 					COLOUR_OPTIONS.at(blurColour),
 					COLOUR_OPTIONS.at(blurBackgroundColour),
 					COLOUR_OPTIONS.at(cylinderColour),
-					blurExtent,
-					blurRange
+					blurDirections,
+					blurQuality,
+					blurSize,
+					blurAdjustment
 				);
 			}
 		}
