@@ -177,6 +177,15 @@
     <ClCompile Include="StreamerSettings.cpp">
       <Filter>Source Files\GeometryGenerators</Filter>
     </ClCompile>
+    <ClCompile Include="DxColourLerp.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="CylinderObject.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="MyLerp.cpp">
+      <Filter>Source Files\Maths</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App1.h">
@@ -295,6 +304,15 @@
     </ClInclude>
     <ClInclude Include="StreamerSettings.h">
       <Filter>Header Files\GeometryGenerators</Filter>
+    </ClInclude>
+    <ClInclude Include="DxColourLerp.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CylinderObject.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MyLerp.h">
+      <Filter>Header Files\Maths</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

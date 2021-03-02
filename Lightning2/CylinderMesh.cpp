@@ -2,12 +2,11 @@
 
 #include "MyMath.h"
 
-CylinderMesh::CylinderMesh(ID3D11Device* device, ID3D11DeviceContext* deviceContext, float _bottomRadius, float _topRadius, float _resolution)
+CylinderMesh::CylinderMesh(ID3D11Device* device, ID3D11DeviceContext* deviceContext, float _radius, float _resolution)
+	:
+	radius(_radius),
+	resolution(_resolution)
 {
-	bottomRadius = _bottomRadius;
-	topRadius    = _topRadius;
-	resolution   = _resolution;
-
 	initBuffers(device);
 }
 
@@ -38,11 +37,9 @@ void CylinderMesh::initBuffers(ID3D11Device* device) {
 	//starting positions:
 	float x, y, z;
 	float theta = 0.f;
-	float r = bottomRadius;
 	float h = 0;
 
 	//delta values:
-	float deltaR = (bottomRadius - topRadius) / resolution;
 	float deltaHeight = 1.f / resolution;
 	float deltaTheta = (2 * PI) / resolution;
 
@@ -56,7 +53,6 @@ void CylinderMesh::initBuffers(ID3D11Device* device) {
 		//starting a new stack:
 		h = deltaHeight * vertical;
 		vCoord = 1.f - (vertical * deltaUV);
-		r = bottomRadius - (vertical * deltaR);
 
 		for (int horizontal = 0; horizontal < resolution; horizontal++) {
 			//starting a new "quad" (2 triangles):
@@ -64,86 +60,81 @@ void CylinderMesh::initBuffers(ID3D11Device* device) {
 			theta = horizontal * deltaTheta;
 			uCoord = horizontal * deltaUV;
 
+			//TRIANGLE 1:
 			//TOP LEFT:
-			x = (r - deltaR) * cosf(theta);
+			x = radius * cosf(theta);
 			y = h + deltaHeight;
-			z = (r - deltaR) * sinf(theta);
+			z = radius * sinf(theta);
 
 			vertices[v].position = XMFLOAT3(x, y, z);
-			vertices[v].texture = XMFLOAT2(uCoord, (vCoord - deltaUV));
-			//TODO CORRECT NORMALS FACTORING IN DELTA RADIUS!!
-			vertices[v].normal = XMFLOAT3(x / r, 0.f, z / r);
+			vertices[v].texture  = XMFLOAT2(uCoord, (vCoord - deltaUV));			
+			vertices[v].normal   = XMFLOAT3(x / radius, 0.f, z / radius);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//BOTTOM LEFT:
-			x = r * cosf(theta);
+			x = radius * cosf(theta);
 			y = h;
-			z = r * sinf(theta);
+			z = radius * sinf(theta);
 
 			vertices[v].position = XMFLOAT3(x, y, z);
-			vertices[v].texture = XMFLOAT2(uCoord, vCoord);
-			//TODO CORRECT NORMALS FACTORING IN DELTA RADIUS!!
-			vertices[v].normal = XMFLOAT3(x / r, 0.f, z / r);
+			vertices[v].texture  = XMFLOAT2(uCoord, vCoord);
+			vertices[v].normal   = XMFLOAT3(x / radius, 0.f, z / radius);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//TOP RIGHT:
-			x = (r - deltaR) * cosf(theta + deltaTheta);
+			x = radius * cosf(theta + deltaTheta);
 			y = h + deltaHeight;
-			z = (r - deltaR) * sinf(theta + deltaTheta);
+			z = radius * sinf(theta + deltaTheta);
 
 			vertices[v].position = XMFLOAT3(x, y, z);
-			vertices[v].texture = XMFLOAT2(uCoord + deltaUV, vCoord - deltaUV);
-			//TODO CORRECT NORMALS FACTORING IN DELTA RADIUS!!
-			vertices[v].normal = XMFLOAT3(x / r, 0.f, z / r);
+			vertices[v].texture  = XMFLOAT2(uCoord + deltaUV, vCoord - deltaUV);
+			vertices[v].normal   = XMFLOAT3(x / radius, 0.f, z / radius);
 
 			indices[i] = i;
 			v++;
 			i++;
-
-
+			
+			//TRIANGLE 2:
 			//BOTTOM LEFT AGAIN:
-			x = r * cosf(theta);
+			x = radius * cosf(theta);
 			y = h;
-			z = r * sinf(theta);
+			z = radius * sinf(theta);
 
 			vertices[v].position = XMFLOAT3(x, y, z);
 			vertices[v].texture = XMFLOAT2(uCoord, vCoord);
-			//TODO CORRECT NORMALS FACTORING IN DELTA RADIUS!!
-			vertices[v].normal = XMFLOAT3(x / r, 0.f, z / r);
+			vertices[v].normal = XMFLOAT3(x / radius, 0.f, z / radius);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//BOTTOM RIGHT:
-			x = r * cosf(theta + deltaTheta);
+			x = radius * cosf(theta + deltaTheta);
 			y = h;
-			z = r * sinf(theta + deltaTheta);
+			z = radius * sinf(theta + deltaTheta);
 
 			vertices[v].position = XMFLOAT3(x, y, z);
 			vertices[v].texture = XMFLOAT2(uCoord + deltaUV, vCoord);
-			//TODO CORRECT NORMALS FACTORING IN DELTA RADIUS!!
-			vertices[v].normal = XMFLOAT3(x / r, 0.f, z / r);
+			vertices[v].normal = XMFLOAT3(x / radius, 0.f, z / radius);
 
 			indices[i] = i;
 			v++;
 			i++;
 
 			//TOP RIGHT AGAN:
-			x = (r - deltaR) * cosf(theta + deltaTheta);
+			x = radius * cosf(theta + deltaTheta);
 			y = h + deltaHeight;
-			z = (r - deltaR) * sinf(theta + deltaTheta);
+			z = radius * sinf(theta + deltaTheta);
 
 			vertices[v].position = XMFLOAT3(x, y, z);
 			vertices[v].texture = XMFLOAT2(uCoord + deltaUV, vCoord - deltaUV);
-			//TODO CORRECT NORMALS FACTORING IN DELTA RADIUS!!
-			vertices[v].normal = XMFLOAT3(x / r, 0.f, z / r);
+			vertices[v].normal = XMFLOAT3(x / radius, 0.f, z / radius);
 
 			indices[i] = i;
 			v++;

@@ -79,8 +79,7 @@ void LineRenderer::RenderLines(D3D* renderer)
 {
 	if (shader && mesh)
 	{
-		//linesToRender = MyClamp(linesToRender, 0, int(mesh->GetLineCount()));
-		linesToRender = int(mesh->GetLineCount());
+		int linesToRender = int(mesh->GetLineCount());
 
 		for (int i = 0; i < linesToRender; i++)
 		{

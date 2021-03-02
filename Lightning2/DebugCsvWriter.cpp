@@ -21,7 +21,7 @@ void DebugWriteCsv(std::vector<Segment*>* segments, const char* filePath)
 	//3. Output relevant data:
 
 	//Column headings:
-	outFile << "SEG NUM, PARENT, CHILDREN, START X, START Y, START X, END X, END Y, END Z, DIST 2 ROOT, MAX DIST 2 ROOT, \n";
+	outFile << "SEG NUM, PARENT, CHILDREN, START X, START Y, START X, END X, END Y, END Z, DIST 2 ROOT, MAX DIST 2 ROOT, ENERGY, \n";
 
 	for (Segment* segment : *segments)
 	{
@@ -72,6 +72,8 @@ void DebugWriteCsv(std::vector<Segment*>* segments, const char* filePath)
 		//MAX DIST 2 ROOT:
 		outFile << segment->GetFarthestDistanceOnThisPath() << ", ";
 
+		//ENERGY
+		outFile << segment->GetEnergy() << ", ";
 
 		outFile << '\n';
 	}

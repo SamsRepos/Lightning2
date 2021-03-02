@@ -2,6 +2,8 @@
 
 #include "MyVectorUtil.h"
 #include "MyMath.h"
+#include "DxColourLerp.h"
+#include "MyClamp.h"
 
 CylinderRenderer::CylinderRenderer(D3D* renderer, HWND hwnd, int _screenWidth, int _screenHeight)
 	:
@@ -11,13 +13,12 @@ CylinderRenderer::CylinderRenderer(D3D* renderer, HWND hwnd, int _screenWidth, i
 	cylinderMesh = new CylinderMesh(
 		renderer->getDevice(),
 		renderer->getDeviceContext(),
-		.5f,
-		.5f, //diameter of 1, which matches defaylt height
+		.5f, //diameter of 1, which matches default height
 		5 // resolution
 	);
 
 	//Scene objects:
-	baseCylinder = new SceneObject(cylinderMesh, NULL, renderer->getWorldMatrix());
+	baseCylinder = new CylinderObject(cylinderMesh, NULL, renderer->getWorldMatrix());
 
 	//Shaders:
 	blurShader    = new BlurShader(renderer->getDevice(), hwnd);
@@ -70,26 +71,26 @@ CylinderRenderer::~CylinderRenderer()
 
 void CylinderRenderer::InitParameters(
 	const XMFLOAT4& _blurColour,
-	const XMFLOAT4& _blurBackgroundColour,
+	const XMFLOAT4& _backgroundColour,
 	const XMFLOAT4& _cylinderColour,
 	float _blurExtent,
 	float _blurRange
 )
 {
-	blurColour           = _blurColour;
-	blurBackgroundColour = _blurBackgroundColour;
-	cylinderColour       = _cylinderColour;
-	blurExtent           = _blurExtent;
-	blurRange            = _blurRange;
+	blurColour       = _blurColour;
+	backgroundColour = _backgroundColour;
+	cylinderColour   = _cylinderColour;
+	blurExtent       = _blurExtent;
+	blurRange        = _blurRange;	
 }
 
-void CylinderRenderer::Build(std::vector<Segment*>* segments)
+void CylinderRenderer::Build(std::vector<Segment*>* segments, float maxEnergy)
 {
 	cylinderObjects.clear();
 
 	for (Segment* seg : *segments)
 	{
-		SceneObject newCylinder(*baseCylinder);
+		CylinderObject newCylinder(*baseCylinder);
 
 		XMFLOAT3 startPosFloat3 = XMFLOAT3(
 			seg->GetStartPoint().x,
@@ -104,10 +105,10 @@ void CylinderRenderer::Build(std::vector<Segment*>* segments)
 		);
 
 		//position:
-		newCylinder.setPosition(XMFLOAT3(startPosFloat3.x, startPosFloat3.y, startPosFloat3.z));
+		newCylinder.SetPosition(XMFLOAT3(startPosFloat3.x, startPosFloat3.y, startPosFloat3.z));
 
 		//scale:
-		newCylinder.setScale(
+		newCylinder.SetScale(
 			seg->GetDiameter(),
 			seg->GetLength(),
 			seg->GetDiameter()
@@ -158,19 +159,25 @@ void CylinderRenderer::Build(std::vector<Segment*>* segments)
 			}			
 		}
 
-		newCylinder.setRotation(pitch, yaw, roll);
+		newCylinder.SetRotation(pitch, yaw, roll);
 
-		newCylinder.updateObjectMatrix();
+		newCylinder.BuildTransform();
+
+		newCylinder.SetBrightness(
+			MyClamp(
+				(seg->GetEnergy() / maxEnergy),
+				0.f,
+				1.f
+			)
+		);
 
 		cylinderObjects.push_back(newCylinder);
 	}
-
-	cylindersToRender = cylinderObjects.size();
 }
 
 void CylinderRenderer::SetShaderParams(
 	const XMMATRIX& _viewMatrix,
-	const XMMATRIX& _projectionMatrix	
+	const XMMATRIX& _projectionMatrix
 )
 {
 	viewMatrix       = _viewMatrix;
@@ -180,35 +187,41 @@ void CylinderRenderer::SetShaderParams(
 
 void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera)
 {
-	XMMATRIX worldMatrix = renderer->getWorldMatrix();
+	XMMATRIX worldMatrix     = renderer->getWorldMatrix();
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix(); // Default camera position for orthographic rendering
-	XMMATRIX orthoMatrix = renderer->getOrthoMatrix();   // ortho matrix for 2D rendering
+	XMMATRIX orthoMatrix     = renderer->getOrthoMatrix();   // ortho matrix for 2D rendering
 	
 														 //1. Render cylinders to the blur texture:
 	blurRenderTexture1->setRenderTarget(renderer->getDeviceContext());
 	blurRenderTexture1->clearRenderTarget(
 		renderer->getDeviceContext(),
-		blurBackgroundColour.x,
-		blurBackgroundColour.y,
-		blurBackgroundColour.z,
-		blurBackgroundColour.w
+		backgroundColour.x,
+		backgroundColour.y,
+		backgroundColour.z,
+		backgroundColour.w
 	);
 
 	for (auto c : cylinderObjects)
 	{
-		c.getMesh()->sendData(renderer->getDeviceContext());
-		mainShader->setShaderParameters(renderer->getDeviceContext(), c.getObjectMatrix(), viewMatrix, projectionMatrix, c.getTexture(), blurColour);
-		mainShader->render(renderer->getDeviceContext(), c.getMesh()->getIndexCount());
+		XMFLOAT4 colour = DxColourLerp(
+			backgroundColour,
+			blurColour,
+			c.GetBrightness()
+		);
+
+		c.GetMesh()->sendData(renderer->getDeviceContext());
+		mainShader->setShaderParameters(renderer->getDeviceContext(), c.GetTransform(), viewMatrix, projectionMatrix, c.GetTexture(), colour);
+		mainShader->render(renderer->getDeviceContext(), c.GetMesh()->getIndexCount());
 	}
 
 	//2. Render blur texture for blur pass:
 	blurRenderTexture2->setRenderTarget(renderer->getDeviceContext());
 	blurRenderTexture2->clearRenderTarget(
 		renderer->getDeviceContext(),
-		blurBackgroundColour.x,
-		blurBackgroundColour.y,
-		blurBackgroundColour.z,
-		blurBackgroundColour.w
+		backgroundColour.x,
+		backgroundColour.y,
+		backgroundColour.z,
+		backgroundColour.w
 	);
 
 	renderer->setZBuffer(false);
@@ -254,38 +267,14 @@ void CylinderRenderer::RenderCylinders(D3D* renderer)
 {
 	for (auto c : cylinderObjects)
 	{
-		c.getMesh()->sendData(renderer->getDeviceContext());
-		mainShader->setShaderParameters(renderer->getDeviceContext(), c.getObjectMatrix(), viewMatrix, projectionMatrix, c.getTexture(), cylinderColour);
-		mainShader->render(renderer->getDeviceContext(), c.getMesh()->getIndexCount());
+		XMFLOAT4 colour = DxColourLerp(
+			backgroundColour,
+			cylinderColour,
+			c.GetBrightness()
+		);
+
+		c.GetMesh()->sendData(renderer->getDeviceContext());
+		mainShader->setShaderParameters(renderer->getDeviceContext(), c.GetTransform(), viewMatrix, projectionMatrix, c.GetTexture(), colour);
+		mainShader->render(renderer->getDeviceContext(), c.GetMesh()->getIndexCount());
 	}
 }
-
-//
-//void TreeObject::guiInspectCylinderRotation(size_t currentSeg)
-//{
-//	
-//	Segment* seg = tree->getSegments()[currentSeg];
-//	SceneObject* cyl = cylinders[currentSeg];
-//
-//	ImGui::Text("INSPECTING CYLINDER ROTATION #%d:", currentSeg);
-//	
-//	//direction for roll/pitch/yaw for rotation:
-//	XMVECTOR startPos = XMLoadFloat3(&seg->startpt);
-//	XMVECTOR endPos = XMLoadFloat3(&seg->endpt);
-//
-//	XMVECTOR direction = endPos - startPos;
-//
-//	//direction = XMVector3Normalize(direction);
-//	float dirX = XMVectorGetX(direction);
-//	float dirY = XMVectorGetY(direction);
-//	float dirZ = XMVectorGetZ(direction);
-//
-//	ImGui::Text("Dir X: %f Y: %f Z: %f", dirX, dirY, dirZ);
-//
-//	ImGui::Text("Pitch: %f", cyl->getRotation().x);
-//	ImGui::Text("Yaw: %f", cyl->getRotation().y);
-//	ImGui::Text("Roll: %f", cyl->getRotation().z);
-//	
-//	
-//	
-//}

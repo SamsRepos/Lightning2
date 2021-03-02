@@ -2,7 +2,7 @@
 
 #include "CylinderShader.h"
 #include "CylinderMesh.h"
-#include "SceneObject.h"
+#include "CylinderObject.h"
 #include "Segment.h"
 #include "BlurShader.h"
 #include "TextureShader.h"
@@ -14,21 +14,26 @@ public:
 	~CylinderRenderer();
 
 	void InitParameters(
-		const XMFLOAT4& blurColour,
-		const XMFLOAT4& blurBackgroundColour,
-		const XMFLOAT4& cylinderColour,
-		float blurExtent,
-		float blurRange
+		const XMFLOAT4& _blurColour,
+		const XMFLOAT4& _backgroundColour,
+		const XMFLOAT4& _cylinderColour,
+		float _blurExtent,
+		float _blurRange
 	);
-	void Build(std::vector<Segment*>* segments);
+
+	void Build(
+		std::vector<Segment*>* segments,
+		float maxEnergy
+	);
+
 	void SetShaderParams(const XMMATRIX& _viewMatrix, const XMMATRIX& _projectionMatrix);
 	void RenderBlur(D3D* renderer, Camera* camera);
 	void RenderCylinders(D3D* renderer);
 
 private:
 	CylinderMesh* cylinderMesh;
-	SceneObject* baseCylinder;
-	std::vector<SceneObject> cylinderObjects;
+	CylinderObject* baseCylinder;
+	std::vector<CylinderObject> cylinderObjects;
 
 	BlurShader* blurShader;
 	TextureShader* textureShader;
@@ -43,18 +48,16 @@ private:
 	int screenHeight;
 
 	XMFLOAT4 blurColour;
-	XMFLOAT4 blurBackgroundColour;
 	XMFLOAT4 cylinderColour;
+	XMFLOAT4 backgroundColour;
 
 	float blurExtent;
 	float blurRange;
 	
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
-	
 
-	//debug stuff:
-	int cylindersToRender;
+	float maxEnergy;
 };
 
 

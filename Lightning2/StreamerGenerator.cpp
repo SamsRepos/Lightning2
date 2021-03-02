@@ -55,10 +55,13 @@ void StreamerGenerator::Run()
 
 	Segment* rootSegment = new Segment(rootStartPt, rootEndPt, rootDiameter, rootMinimumDiamater);
 
+	rootSegment->SetEnergy(rootLength * ENERGY_COEFF);
+
 	output->push_back(rootSegment);
 
 	CreateChildrenRecurs(rootSegment, 0);
 }
+
 
 ////
 // PRIVATE:

@@ -69,7 +69,7 @@ public:
 	);
 	void Run();
 	inline std::vector<Segment*>* GetOutput() { return output; };
-
+	
 private:
 	void SetGasComposition(GasCompositions gasCompoisition);
 	void InitAlgorithm();

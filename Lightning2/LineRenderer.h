@@ -26,8 +26,5 @@ private:
 	XMMATRIX worldMatrix;
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
-
-	//debug stuff:
-	int linesToRender;
 };
 

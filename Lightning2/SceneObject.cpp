@@ -1,36 +1,32 @@
 #include "SceneObject.h"
 
-SceneObject::SceneObject(BaseMesh* _mesh, ID3D11ShaderResourceView* _texture, const XMMATRIX &_worldMatrix)
+SceneObject::SceneObject(BaseMesh* _mesh, ID3D11ShaderResourceView* _texture, const XMMATRIX &_worldOriginTransform)
 	:
 	mesh(_mesh),
 	texture(_texture),
-	worldMatrix(_worldMatrix)
+	worldOriginTransform(_worldOriginTransform)
 {
 	//defaults:
-	setPosition(0.f, 0.f, 0.f);
-	setScale(1.f, 1.f, 1.f);
-	setRotation(0.f, 0.f, 0.f);
-	updateObjectMatrix();
+	SetPosition(0.f, 0.f, 0.f);
+	SetScale(1.f, 1.f, 1.f);
+	SetRotation(0.f, 0.f, 0.f);
+	BuildTransform();
 }
 
-SceneObject::~SceneObject()
+void SceneObject::BuildTransform() 
 {
-}
-
-void SceneObject::updateObjectMatrix() 
-{
-	objectMatrix = worldMatrix;
+	transform = worldOriginTransform;
 	
 	//translate:
 	XMMATRIX translateMatrix = XMMatrixTranslation(position.x, position.y, position.z);
-	objectMatrix = XMMatrixMultiply(translateMatrix, objectMatrix);
+	transform = XMMatrixMultiply(translateMatrix, transform);
 
 	//rotation:
 	//XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(XMConvertToRadians(rotation.x), XMConvertToRadians(rotation.y), XMConvertToRadians(rotation.z));
 	XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw((rotation.x), (rotation.y), (rotation.z));
-	objectMatrix = XMMatrixMultiply(rotationMatrix, objectMatrix);
+	transform = XMMatrixMultiply(rotationMatrix, transform);
 	
 	//scale:
 	XMMATRIX scaleMatrix = XMMatrixScaling(scale.x, scale.y, scale.z);
-	objectMatrix = XMMatrixMultiply(scaleMatrix, objectMatrix);	
+	transform = XMMatrixMultiply(scaleMatrix, transform);
 };

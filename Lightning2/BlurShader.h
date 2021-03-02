@@ -4,11 +4,8 @@
 
 using namespace DirectX;
 
-#define MAX_MOTION_TEXTURES_NUM 4
-
 class BlurShader : public BaseShader
 {
-
 	struct ScreenSizeBufferType {
 		XMFLOAT2 screenSize;
 		XMFLOAT2 padding;
@@ -24,8 +21,7 @@ class BlurShader : public BaseShader
 public:
 	BlurShader(ID3D11Device* device, HWND hwnd);
 	~BlurShader();
-
-
+	
 	void setScreenSize(ID3D11DeviceContext* deviceContext, XMINT2 size);
 	void updateGaussianBlurParameters(ID3D11DeviceContext* deviceContext, float blurExtent, float blurRange);
 	

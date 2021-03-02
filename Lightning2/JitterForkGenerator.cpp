@@ -77,6 +77,12 @@ void JitterForkGenerator::Run()
 	delete currentSegments;
 	currentSegments  = NULL;
 	previousSegments = NULL; 
+
+	//Energy - not provided by this method
+	for (Segment* seg : *output)
+	{
+		seg->SetEnergy(1.f);
+	}
 }
 
 ////

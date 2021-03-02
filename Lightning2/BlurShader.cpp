@@ -5,7 +5,6 @@ BlurShader::BlurShader(ID3D11Device* device, HWND hwnd) : BaseShader(device, hwn
 	initShader(L"blur_vs.cso", L"blur_ps.cso");
 }
 
-
 BlurShader::~BlurShader()
 {
 	// Release the sampler state.

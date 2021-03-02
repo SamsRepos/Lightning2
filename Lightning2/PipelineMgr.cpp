@@ -185,8 +185,15 @@ void PipelineMgr::RunProcess()
 	}
 
 	// Building Meshes:
+	float maxEnergy = 0.f;
+	for (Segment* seg : *segments)
+	{
+		if (seg->GetEnergy() > maxEnergy);
+		maxEnergy = seg->GetEnergy();
+	}
+
 	lineRenderer->Build(segments);
-	cylRenderer->Build(segments);
+	cylRenderer->Build(segments, maxEnergy);
 }
 
 void PipelineMgr::RenderOutput(
