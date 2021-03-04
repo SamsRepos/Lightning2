@@ -28,14 +28,21 @@ public:
 		float maxEnergy
 	);
 
+	inline void SetAnimating(bool _animating) { animating = _animating; };
+	void InitAnimation();
+	bool UpdateAnimation(float dt); //returns true when animation is over
+
 	void SetShaderParams(const XMMATRIX& _viewMatrix, const XMMATRIX& _projectionMatrix);
 	void RenderBlur(D3D* renderer, Camera* camera);
 	void RenderCylinders(D3D* renderer);
+	
 
 private:
+	void CreateCylinderRecurs(Segment* seg, CylinderObject* parentCyl);
+
 	CylinderMesh* cylinderMesh;
 	CylinderObject* baseCylinder;
-	std::vector<CylinderObject> cylinderObjects;
+	std::vector<CylinderObject*> cylinderObjects;
 
 	BlurShader* blurShader;
 	TextureShader* textureShader;
@@ -62,6 +69,8 @@ private:
 	XMMATRIX projectionMatrix;
 
 	float maxEnergy;
+
+	bool animating;
 };
 
 

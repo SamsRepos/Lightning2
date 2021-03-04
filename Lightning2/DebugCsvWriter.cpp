@@ -11,7 +11,7 @@ void DebugWriteCsv(std::vector<Segment*>* segments, const char* filePath)
 	int i = 0;
 	for (Segment* segment : *segments)
 	{
-		intMap[segment] = ++i;
+		intMap[segment] = i++;
 	}
 	
 	//2. Initialse out file

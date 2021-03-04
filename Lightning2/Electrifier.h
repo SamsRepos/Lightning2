@@ -17,7 +17,8 @@ public:
 	void Run();
 	
 private:
-	std::vector<Segment*> JitterSegment(Segment* segment, float extent, Segment* parent);
+	bool RunIterationRecurs(Segment* seed, Segment* parentSegment);
+	std::vector<Segment*> Jitter(Segment* segment, Segment* parent);
 	
 	std::vector<Segment*>* segments;
 

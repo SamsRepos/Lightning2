@@ -10,6 +10,24 @@ CylinderObject::CylinderObject(
 {
 }
 
+void CylinderObject::InitAnimation()
+{
+	t = 0;
+	SetScale(t);
+}
 
+bool CylinderObject::UpdateAnimation(float deltaTime)
+{
+	float deltaLength = velocity * deltaTime;
+	t += (deltaLength / length);
 
+	SetScale(t);
 
+	if (t >= 1.f)
+	{
+		SetScale(1.f); //ensuring scale doesnt't go too far
+		return true;
+	}
+
+	return false;
+}

@@ -67,6 +67,8 @@ CylinderRenderer::~CylinderRenderer()
 		delete baseCylinder;
 		baseCylinder = NULL;
 	}
+
+	DeleteAllVectorData(&cylinderObjects);
 }
 
 void CylinderRenderer::InitParameters(
@@ -91,104 +93,29 @@ void CylinderRenderer::InitParameters(
 
 void CylinderRenderer::Build(std::vector<Segment*>* segments, float maxEnergy)
 {
-	cylinderObjects.clear();
+	DeleteAllVectorData(&cylinderObjects);
 
-	for (Segment* seg : *segments)
-	{
-		CylinderObject newCylinder(*baseCylinder);
+	Segment* rootSeg = segments->front();
 
-		XMFLOAT3 startPosFloat3 = XMFLOAT3(
-			seg->GetStartPoint().x,
-			seg->GetStartPoint().y,
-			seg->GetStartPoint().z
-		);
-			
-		XMFLOAT3 endPosFloat3 = XMFLOAT3(
-			seg->GetEndPoint().x,
-			seg->GetEndPoint().y,
-			seg->GetEndPoint().z
-		);
-
-		//position:
-		newCylinder.SetPosition(XMFLOAT3(startPosFloat3.x, startPosFloat3.y, startPosFloat3.z));
-
-		//scale:
-		newCylinder.SetScale(
-			seg->GetDiameter(),
-			seg->GetLength(),
-			seg->GetDiameter()
-		);
-
-		//direction for roll/pitch/yaw for rotation:
-		XMVECTOR startPos = XMLoadFloat3(&startPosFloat3);
-		XMVECTOR endPos = XMLoadFloat3(&endPosFloat3);
-
-		XMVECTOR direction = endPos - startPos;
-
-		//direction = XMVector3Normalize(direction);
-
-		float dirX = XMVectorGetX(direction);
-		float dirY = XMVectorGetY(direction);
-		float dirZ = XMVectorGetZ(direction);
-
-		//yaw value rotates cylinder, around Y axis, towards  new point...
-		float yaw = atan(dirX / dirZ);
-
-		//roll value is just used for correction where the branch is pointing downwards:
-
-		float roll = (dirY < 0.f) ? PI : 0.f;
-
-		//pitch down value is determined by tranforming direction coordinates onto the X-axis:
-		XMMATRIX axisChanger    = XMMatrixRotationRollPitchYaw(0.f, -yaw, 0.f);
-		XMVECTOR transDirection = XMVector3Transform(direction, axisChanger);
-
-		float tdirX = XMVectorGetX(transDirection);
-		float tdirY = XMVectorGetY(transDirection);
-		float tdirZ = XMVectorGetZ(transDirection);
-
-		float pitch = atan(tdirZ / tdirY);
-
-		//(glitch fix, for if the branch is perfectly vertical)
-		if (dirZ == 0.f && dirX == 0.f)
-		{
-			if (dirY > 0.f)
-			{
-				yaw = 1.f;
-				pitch = roll = 0.f;
-			}
-			else
-			{
-				yaw = -1.f;
-				pitch = PI;
-				roll = 0.f;
-			}			
-		}
-
-		newCylinder.SetRotation(pitch, yaw, roll);
-
-		newCylinder.BuildTransform();
-
-		newCylinder.SetBrightness(
-			MyClamp(
-				(seg->GetEnergy() / maxEnergy),
-				0.f,
-				1.f
-			)
-		);
-
-		cylinderObjects.push_back(newCylinder);
-	}
+	CreateCylinderRecurs(rootSeg, NULL);	
 }
 
-void CylinderRenderer::SetShaderParams(
-	const XMMATRIX& _viewMatrix,
-	const XMMATRIX& _projectionMatrix
-)
+void CylinderRenderer::InitAnimation()
+{
+
+}
+
+//returns true when animation is over
+bool CylinderRenderer::UpdateAnimation(float dt)
+{
+	return false;
+}
+
+void CylinderRenderer::SetShaderParams(const XMMATRIX& _viewMatrix,	const XMMATRIX& _projectionMatrix)
 {
 	viewMatrix       = _viewMatrix;
 	projectionMatrix = _projectionMatrix;
 }
-
 
 void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera)
 {
@@ -211,12 +138,12 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera)
 		XMFLOAT4 colour = DxColourLerp(
 			backgroundColour,
 			blurColour,
-			c.GetBrightness()
+			c->GetBrightness()
 		);
 
-		c.GetMesh()->sendData(renderer->getDeviceContext());
-		mainShader->setShaderParameters(renderer->getDeviceContext(), c.GetTransform(), viewMatrix, projectionMatrix, c.GetTexture(), colour);
-		mainShader->render(renderer->getDeviceContext(), c.GetMesh()->getIndexCount());
+		c->GetMesh()->sendData(renderer->getDeviceContext());
+		mainShader->setShaderParameters(renderer->getDeviceContext(), c->GetTransform(), viewMatrix, projectionMatrix, c->GetTexture(), colour);
+		mainShader->render(renderer->getDeviceContext(), c->GetMesh()->getIndexCount());
 	}
 
 	//2. Render blur texture for blur pass:
@@ -277,11 +204,115 @@ void CylinderRenderer::RenderCylinders(D3D* renderer)
 		XMFLOAT4 colour = DxColourLerp(
 			backgroundColour,
 			cylinderColour,
-			c.GetBrightness()
+			c->GetBrightness()
 		);
 
-		c.GetMesh()->sendData(renderer->getDeviceContext());
-		mainShader->setShaderParameters(renderer->getDeviceContext(), c.GetTransform(), viewMatrix, projectionMatrix, c.GetTexture(), colour);
-		mainShader->render(renderer->getDeviceContext(), c.GetMesh()->getIndexCount());
+		c->GetMesh()->sendData(renderer->getDeviceContext());
+		mainShader->setShaderParameters(renderer->getDeviceContext(), c->GetTransform(), viewMatrix, projectionMatrix, c->GetTexture(), colour);
+		mainShader->render(renderer->getDeviceContext(), c->GetMesh()->getIndexCount());
+	}
+}
+
+////
+// PRIVATE:
+////
+
+void CylinderRenderer::CreateCylinderRecurs(Segment* seg, CylinderObject* parentCyl)
+{
+	CylinderObject* newCylinder = new CylinderObject(*baseCylinder);
+
+	XMFLOAT3 startPosFloat3 = XMFLOAT3(
+		seg->GetStartPoint().x,
+		seg->GetStartPoint().y,
+		seg->GetStartPoint().z
+	);
+
+	XMFLOAT3 endPosFloat3 = XMFLOAT3(
+		seg->GetEndPoint().x,
+		seg->GetEndPoint().y,
+		seg->GetEndPoint().z
+	);
+
+	//position:
+	newCylinder->SetPosition(XMFLOAT3(startPosFloat3.x, startPosFloat3.y, startPosFloat3.z));
+
+	//scale:
+	newCylinder->SetScale(
+		seg->GetDiameter(),
+		seg->GetLength(),
+		seg->GetDiameter()
+	);
+
+	//direction for roll/pitch/yaw for rotation:
+	XMVECTOR startPos = XMLoadFloat3(&startPosFloat3);
+	XMVECTOR endPos = XMLoadFloat3(&endPosFloat3);
+
+	XMVECTOR direction = endPos - startPos;
+
+	//direction = XMVector3Normalize(direction);
+
+	float dirX = XMVectorGetX(direction);
+	float dirY = XMVectorGetY(direction);
+	float dirZ = XMVectorGetZ(direction);
+
+	//yaw value rotates cylinder, around Y axis, towards  new point...
+	float yaw = atan(dirX / dirZ);
+
+	//roll value is just used for correction where the branch is pointing downwards:
+
+	float roll = (dirY < 0.f) ? PI : 0.f;
+
+	//pitch down value is determined by tranforming direction coordinates onto the X-axis:
+	XMMATRIX axisChanger = XMMatrixRotationRollPitchYaw(0.f, -yaw, 0.f);
+	XMVECTOR transDirection = XMVector3Transform(direction, axisChanger);
+
+	float tdirX = XMVectorGetX(transDirection);
+	float tdirY = XMVectorGetY(transDirection);
+	float tdirZ = XMVectorGetZ(transDirection);
+
+	float pitch = atan(tdirZ / tdirY);
+
+	//(glitch fix, for if the branch is perfectly vertical)
+	if (dirZ == 0.f && dirX == 0.f)
+	{
+		if (dirY > 0.f)
+		{
+			yaw = 1.f;
+			pitch = roll = 0.f;
+		}
+		else
+		{
+			yaw = -1.f;
+			pitch = PI;
+			roll = 0.f;
+		}
+	}
+
+	newCylinder->SetRotation(pitch, yaw, roll);
+
+	newCylinder->BuildTransform();
+
+	newCylinder->SetBrightness(
+		MyClamp(
+			(seg->GetEnergy() / maxEnergy),
+			0.f,
+			1.f
+		)
+	);
+
+	newCylinder->SetLength(seg->GetLength());
+	newCylinder->SetVelocity(seg->GetVelocity());
+	
+	if (parentCyl)
+	{
+		parentCyl->AddChild(newCylinder);
+		newCylinder->SetParent(parentCyl);
+	}
+
+	cylinderObjects.push_back(newCylinder);
+
+	for (Segment* s : *(seg->GetChildren()))
+	{
+		CreateCylinderRecurs(s, newCylinder);
 	}
 }
