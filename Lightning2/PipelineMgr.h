@@ -104,7 +104,9 @@ public:
 	void RunProcess();
 	std::vector<Segment*>* GetSegments() { return segments; };
 
-	//render output
+	//graphics:
+	void UpdateAnimation(float dt);
+
 	void RenderOutput(
 		D3D* renderer,
 		Camera* camera,

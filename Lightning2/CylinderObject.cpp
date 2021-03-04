@@ -1,5 +1,8 @@
 #include "CylinderObject.h"
 
+#include "MyClamp.h"
+#include "MyLerp.h"
+
 CylinderObject::CylinderObject(
 	BaseMesh* _mesh,
 	ID3D11ShaderResourceView* _texture,
@@ -12,20 +15,32 @@ CylinderObject::CylinderObject(
 
 void CylinderObject::InitAnimation()
 {
+	fullScale = GetScale();
+
 	t = 0;
-	SetScale(t);
+	SetScale(0);
+	BuildTransform();
 }
 
 bool CylinderObject::UpdateAnimation(float deltaTime)
 {
 	float deltaLength = velocity * deltaTime;
 	t += (deltaLength / length);
+	t = MyClamp(t, 0.f, 1.f);
 
-	SetScale(t);
+	SetScale(
+		XMFLOAT3(
+			MyLerp(0.f, fullScale.x, t),
+			MyLerp(0.f, fullScale.y, t),
+			MyLerp(0.f, fullScale.z, t)
+		)
+	);
 
+
+	BuildTransform();
+	
 	if (t >= 1.f)
-	{
-		SetScale(1.f); //ensuring scale doesnt't go too far
+	{		
 		return true;
 	}
 

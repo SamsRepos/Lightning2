@@ -198,6 +198,15 @@ void PipelineMgr::RunProcess()
 
 	lineRenderer->Build(segments);
 	cylRenderer->Build(segments, maxEnergy);
+
+	cylRenderer->SetAnimating(true);
+	cylRenderer->InitAnimation();
+
+}
+
+void PipelineMgr::UpdateAnimation(float dt)
+{
+	cylRenderer->UpdateAnimation(dt);
 }
 
 void PipelineMgr::RenderOutput(
@@ -208,7 +217,6 @@ void PipelineMgr::RenderOutput(
 	const XMMATRIX& projMatrix	
 )
 {
-
 	if (settings->IsBlurRenderingActive() || settings->IsCylinderRenderingActive())
 	{
 		cylRenderer->SetShaderParams(viewMatrix, projMatrix);

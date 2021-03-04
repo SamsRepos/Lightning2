@@ -113,37 +113,57 @@ void CylinderRenderer::InitAnimation()
 	CylinderObject* rootCyl = cylinderObjects.front();
 	animCylindersGrowing.push_back(rootCyl);
 	animCylindersVisible.push_back(rootCyl);
+
+	animatingNow = true;
 }
 
 //returns true when animation is over
 bool CylinderRenderer::UpdateAnimation(float dt)
 {
-	auto it = animCylindersGrowing.begin();
-
-	while (it != animCylindersGrowing.end())
+	if (animatingNow)
 	{
-		CylinderObject* cyl = *it;
+		std::vector<CylinderObject*> cylindersToAddToAnim;
 
-		if (cyl->UpdateAnimation(dt))
+		auto it = animCylindersGrowing.begin();
+
+		while (it != animCylindersGrowing.end())
 		{
-			// Remove this cylinder from the vector of growing cylinders
-			it = animCylindersGrowing.erase(it);
-
-			//when animation is over:
-			for (CylinderObject* child : *(cyl->GetChildren()))
+			CylinderObject* cyl = *it;
+		
+			if (cyl->UpdateAnimation(dt))
 			{
-				animCylindersGrowing.push_back(child);
-				animCylindersVisible.push_back(child);
+				// Remove this cylinder from the vector of growing cylinders
+				it = animCylindersGrowing.erase(it);
+
+				//when animation is over:
+				for (CylinderObject* child : *(cyl->GetChildren()))
+				{
+					cylindersToAddToAnim.push_back(child);
+					cylindersToAddToAnim.push_back(child);
+				}
 			}
-		}
-		else
-		{
-			it++;
+			else
+			{
+				it++;
+			}
+
 		}
 
+		animCylindersGrowing.insert(
+			animCylindersGrowing.end(),
+			cylindersToAddToAnim.begin(),
+			cylindersToAddToAnim.end()
+		);
+
+		animCylindersVisible.insert(
+			animCylindersVisible.end(),
+			cylindersToAddToAnim.begin(),
+			cylindersToAddToAnim.end()
+		);
 	}
 
-	return animCylindersGrowing.size();
+	animatingNow = animCylindersGrowing.size() == 0 ? false : true;
+	return !animatingNow;
 }
 
 void CylinderRenderer::SetShaderParams(const XMMATRIX& _viewMatrix,	const XMMATRIX& _projectionMatrix)
@@ -168,7 +188,12 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera)
 		backgroundColour.w
 	);
 
-	for (auto c : cylinderObjects)
+	std::vector<CylinderObject*>* cylindersToRender =
+		animating ?
+		&animCylindersVisible :
+		&cylinderObjects;
+
+	for (CylinderObject* c : *cylindersToRender)
 	{
 		XMFLOAT4 colour = DxColourLerp(
 			backgroundColour,
@@ -234,7 +259,12 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera)
 
 void CylinderRenderer::RenderCylinders(D3D* renderer)
 {
-	for (auto c : cylinderObjects)
+	std::vector<CylinderObject*>* cylindersToRender =
+		animating ?
+		&animCylindersVisible :
+		&cylinderObjects;
+
+	for (CylinderObject* c : *cylindersToRender)
 	{
 		XMFLOAT4 colour = DxColourLerp(
 			backgroundColour,

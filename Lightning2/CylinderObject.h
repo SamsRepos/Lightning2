@@ -34,6 +34,8 @@ private:
 	float velocity;
 	float t; // for animation.. 0 <= t <= 1
 
+	XMFLOAT3 fullScale;
+
 	CylinderObject* parent;
 	std::vector<CylinderObject*> children;
 };

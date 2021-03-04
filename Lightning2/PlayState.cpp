@@ -136,6 +136,8 @@ void PlayState::Init()
 void PlayState::Update(float _dt)
 {
 	BaseState::Update(_dt);
+
+	pipelineMgr->UpdateAnimation(_dt* 10);
 }
 
 void PlayState::Render()
@@ -176,7 +178,7 @@ void PlayState::Gui()
 		}
 	}
 
-	static bool zappy = true;
+	static bool zappy = false;
 	ImGui::Checkbox("ZAPPY", &zappy);
 	if (zappy)
 	{
