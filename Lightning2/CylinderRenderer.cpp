@@ -102,13 +102,48 @@ void CylinderRenderer::Build(std::vector<Segment*>* segments, float maxEnergy)
 
 void CylinderRenderer::InitAnimation()
 {
+	animCylindersGrowing.clear();
+	animCylindersVisible.clear();
 
+	for (CylinderObject* cyl : cylinderObjects)
+	{
+		cyl->InitAnimation();
+	}
+
+	CylinderObject* rootCyl = cylinderObjects.front();
+	animCylindersGrowing.push_back(rootCyl);
+	animCylindersVisible.push_back(rootCyl);
 }
 
 //returns true when animation is over
 bool CylinderRenderer::UpdateAnimation(float dt)
 {
-	return false;
+	auto it = animCylindersGrowing.begin();
+
+	while (it != animCylindersGrowing.end())
+	{
+		CylinderObject* cyl = *it;
+
+		if (cyl->UpdateAnimation(dt))
+		{
+			// Remove this cylinder from the vector of growing cylinders
+			it = animCylindersGrowing.erase(it);
+
+			//when animation is over:
+			for (CylinderObject* child : *(cyl->GetChildren()))
+			{
+				animCylindersGrowing.push_back(child);
+				animCylindersVisible.push_back(child);
+			}
+		}
+		else
+		{
+			it++;
+		}
+
+	}
+
+	return animCylindersGrowing.size();
 }
 
 void CylinderRenderer::SetShaderParams(const XMMATRIX& _viewMatrix,	const XMMATRIX& _projectionMatrix)

@@ -71,6 +71,8 @@ private:
 	float maxEnergy;
 
 	bool animating;
+	std::vector<CylinderObject*> animCylindersGrowing;
+	std::vector<CylinderObject*> animCylindersVisible;
 };
 
 
