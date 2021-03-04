@@ -16,6 +16,10 @@ CylinderObject::CylinderObject(
 
 void CylinderObject::Init(Segment* seg)
 {
+	diameter = seg->GetDiameter();
+	length =   seg->GetLength();
+	velocity = seg->GetVelocity();
+
 	XMFLOAT3 startPosFloat3 = XMFLOAT3(
 		seg->GetStartPoint().x,
 		seg->GetStartPoint().y,
@@ -32,11 +36,7 @@ void CylinderObject::Init(Segment* seg)
 	SetPosition(XMFLOAT3(startPosFloat3.x, startPosFloat3.y, startPosFloat3.z));
 
 	//scale:
-	SetScale(
-		seg->GetDiameter(),
-		seg->GetLength(),
-		seg->GetDiameter()
-	);
+	SetScale(diameter, length, diameter);
 
 	//direction for roll/pitch/yaw for rotation:
 	XMVECTOR startPos = XMLoadFloat3(&startPosFloat3);
@@ -58,7 +58,7 @@ void CylinderObject::Init(Segment* seg)
 	float roll = (dirY < 0.f) ? PI : 0.f;
 
 	//pitch down value is determined by tranforming direction coordinates onto the X-axis:
-	XMMATRIX axisChanger = XMMatrixRotationRollPitchYaw(0.f, -yaw, 0.f);
+	XMMATRIX axisChanger    = XMMatrixRotationRollPitchYaw(0.f, -yaw, 0.f);
 	XMVECTOR transDirection = XMVector3Transform(direction, axisChanger);
 
 	float tdirX = XMVectorGetX(transDirection);
@@ -86,16 +86,10 @@ void CylinderObject::Init(Segment* seg)
 	SetRotation(pitch, yaw, roll);
 
 	BuildTransform();
-	
-	SetLength(seg->GetLength());
-	SetVelocity(seg->GetVelocity());
-
 }
 
 void CylinderObject::InitAnimation()
 {	
-	fullScale = GetScale();
-
 	t = 0.f;
 	SetScale(0);
 	BuildTransform();
@@ -121,10 +115,10 @@ bool CylinderObject::UpdateAnimationRecurs(float deltaTime)
 	t = MyClamp(t, 0.f, 1.f);
 
 	SetScale(
-		XMFLOAT3(
-			MyLerp(0.f, fullScale.x, t),
-			MyLerp(0.f, fullScale.y, t),
-			MyLerp(0.f, fullScale.z, t)
+		XMFLOAT3(			
+			diameter,
+			MyLerp(0.f, length, t),
+			diameter
 		)
 	);
 	BuildTransform();
@@ -132,7 +126,7 @@ bool CylinderObject::UpdateAnimationRecurs(float deltaTime)
 	if (t >= 1.f)
 	{
 		finishedAnimating = true;
-		SetScale(fullScale); // ensuring any slight t>1.f is fixed
+		SetScale(diameter, length, diameter); // ensuring any slight t>1.f is fixed
 
 		if (children.empty())
 		{

@@ -121,7 +121,7 @@ bool CylinderRenderer::UpdateAnimation(float dt)
 	{
 		CylinderObject* rootCyl = cylinderObjects.front();
 
-		bool isFinished = !(rootCyl->UpdateAnimationRecurs(dt));
+		bool isFinished = !(rootCyl->UpdateAnimationRecurs(dt * 20));
 		animatingNow = !isFinished;
 		return isFinished;				
 	}
