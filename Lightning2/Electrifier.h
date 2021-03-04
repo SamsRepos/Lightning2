@@ -17,7 +17,7 @@ public:
 	void Run();
 	
 private:
-	std::vector<Segment*> JitterSegment(Segment* segment, float extent);
+	std::vector<Segment*> JitterSegment(Segment* segment, float extent, Segment* parent);
 	
 	std::vector<Segment*>* segments;
 

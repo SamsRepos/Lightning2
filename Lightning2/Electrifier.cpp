@@ -37,6 +37,8 @@ void Electrifier::Run()
 
 		anySegmentTooLong = false;
 
+		Segment* nextParent = NULL;
+
 		for (Segment* seg : *previousSegments)
 		{
 			float len = seg->GetLength();
@@ -45,12 +47,15 @@ void Electrifier::Run()
 			{
 				anySegmentTooLong = true;
 
-				std::vector<Segment*> res = JitterSegment(seg, len * chaosGaussianGen.GetSample());
+				std::vector<Segment*> res = JitterSegment(seg, len * chaosGaussianGen.GetSample(), nextParent);
 				currentSegments->insert(currentSegments->end(), res.begin(), res.end());
+				nextParent = res[1]; //bottomSeg
 			}
 			else
 			{
-				currentSegments->push_back(new Segment(*seg));
+				Segment* newSeedSegCopy = new Segment(*seg);
+				currentSegments->push_back(newSeedSegCopy);
+				nextParent = newSeedSegCopy;
 			}
 		}
 
@@ -82,7 +87,7 @@ void Electrifier::Run()
 // PRIVATE:
 ////
 
-std::vector<Segment*> Electrifier::JitterSegment(Segment* seed, float extent)
+std::vector<Segment*> Electrifier::JitterSegment(Segment* seed, float extent, Segment* parent)
 {
 	//1. get a random vector
 	MyFloat3 randvec = RandomNormalisedVector();
@@ -100,8 +105,25 @@ std::vector<Segment*> Electrifier::JitterSegment(Segment* seed, float extent)
 	Segment* topSeg    = new Segment(seed->GetStartPoint(), newPt);
 	Segment* bottomSeg = new Segment(newPt, seed->GetEndPoint());
 
+	// Parenting:
+	if (parent)
+	{
+		topSeg->SetParent(parent);
+		parent->AddChild(topSeg);
+	}
+	bottomSeg->SetParent(topSeg);
+	topSeg->AddChild(bottomSeg);
+
+	// Things to be sure to inherit from the seed:
 	topSeg->SetDiameter(seed->GetDiameter());
 	bottomSeg->SetDiameter(seed->GetDiameter());
+
+	topSeg->SetEnergy(seed->GetEnergy());
+	bottomSeg->SetEnergy(seed->GetEnergy());
+
+	topSeg->SetVelocity(seed->GetVelocity());
+	bottomSeg->SetVelocity(seed->GetVelocity());
+
 
 	std::vector<Segment*> res = { topSeg, bottomSeg };
 

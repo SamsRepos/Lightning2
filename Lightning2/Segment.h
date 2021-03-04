@@ -56,6 +56,9 @@ public:
 	inline void SetEnergy(float _energy) { energy = _energy; };
 	inline float GetEnergy() { return energy; };
 
+	inline void SetVelocity(float _velocity) { velocity = _velocity; };
+	inline float GetVelocity() { return velocity; };
+
 	void SetToBeCulled();
 	inline bool IsToBeCulled() { return cullMe; };
 	
@@ -72,6 +75,7 @@ private:
 	SegmentStatuses status;
 
 	float energy;
+	float velocity;
 
 	bool cullMe = false;
 };

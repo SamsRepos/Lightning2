@@ -56,6 +56,7 @@ void StreamerGenerator::Run()
 	Segment* rootSegment = new Segment(rootStartPt, rootEndPt, rootDiameter, rootMinimumDiamater);
 
 	rootSegment->SetEnergy(rootLength * ENERGY_COEFF);
+	rootSegment->SetVelocity(CalculateVelocity(rootDiameter));
 
 	output->push_back(rootSegment);
 
@@ -134,6 +135,7 @@ Segment* StreamerGenerator::CreateSegment(Segment* parent)
 	);
 
 	newSegment->SetEnergy(length * ENERGY_COEFF);
+	newSegment->SetVelocity(CalculateVelocity(diameter));
 
 	// Angle fix:
 	float angle = deltaAngleGen.GetSample();

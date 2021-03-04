@@ -82,6 +82,7 @@ void JitterForkGenerator::Run()
 	for (Segment* seg : *output)
 	{
 		seg->SetEnergy(1.f);
+		seg->SetVelocity(1.f);
 	}
 }
 
