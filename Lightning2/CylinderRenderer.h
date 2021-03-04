@@ -28,7 +28,6 @@ public:
 		float maxEnergy
 	);
 
-	inline void SetAnimating(bool _animating) { animating = _animating; };
 	void InitAnimation();
 	bool UpdateAnimation(float dt); //returns true when animation is over
 
@@ -70,10 +69,7 @@ private:
 
 	float maxEnergy;
 
-	bool animating;
 	bool animatingNow;
-	std::vector<CylinderObject*> animCylindersGrowing;
-	std::vector<CylinderObject*> animCylindersVisible;
 };
 
 

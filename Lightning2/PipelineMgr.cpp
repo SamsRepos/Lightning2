@@ -199,7 +199,6 @@ void PipelineMgr::RunProcess()
 	lineRenderer->Build(segments);
 	cylRenderer->Build(segments, maxEnergy);
 
-	cylRenderer->SetAnimating(true);
 	cylRenderer->InitAnimation();
 
 }

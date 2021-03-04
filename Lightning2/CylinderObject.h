@@ -1,6 +1,8 @@
 #pragma once
 #include "SceneObject.h"
 
+#include "Segment.h"
+
 class CylinderObject : public SceneObject
 {
 public:
@@ -9,6 +11,8 @@ public:
 		ID3D11ShaderResourceView* _texture,
 		const XMMATRIX &_worldOriginTransform
 	);
+
+	void Init(Segment* seg);
 	
 	inline void SetBrightness(float _brightness) { brightness = _brightness; };
 	inline float GetBrightness() { return brightness; };
@@ -19,6 +23,9 @@ public:
 	inline void SetVelocity(float _velocity) { velocity = _velocity; };
 	inline float GetVelocity() { return velocity; };
 
+	inline void SetVisible(bool _visible) { visible = _visible; };
+	inline bool IsVisible() { return visible; };
+
 	inline void SetParent(CylinderObject* _parent) { parent = _parent; };
 	inline CylinderObject* GetParent() { return parent; };
 	inline void AddChild(CylinderObject* child) { children.push_back(child); };
@@ -26,13 +33,15 @@ public:
 	inline CylinderObject* GetChild(size_t index) { return children[index]; };
 
 	void InitAnimation();
-	bool UpdateAnimation(float deltaTime); //Returns true if animation is completed
-
+	bool UpdateAnimationRecurs(float deltaTime); //Returns true if animation is completed
+	
 private:
 	float brightness;
 	float length;
 	float velocity;
 	float t; // for animation.. 0 <= t <= 1
+	bool visible;
+	bool finishedAnimating;
 
 	XMFLOAT3 fullScale;
 
