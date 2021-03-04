@@ -19,9 +19,7 @@ TestState::TestState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHe
 	defaultSettings.wholeTransformerActive    = false;
 	defaultSettings.diameterTransformerActive = false;
 	defaultSettings.electrifierActive         = false;
-	defaultSettings.blurRenderingActive       = false;
-	defaultSettings.lineRenderingActive       = false;
-	defaultSettings.cylinderRenderingActive   = false;
+	defaultSettings.renderingActive           = false;
 
 	pipelineMgr = new PipelineMgr(
 		defaultSettings,
@@ -154,18 +152,24 @@ void TestState::InitPipelineMgr()
 		DEFAULT_E_CHAOS_STDDEV
 	);
 
-	pipelineMgr->InitLineRenderer(
-		COLOUR_OPTIONS.at(DEFAULT_LINE_COLOUR)
+	LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
+
+	lightningRenderer->SetColours(
+		COLOUR_OPTIONS.at(DEFAULT_BACKGROUND_COLOUR),
+		COLOUR_OPTIONS.at(DEFAULT_BLUR_COLOUR),
+		COLOUR_OPTIONS.at(DEFAULT_LINE_COLOUR),
+		COLOUR_OPTIONS.at(DEFAULT_CYLINDER_COLOUR)
 	);
 
-	pipelineMgr->InitCylinderRenderer(
-		COLOUR_OPTIONS.at(DEFAULT_BLUR_COLOUR),
-		COLOUR_OPTIONS.at(DEFAULT_BLUR_BACKGROUND_COLOUR),
-		COLOUR_OPTIONS.at(DEFAULT_CYLINDER_COLOUR),
+	lightningRenderer->SetBlurParams(
 		DEFAULT_BLUR_DIRECTIONS,
 		DEFAULT_BLUR_QUALITY,
 		DEFAULT_BLUR_SIZE,
 		DEFAULT_BLUR_ADJUSTMENT
+	);
+
+	lightningRenderer->SetAnimationParams(
+		DEFAULT_ANIM_SPEED
 	);
 }
 

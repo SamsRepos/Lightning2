@@ -21,9 +21,7 @@ PlayState::PlayState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHe
 	defaultSettings.wholeTransformerActive    = false;
 	defaultSettings.diameterTransformerActive = false;
 	defaultSettings.electrifierActive         = false;
-	defaultSettings.blurRenderingActive       = true;
-	defaultSettings.lineRenderingActive       = true;
-	defaultSettings.cylinderRenderingActive   = true;
+	defaultSettings.renderingActive           = true;	
 
 	pipelineMgr = new PipelineMgr(
 		defaultSettings,
@@ -118,18 +116,22 @@ void PlayState::Init()
 		DEFAULT_E_CHAOS_STDDEV
 	);
 
-	pipelineMgr->InitLineRenderer(
-		COLOUR_OPTIONS.at(DEFAULT_LINE_COLOUR)
+	pipelineMgr->GetLightningRenderer()->SetColours(
+		COLOUR_OPTIONS.at(DEFAULT_BACKGROUND_COLOUR),
+		COLOUR_OPTIONS.at(DEFAULT_BLUR_COLOUR),
+		COLOUR_OPTIONS.at(DEFAULT_LINE_COLOUR),
+		COLOUR_OPTIONS.at(DEFAULT_CYLINDER_COLOUR)
 	);
 
-	pipelineMgr->InitCylinderRenderer(
-		COLOUR_OPTIONS.at(DEFAULT_BLUR_COLOUR),
-		COLOUR_OPTIONS.at(DEFAULT_BLUR_BACKGROUND_COLOUR),
-		COLOUR_OPTIONS.at(DEFAULT_CYLINDER_COLOUR),
+	pipelineMgr->GetLightningRenderer()->SetBlurParams(
 		DEFAULT_BLUR_DIRECTIONS,
 		DEFAULT_BLUR_QUALITY,
 		DEFAULT_BLUR_SIZE,
 		DEFAULT_BLUR_ADJUSTMENT
+	);
+
+	pipelineMgr->GetLightningRenderer()->SetAnimationParams(
+		DEFAULT_ANIM_SPEED
 	);
 }
 
@@ -142,11 +144,16 @@ void PlayState::Update(float _dt)
 
 void PlayState::Render()
 {
+	if (!(pipelineMgr->GetSettings()->IsRenderingActive()))
+	{
+		return;
+	}
+
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 	XMMATRIX viewMatrix = camera->getViewMatrix();
 	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
 
-	if (!(pipelineMgr->GetSettings()->IsBlurRenderingActive()))
+	if (!(pipelineMgr->GetLightningRenderer()->IsBlurRenderingActive()))
 	{
 		planeMesh->sendData(renderer->getDeviceContext());
 		lightShader->setShaderParameters(renderer->getDeviceContext(), planeMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"metal"), light);
@@ -154,7 +161,6 @@ void PlayState::Render()
 	}
 
 	pipelineMgr->RenderOutput(
-		renderer,
 		camera,
 		worldMatrix,
 		viewMatrix,
@@ -198,9 +204,11 @@ void PlayState::Gui()
 		}
 	}
 
+	PipelineMgrSettings* settings = pipelineMgr->GetSettings();
+	LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
+
 	// Pipeline stages:
 	{
-		PipelineMgrSettings* settings = pipelineMgr->GetSettings();
 
 		//Geometry generator:
 		GeometryGeneratorTypes genType = settings->GetGeometryGeneratorType();
@@ -248,15 +256,15 @@ void PlayState::Gui()
 		//Renderers:
 		ImGui::Text("Active Rendering Stages: ");
 		ImGui::Indent();
-		if (settings->IsBlurRenderingActive())
+		if (lightningRenderer->IsBlurRenderingActive())
 		{
 			ImGui::Text("- Blur Rendering");
 		}
-		if (settings->IsLineRenderingActive())
+		if (lightningRenderer->IsLineRenderingActive())
 		{
 			ImGui::Text("- Line Rendering");
 		}
-		if (settings->IsCylinderRenderingActive())
+		if (lightningRenderer->IsCylinderRenderingActive())
 		{
 			ImGui::Text("- Cylinder Rendering");
 		}
@@ -314,24 +322,24 @@ void PlayState::Gui()
 		//Toggle renderers:
 		if (ImGui::CollapsingHeader("Toggle Rendering Stages On/Off"))
 		{
-			if (GuiToggleButton("Toggle Blur Rendering", settings->IsBlurRenderingActive()))
+			if (GuiToggleButton("Toggle Blur Rendering", lightningRenderer->IsBlurRenderingActive()))
 			{
 				pipelineMgr->SetBlurRenderingActive(
-					!(settings->IsBlurRenderingActive())
+					!(lightningRenderer->IsBlurRenderingActive())
 				);
 			}
 
-			if (GuiToggleButton("Toggle Line Rendering", settings->IsLineRenderingActive()))
+			if (GuiToggleButton("Toggle Line Rendering", lightningRenderer->IsLineRenderingActive()))
 			{
 				pipelineMgr->SetLineRenderingActive(
-					!(settings->IsLineRenderingActive())
+					!(lightningRenderer->IsLineRenderingActive())
 				);
 			}
 
-			if (GuiToggleButton("Toggle Cylinder Rendering", settings->IsCylinderRenderingActive()))
+			if (GuiToggleButton("Toggle Cylinder Rendering", lightningRenderer->IsCylinderRenderingActive()))
 			{
 				pipelineMgr->SetCylinderRenderingActive(
-					!(settings->IsCylinderRenderingActive())
+					!(lightningRenderer->IsCylinderRenderingActive())
 				);
 			}
 		}
@@ -425,6 +433,7 @@ void PlayState::Gui()
 		if (ImGui::CollapsingHeader("Set Diameter Thinner Parameters"))
 		{
 			bool changeNow = false;
+
 			changeNow = GuiSliderFloat(changeNow, "DTHIN scaledown", &scaledown, DTHIN_MIN_SCALEDOWN, DTHIN_MAX_SCALEDOWN);
 
 			if (changeNow)
@@ -467,6 +476,7 @@ void PlayState::Gui()
 		if (ImGui::CollapsingHeader("Set Diameter Transformer Parameters"))
 		{
 			bool changeNow = false;
+
 			changeNow = GuiSliderFloat(changeNow, "DT initial diameter", &initialDiameter, DT_MIN_INITIAL_DIAMETER, DT_MAX_INITIAL_DIAMETER);
 			changeNow = GuiSliderFloat(changeNow, "DT diameter scaledown", &diameterScaledown, DT_MIN_DIAMETER_SCALEDOWN, DT_MAX_DIAMETER_SCALEDOWN);
 			changeNow = GuiSliderInt(changeNow, "DT max num branch levels", &maxNumBranchLevels, DT_MIN_MAX_NUM_BRANCH_LEVELS, DT_MAX_MAX_NUM_BRANCH_LEVELS);
@@ -490,8 +500,8 @@ void PlayState::Gui()
 
 		if (ImGui::CollapsingHeader("Set Electrifier Parameters"))
 		{
-
 			bool changeNow = false;
+
 			changeNow = GuiSliderFloat(changeNow, "E max len", &maxSegmentLength, E_MIN_MAX_SEG_LENGTH, E_MAX_MAX_SEG_LENGTH);
 			changeNow = GuiSliderFloat(changeNow, "E chaos mean", &chaosMean, E_MIN_CHAOS_MEAN, E_MAX_CHAOS_MEAN);
 			changeNow = GuiSliderFloat(changeNow, "E chaos std dev", &chaosStdDev, E_MIN_CHAOS_STDDEV, E_MAX_CHAOS_STDDEV);
@@ -507,42 +517,45 @@ void PlayState::Gui()
 		}
 	}
 
-	//Adjust Line Renderer Parameters:
+	//Adjust Colour Parameters:
 	{
+		static std::string backgroundColour = DEFAULT_BACKGROUND_COLOUR;
+		static std::string blurColour = DEFAULT_BLUR_COLOUR;
 		static std::string lineColour = DEFAULT_LINE_COLOUR;
+		static std::string cylinderColour = DEFAULT_CYLINDER_COLOUR;
 
-		if (ImGui::CollapsingHeader("Set Line Renderer Parameters"))
+		if (ImGui::CollapsingHeader("Set Colour Parameters"))
 		{
 			bool changeNow = false;
+
+			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Background Colour", &backgroundColour);
+			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Blur Colour", &blurColour);
 			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Line Colour", &lineColour);
+			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Cylinder Colour", &cylinderColour);
 
 			if (changeNow)
 			{
-				pipelineMgr->InitLineRenderer(
-					COLOUR_OPTIONS.at(lineColour)
+				lightningRenderer->SetColours(
+					COLOUR_OPTIONS.at(backgroundColour),
+					COLOUR_OPTIONS.at(blurColour),
+					COLOUR_OPTIONS.at(lineColour),
+					COLOUR_OPTIONS.at(cylinderColour)
 				);
 			}
 		}
 	}
-
-
-	//Adjust Cylinder Renderer Parameters:
+	
+	//Adjust Blur Parameters:
 	{
-		static std::string blurColour = DEFAULT_BLUR_COLOUR;
-		static std::string blurBackgroundColour = DEFAULT_BLUR_BACKGROUND_COLOUR;
-		static std::string cylinderColour = DEFAULT_CYLINDER_COLOUR;
 		static float blurDirections = DEFAULT_BLUR_DIRECTIONS;
 		static float blurQuality = DEFAULT_BLUR_QUALITY;
 		static float blurSize = DEFAULT_BLUR_SIZE;
 		static float blurAdjustment= DEFAULT_BLUR_ADJUSTMENT;
 
-		if (ImGui::CollapsingHeader("Set Cylinder Renderer Parameters"))
+		if (ImGui::CollapsingHeader("Set Blur Parameters"))
 		{
-
 			bool changeNow = false;
-			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Blur Colour", &blurColour);
-			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Blur Background Colour", &blurBackgroundColour);
-			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Cylinder Colour", &cylinderColour);
+
 			changeNow = GuiSliderFloat(changeNow, "Blur directions", &blurDirections, BLUR_MIN_DIRECTIONS, BLUR_MAX_DIRECTIONS);
 			changeNow = GuiSliderFloat(changeNow, "Blur quality", &blurQuality, BLUR_MIN_QUALITY, BLUR_MAX_QUALITY);
 			changeNow = GuiSliderFloat(changeNow, "Blur size", &blurSize, BLUR_MIN_SIZE, BLUR_MAX_SIZE);
@@ -550,14 +563,30 @@ void PlayState::Gui()
 
 			if (changeNow)
 			{
-				pipelineMgr->InitCylinderRenderer(
-					COLOUR_OPTIONS.at(blurColour),
-					COLOUR_OPTIONS.at(blurBackgroundColour),
-					COLOUR_OPTIONS.at(cylinderColour),
+				lightningRenderer->SetBlurParams(					
 					blurDirections,
 					blurQuality,
 					blurSize,
 					blurAdjustment
+				);
+			}
+		}
+	}
+
+	//Adjust animation parameters:
+	{
+		static float speed = DEFAULT_ANIM_SPEED;
+
+		if (ImGui::CollapsingHeader("Set Animation Parameters"))
+		{
+			bool changeNow = false;
+
+			changeNow = GuiSliderFloat(changeNow, "Anim Speed", &speed, ANIM_MIN_SPEED, ANIM_MAX_SPEED);
+
+			if (changeNow)
+			{
+				lightningRenderer->SetAnimationParams(
+					speed
 				);
 			}
 		}

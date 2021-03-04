@@ -33,13 +33,6 @@ LineRenderer::~LineRenderer()
 	}
 }
 
-void LineRenderer::InitParameters(
-	const XMFLOAT4& _lineColour
-)
-{
-	lineColour = _lineColour;
-}
-
 void LineRenderer::Build(std::vector<Segment*>* segments)
 {
 	if (mesh)

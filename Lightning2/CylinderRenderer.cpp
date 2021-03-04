@@ -71,20 +71,25 @@ CylinderRenderer::~CylinderRenderer()
 	DeleteAllVectorData(&cylinderObjects);
 }
 
-void CylinderRenderer::InitParameters(
-	const XMFLOAT4& _blurColour,
+void CylinderRenderer::SetColours(
 	const XMFLOAT4& _backgroundColour,
-	const XMFLOAT4& _cylinderColour,
+	const XMFLOAT4& _blurColour,
+	const XMFLOAT4& _cylinderColour
+)
+{
+	backgroundColour = _backgroundColour;
+	blurColour       = _blurColour;
+	cylinderColour   = _cylinderColour;
+	
+}
+
+void CylinderRenderer::SetBlurParams(
 	float _blurDirections,
 	float _blurQuality,
 	float _blurSize,
 	float _blurFinalAdjustment
 )
 {
-	blurColour       = _blurColour;
-	backgroundColour = _backgroundColour;
-	cylinderColour   = _cylinderColour;
-	
 	blurDirections      = _blurDirections;
 	blurQuality         = _blurQuality;
 	blurSize            = _blurSize;
@@ -121,7 +126,7 @@ bool CylinderRenderer::UpdateAnimation(float dt)
 	{
 		CylinderObject* rootCyl = cylinderObjects.front();
 
-		bool isFinished = !(rootCyl->UpdateAnimationRecurs(dt * 20));
+		bool isFinished = !(rootCyl->UpdateAnimationRecurs(dt));
 		animatingNow = !isFinished;
 		return isFinished;				
 	}

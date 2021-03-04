@@ -189,6 +189,9 @@
     <ClCompile Include="MyLerp.cpp">
       <Filter>Source Files\Maths</Filter>
     </ClCompile>
+    <ClCompile Include="LightningRenderer.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App1.h">
@@ -319,6 +322,9 @@
     </ClInclude>
     <ClInclude Include="MyMemoryMeasurer.h">
       <Filter>Header Files\Performance</Filter>
+    </ClInclude>
+    <ClInclude Include="LightningRenderer.h">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -49,17 +49,20 @@ const float DEFAULT_E_MAX_SEG_LENGTH = 1.f;
 const float DEFAULT_E_CHAOS_MEAN     = .1f;
 const float DEFAULT_E_CHAOS_STDDEV   = .05f;
 
-// Line Renderer
-const std::string DEFAULT_LINE_COLOUR = "lightning white";
+// Renderer Colours
+const std::string DEFAULT_BACKGROUND_COLOUR = "background night";
+const std::string DEFAULT_BLUR_COLOUR       = "lightning blue";
+const std::string DEFAULT_LINE_COLOUR       = "lightning white";
+const std::string DEFAULT_CYLINDER_COLOUR   = "lightning white";
 
-// Cylinder Renderer
-const std::string DEFAULT_BLUR_COLOUR            = "lightning blue";
-const std::string DEFAULT_BLUR_BACKGROUND_COLOUR = "background night";
-const std::string DEFAULT_CYLINDER_COLOUR        = "lightning white";
+// Blur Parameters
 const float DEFAULT_BLUR_DIRECTIONS = 16.f;
 const float DEFAULT_BLUR_QUALITY    = 30.f;
 const float DEFAULT_BLUR_SIZE       = 30.f;
 const float DEFAULT_BLUR_ADJUSTMENT = 15.f;
+
+// Animation parameters:
+const float DEFAULT_ANIM_SPEED = 1.f;
 
 ////
 // MIN & MAX VALUES:
@@ -121,7 +124,7 @@ const float E_MAX_CHAOS_MEAN = .2f;
 const float E_MIN_CHAOS_STDDEV = 0.f;
 const float E_MAX_CHAOS_STDDEV = .3f;
 
-// Blur parameters for cylinder renderer
+// Blur parameters
 const float BLUR_MIN_DIRECTIONS = 1.f;
 const float BLUR_MAX_DIRECTIONS = 64.f;
 
@@ -133,3 +136,7 @@ const float BLUR_MAX_SIZE = 100.f;
 
 const float BLUR_MIN_ADJUSTMENT = 0.f;
 const float BLUR_MAX_ADJUSTMENT = 50.f;
+
+// Animation parameters:
+const float ANIM_MIN_SPEED = .01f;
+const float ANIM_MAX_SPEED = 10000.f;

@@ -182,6 +182,7 @@
     <ClCompile Include="DiameterTransformer.cpp" />
     <ClCompile Include="DxColourLerp.cpp" />
     <ClCompile Include="JitterForkGenerator.cpp" />
+    <ClCompile Include="LightningRenderer.cpp" />
     <ClCompile Include="LightShader.cpp" />
     <ClCompile Include="LineMesh.cpp" />
     <ClCompile Include="LineRenderer.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="DiameterTransformer.h" />
     <ClInclude Include="DxColourLerp.h" />
     <ClInclude Include="JitterForkGenerator.h" />
+    <ClInclude Include="LightningRenderer.h" />
     <ClInclude Include="LightShader.h" />
     <ClInclude Include="LineMesh.h" />
     <ClInclude Include="LineRenderer.h" />

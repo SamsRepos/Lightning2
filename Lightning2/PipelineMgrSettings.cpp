@@ -12,7 +12,5 @@ void PipelineMgrSettings::Init(const PipelineMgrDefaultSettings& defaultSettings
 	wholeTransformerActive    = defaultSettings.wholeTransformerActive;
 	diameterTransformerActive = defaultSettings.diameterTransformerActive;
 	electrifierActive         = defaultSettings.electrifierActive;
-	blurRenderingActive       = defaultSettings.blurRenderingActive;
-	lineRenderingActive       = defaultSettings.lineRenderingActive;
-	cylinderRenderingActive   = defaultSettings.cylinderRenderingActive;
+	renderingActive           = defaultSettings.renderingActive;
 }

@@ -13,10 +13,13 @@ public:
 	CylinderRenderer(D3D* renderer, HWND hwnd, int _screenWidth, int _screenHeight);
 	~CylinderRenderer();
 
-	void InitParameters(
-		const XMFLOAT4& _blurColour,
+	void SetColours(
 		const XMFLOAT4& _backgroundColour,
-		const XMFLOAT4& _cylinderColour,
+		const XMFLOAT4& _blurColour,
+		const XMFLOAT4& _cylinderColour		
+	);
+
+	void SetBlurParams(
 		float _blurDirections,
 		float _blurQuality,
 		float _blurSize,

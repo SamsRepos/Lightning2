@@ -12,8 +12,7 @@
 #include "WholeTransformer.h"
 #include "Electrifier.h"
 
-#include "LineRenderer.h"
-#include "CylinderRenderer.h"
+#include "LightningRenderer.h"
 
 class PipelineMgr
 {
@@ -25,6 +24,18 @@ public:
 		int screenWidth,
 		int screenHeight
 	);
+	~PipelineMgr();
+	
+	inline PipelineMgrSettings* GetSettings() { return settings; };
+
+	//set current geometry generator
+	inline void SetGeometryGeneratorType(GeometryGeneratorTypes type) { settings->SetGeometryGeneratorType(type); };
+
+	//toggle post-generation transform stages
+	inline void SetDiameterThinnerActive(bool active) { settings->SetDiameterThinnerActive(active); };
+	inline void SetWholeTransformerActive(bool active) { settings->SetWholeTransformerActive(active); };
+	inline void SetDiameterTransformerActive(bool active) { settings->SetDiameterTransformerActive(active); };
+	inline void SetElectifierActive(bool active) { settings->SetElectifierActive(active); };
 
 	//setters for all parameters
 	void InitJitterForkGenerator(
@@ -69,36 +80,13 @@ public:
 		float chaosMean,
 		float chaosStdDev
 	);
+		
+	// Rendering
+	inline void SetBlurRenderingActive(bool active) { lightningRenderer->SetBlurRenderingActive(active); };
+	inline void SetLineRenderingActive(bool active) { lightningRenderer->SetLineRenderingActive(active); };
+	inline void SetCylinderRenderingActive(bool active) { lightningRenderer->SetCylinderRenderingActive(active); };
 
-	void InitLineRenderer(
-		const XMFLOAT4& lineColour
-	);
-
-	void InitCylinderRenderer(
-		const XMFLOAT4& blurColour,
-		const XMFLOAT4& blurBackgroundColour,
-		const XMFLOAT4& cylinderColour,
-		float blurDirections,
-		float blurQuality,
-		float blurSize,
-		float blurAdjustment
-	);
-
-	inline PipelineMgrSettings* GetSettings() { return settings; };
-
-	//set current geometry generator
-	inline void SetGeometryGeneratorType(GeometryGeneratorTypes type) { settings->SetGeometryGeneratorType(type); };
-	
-	//toggle post-generation transform stages
-	inline void SetDiameterThinnerActive(bool active) { settings->SetDiameterThinnerActive(active); };
-	inline void SetWholeTransformerActive(bool active) { settings->SetWholeTransformerActive(active); };
-	inline void SetDiameterTransformerActive(bool active) { settings->SetDiameterTransformerActive(active); };
-	inline void SetElectifierActive(bool active) { settings->SetElectifierActive(active); };
-
-	//set current renderer
-	inline void SetBlurRenderingActive(bool active) { settings->SetBlurRenderingActive(active); };
-	inline void SetLineRenderingActive(bool active) { settings->SetLineRenderingActive(active); };
-	inline void SetCylinderRenderingActive(bool active) { settings->SetCylinderRenderingActive(active); };
+	inline LightningRenderer* GetLightningRenderer() { return lightningRenderer; };
 
 	//run whole process
 	void RunProcess();
@@ -108,7 +96,6 @@ public:
 	void UpdateAnimation(float dt);
 
 	void RenderOutput(
-		D3D* renderer,
 		Camera* camera,
 		const XMMATRIX& worldMatrix,
 		const XMMATRIX& viewMatrix,
@@ -136,7 +123,6 @@ private:
 	Electrifier electrifier;
 
 	//Graphics renderers:
-	LineRenderer* lineRenderer;
-	CylinderRenderer* cylRenderer;
+	LightningRenderer* lightningRenderer;
 };
 

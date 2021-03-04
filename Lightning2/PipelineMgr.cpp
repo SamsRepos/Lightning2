@@ -15,12 +15,24 @@ PipelineMgr::PipelineMgr(
 	int screenHeight
 ) 
 	:
-	segments(NULL)
+	segments(NULL),
+	lightningRenderer(NULL)
 {
 	settings = new PipelineMgrSettings(defaultSettings);
 
-	lineRenderer = new LineRenderer(renderer, hwnd);
-	cylRenderer  = new CylinderRenderer(renderer, hwnd, screenWidth, screenHeight);
+	lightningRenderer = new LightningRenderer
+	(
+		renderer, hwnd, screenWidth, screenHeight
+	);
+}
+
+PipelineMgr::~PipelineMgr()
+{
+	if (lightningRenderer)
+	{
+		delete lightningRenderer;
+		lightningRenderer = NULL;
+	}
 }
 
 void PipelineMgr::InitJitterForkGenerator(
@@ -114,35 +126,6 @@ void PipelineMgr::InitElectrifier(
 	);
 }
 
-void PipelineMgr::InitLineRenderer(
-	const XMFLOAT4& lineColour
-)
-{
-	lineRenderer->InitParameters(
-		lineColour
-	);
-}
-
-void PipelineMgr::InitCylinderRenderer(
-	const XMFLOAT4& blurColour,
-	const XMFLOAT4& blurBackgroundColour,
-	const XMFLOAT4& cylinderColour,
-	float blurDirections,
-	float blurQuality,
-	float blurSize,
-	float blurAdjustment
-)
-{
-	cylRenderer->InitParameters(
-		blurColour,
-		blurBackgroundColour,
-		cylinderColour,
-		blurDirections,
-		blurQuality,
-		blurSize,
-		blurAdjustment
-	);
-}
 
 void PipelineMgr::RunProcess()
 {
@@ -189,53 +172,36 @@ void PipelineMgr::RunProcess()
 	}
 
 	// Building Meshes:
-	float maxEnergy = 0.f;
-	for (Segment* seg : *segments)
+	if (settings->IsRenderingActive())
 	{
-		if (seg->GetEnergy() > maxEnergy);
-		maxEnergy = seg->GetEnergy();
-	}
-
-	lineRenderer->Build(segments);
-	cylRenderer->Build(segments, maxEnergy);
-
-	cylRenderer->InitAnimation();
-
+		lightningRenderer->Build(segments);
+		lightningRenderer->InitAnimation();
+	}	
 }
 
 void PipelineMgr::UpdateAnimation(float dt)
 {
-	cylRenderer->UpdateAnimation(dt);
+	lightningRenderer->UpdateAnimation(dt);
 }
 
 void PipelineMgr::RenderOutput(
-	D3D* renderer,
 	Camera* camera,
 	const XMMATRIX& worldMatrix,
 	const XMMATRIX& viewMatrix,
 	const XMMATRIX& projMatrix	
 )
 {
-	if (settings->IsBlurRenderingActive() || settings->IsCylinderRenderingActive())
+	if (!(settings->IsRenderingActive()))
 	{
-		cylRenderer->SetShaderParams(viewMatrix, projMatrix);
+		return;
 	}
 
-	if (settings->IsBlurRenderingActive())
-	{
-		cylRenderer->RenderBlur(renderer, camera);
-	}
-
-	if (settings->IsLineRenderingActive())
-	{
-		lineRenderer->SetShaderParams(worldMatrix, viewMatrix, projMatrix);
-		lineRenderer->RenderLines(renderer);
-	}
-
-	if (settings->IsCylinderRenderingActive())
-	{		
-		cylRenderer->RenderCylinders(renderer);
-	}
+	lightningRenderer->Render(
+		camera,
+		worldMatrix,
+		viewMatrix,
+		projMatrix
+	);
 }
 
 ////
