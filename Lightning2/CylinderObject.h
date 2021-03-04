@@ -31,10 +31,11 @@ public:
 	
 private:
 	float diameter;
-	float length;
+	float fixedLength;
+	float currentLength;
 	float velocity;
 	float brightness;
-	float t; // for animation.. 0 <= t <= 1
+	
 	bool visible;
 	bool finishedAnimating;
 	

@@ -16,9 +16,10 @@ CylinderObject::CylinderObject(
 
 void CylinderObject::Init(Segment* seg)
 {
-	diameter = seg->GetDiameter();
-	length =   seg->GetLength();
-	velocity = seg->GetVelocity();
+	diameter      = seg->GetDiameter();
+	currentLength = seg->GetLength();
+	fixedLength   = seg->GetLength();
+	velocity      = seg->GetVelocity();
 
 	XMFLOAT3 startPosFloat3 = XMFLOAT3(
 		seg->GetStartPoint().x,
@@ -36,7 +37,7 @@ void CylinderObject::Init(Segment* seg)
 	SetPosition(XMFLOAT3(startPosFloat3.x, startPosFloat3.y, startPosFloat3.z));
 
 	//scale:
-	SetScale(diameter, length, diameter);
+	SetScale(diameter, fixedLength, diameter);
 
 	//direction for roll/pitch/yaw for rotation:
 	XMVECTOR startPos = XMLoadFloat3(&startPosFloat3);
@@ -90,14 +91,70 @@ void CylinderObject::Init(Segment* seg)
 
 void CylinderObject::InitAnimation()
 {	
-	t = 0.f;
+	currentLength = 0.f;
 	SetScale(0);
 	BuildTransform();
 	finishedAnimating = false;
+	SetVisible(false);
 }
 
 bool CylinderObject::UpdateAnimationRecurs(float deltaTime)
 {
+
+	float deltaTimeTaken = 0.f;
+	
+	if (!finishedAnimating) {
+		// Growth:
+		float deltaLength = velocity * deltaTime;
+		
+		// If there is going to be an overshoot...
+		if ((currentLength + deltaLength) > fixedLength)
+		{
+			// just make deltaLength the amount remaining till the end of the segment
+			deltaLength = (fixedLength - currentLength);
+		}
+
+		currentLength += deltaLength;
+
+		SetScale(
+			XMFLOAT3(
+				diameter,
+				currentLength,
+				diameter
+			)
+		);
+		BuildTransform();
+
+		if (currentLength >= fixedLength)
+		{
+			finishedAnimating = true;
+			SetScale(diameter, fixedLength, diameter); // ensuring any slight t>1.f is fixed
+
+			if (children.empty())
+			{
+				return true;
+			}
+			else
+			{
+				for (CylinderObject* child : children)
+				{
+					child->SetVisible(true);
+				}
+			}
+
+			// deltaTimeTaken is calculated now
+			// a possible lightning slow-down due to the frame rate is undesirable...
+			// ...so for the next segment down, we're going now! (next block below)
+			// but, reducing deltaTime so we don't overshoot...
+
+			deltaTimeTaken = (deltaLength / velocity);
+
+			// This is still buggy
+			to do:
+			also implement this in the line renderer... correctly tho!
+		}
+	}
+
 	if (finishedAnimating)
 	{
 		bool res = false;
@@ -109,37 +166,6 @@ bool CylinderObject::UpdateAnimationRecurs(float deltaTime)
 		return res;
 	}
 
-	// Growth:
-	float deltaLength = velocity * deltaTime;
-	t += deltaLength / length;
-	t = MyClamp(t, 0.f, 1.f);
-
-	SetScale(
-		XMFLOAT3(			
-			diameter,
-			MyLerp(0.f, length, t),
-			diameter
-		)
-	);
-	BuildTransform();
-	
-	if (t >= 1.f)
-	{
-		finishedAnimating = true;
-		SetScale(diameter, length, diameter); // ensuring any slight t>1.f is fixed
-
-		if (children.empty())
-		{
-			return true;
-		}
-		else
-		{
-			for (CylinderObject* child : children)
-			{
-				child->SetVisible(true);
-			}
-		}		
-	}
 
 	return false;
 }

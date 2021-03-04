@@ -107,31 +107,29 @@ void CylinderRenderer::Build(std::vector<Segment*>* segments, float maxEnergy)
 
 void CylinderRenderer::InitAnimation()
 {
+	animatingNow = true;
+
 	for (CylinderObject* cyl : cylinderObjects)
 	{
 		cyl->InitAnimation();
-		cyl->SetVisible(false);
 	}
 
 	CylinderObject* rootCyl = cylinderObjects.front();
 	rootCyl->SetVisible(true);
-
-	animatingNow = true;
 }
 
 //returns true when animation is over
 bool CylinderRenderer::UpdateAnimation(float dt)
 {
-	if (cylinderObjects.size() > 0 && (true || animatingNow))
+	if (cylinderObjects.size() > 0 && animatingNow)
 	{
 		CylinderObject* rootCyl = cylinderObjects.front();
 
-		bool isFinished = !(rootCyl->UpdateAnimationRecurs(dt));
-		animatingNow = !isFinished;
-		return isFinished;				
+		bool isFinished = rootCyl->UpdateAnimationRecurs(dt);
+		animatingNow = !isFinished;		
 	}
 
-	return true;
+	return !animatingNow;
 }
 
 void CylinderRenderer::SetShaderParams(const XMMATRIX& _viewMatrix,	const XMMATRIX& _projectionMatrix)

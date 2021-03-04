@@ -139,4 +139,4 @@ const float BLUR_MAX_ADJUSTMENT = 50.f;
 
 // Animation parameters:
 const float ANIM_MIN_SPEED = .01f;
-const float ANIM_MAX_SPEED = 10000.f;
+const float ANIM_MAX_SPEED = 1000000000.f; // 1 billion. segment speed in streamer method is nanoseconds

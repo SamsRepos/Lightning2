@@ -1,8 +1,12 @@
 #include "LineMesh.h"
 
-
+////
+// PUBLIC:
+////
 
 LineMesh::LineMesh(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
+	:
+	lines(NULL)
 {
 	vertexCount = 2;
 	indexCount = 2;
@@ -19,9 +23,7 @@ LineMesh::LineMesh(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
 	//Set up index list
 	indices[0] = 0;
 	indices[1] = 1;
-
-	maxLevel = 0;
-
+	
 	initBuffers(device);
 }
 
@@ -33,20 +35,43 @@ LineMesh::~LineMesh() {
 	indices = 0;
 }
 
+void LineMesh::sendData(ID3D11DeviceContext* deviceContext, int line, D3D_PRIMITIVE_TOPOLOGY top)
+{
+	LoadLine(deviceContext, line);
+	unsigned int stride;
+	unsigned int offset;
 
-void LineMesh::AddLine(XMFLOAT3 start, XMFLOAT3 end, int level) 
-{ 
-	lines.push_back(Line(start, end, level));
+	// Set vertex buffer stride and offset.
+	stride = sizeof(VertexType);
+	offset = 0;
 
-	if (level > maxLevel) maxLevel = level;
+	deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->IASetPrimitiveTopology(top);
 }
+
+int LineMesh::GetLineCount() 
+{ 
+	if (lines)
+	{
+		return lines->size();
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+////
+// PRIVATE:
+////
 
 // Set up the heightmap and create or update the appropriate buffers
 void LineMesh::LoadLine( ID3D11DeviceContext* deviceContext, int lineNo) {		
 	//Load the line segment into the buffer
-	vertices[0].position = lines[lineNo].start;
+	vertices[0].position = (*lines)[lineNo]->GetStart();
 	vertices[0].texture = XMFLOAT2(0, 0);
-	vertices[1].position = lines[lineNo].end;
+	vertices[1].position = (*lines)[lineNo]->GetEnd();
 	vertices[1].texture = XMFLOAT2(1, 1);
 
 	//Set up index list
@@ -63,20 +88,7 @@ void LineMesh::LoadLine( ID3D11DeviceContext* deviceContext, int lineNo) {
 	deviceContext->Unmap(vertexBuffer, 0);
 }
 
-void LineMesh::sendData(ID3D11DeviceContext* deviceContext, int line,  D3D_PRIMITIVE_TOPOLOGY top)
-{
-	LoadLine(deviceContext, line);
-	unsigned int stride;
-	unsigned int offset;
 
-	// Set vertex buffer stride and offset.
-	stride = sizeof(VertexType);
-	offset = 0;
-
-	deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-	deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	deviceContext->IASetPrimitiveTopology(top);
-}
 
 // Generate buffers
 void LineMesh::initBuffers(ID3D11Device* device)

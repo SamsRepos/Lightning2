@@ -87,11 +87,13 @@ void LightningRenderer::Build(std::vector<Segment*>* segs)
 void LightningRenderer::InitAnimation()
 {
 	cylRenderer->InitAnimation();
+	lineRenderer->InitAnimation();
 }
 
 void LightningRenderer::UpdateAnimation(float dt)
 {
 	cylRenderer->UpdateAnimation(dt * animationSpeed);
+	lineRenderer->UpdateAnimation(dt * animationSpeed);
 }
 
 void LightningRenderer::Render(
