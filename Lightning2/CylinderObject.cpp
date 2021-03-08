@@ -100,7 +100,6 @@ void CylinderObject::InitAnimation()
 
 bool CylinderObject::UpdateAnimationRecurs(float deltaTime)
 {
-
 	float deltaTimeTaken = 0.f;
 	
 	if (!finishedAnimating) {
@@ -145,13 +144,8 @@ bool CylinderObject::UpdateAnimationRecurs(float deltaTime)
 			// deltaTimeTaken is calculated now
 			// a possible lightning slow-down due to the frame rate is undesirable...
 			// ...so for the next segment down, we're going now! (next block below)
-			// but, reducing deltaTime so we don't overshoot...
-
+			// but, reducing deltaTime so we don't overshoot:
 			deltaTimeTaken = (deltaLength / velocity);
-
-			// This is still buggy
-			to do:
-			also implement this in the line renderer... correctly tho!
 		}
 	}
 
@@ -159,9 +153,13 @@ bool CylinderObject::UpdateAnimationRecurs(float deltaTime)
 	{
 		bool res = false;
 
+		// Reducing deltaTime:
+		float nextDeltaTime = deltaTime - deltaTimeTaken;
+		nextDeltaTime = max(0.f, nextDeltaTime);
+
 		for (CylinderObject* child : children)
 		{
-			res = child->UpdateAnimationRecurs(deltaTime) && res;
+			res = child->UpdateAnimationRecurs(nextDeltaTime) && res;
 		}
 		return res;
 	}

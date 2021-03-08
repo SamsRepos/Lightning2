@@ -1,32 +1,19 @@
 #pragma once
+
 #include "BaseMesh.h"
 #include <vector>
 
-//for Line class only:
 #include "Segment.h"
 #include "MyLerp.h"
 #include "MyClamp.h"
 
+////
+// Line
+////
+
 class Line {
 public:
-	Line(Segment* seg)
-	{
-		start = XMFLOAT3(
-			seg->GetStartPoint().x,
-			seg->GetStartPoint().y,
-			seg->GetStartPoint().z
-		);
-				
-		end = XMFLOAT3(
-			seg->GetEndPoint().x,
-			seg->GetEndPoint().y,
-			seg->GetEndPoint().z
-		);
-
-		fixedEnd = end;
-		velocity = seg->GetVelocity();
-		length = seg->GetLength();
-	}
+	Line(Segment* seg);
 	
 	inline XMFLOAT3 GetStart() { return start; };
 	inline XMFLOAT3 GetEnd() { return end; };
@@ -40,58 +27,9 @@ public:
 	inline std::vector<Line*>* GetChildren() { return &children; };
 	inline Line* GetChild(size_t index) { return children[index]; };
 
-	void InitAnimation()
-	{
-		t = 0.f;
-		end = start;
-		finishedAnimating = false;
-		SetVisible(false);
-	}
+	void InitAnimation();
 
-	bool UpdateAnimationRecurs(float deltaTime)
-	{
-		if (finishedAnimating)
-		{
-			bool res = false;
-
-			for (Line* child : children)
-			{
-				res = child->UpdateAnimationRecurs(deltaTime) && res;
-			}
-			return res;
-		}
-
-		// Growth:
-		float deltaLength = velocity * deltaTime;
-		t += deltaLength / length;
-		t = MyClamp(t, 0.f, 1.f);
-
-		end = XMFLOAT3(
-			MyLerp(start.x, fixedEnd.x, t),
-			MyLerp(start.y, fixedEnd.y, t),
-			MyLerp(start.z, fixedEnd.z, t)
-		);
-
-		if (t >= 1.f)
-		{
-			finishedAnimating = true;
-			end = fixedEnd; // ensuring any slight t>1.f is fixed
-
-			if (children.empty())
-			{
-				return true;
-			}
-			else
-			{
-				for (Line* child : children)
-				{
-					child->SetVisible(true);
-				}
-			}
-		}
-
-		return false;
-	}
+	bool UpdateAnimationRecurs(float deltaTime);
 
 private:
 	XMFLOAT3 start;
@@ -107,6 +45,10 @@ private:
 	Line* parent;
 	std::vector<Line*> children;
 };
+
+////
+// LineMesh
+////
 
 class LineMesh :
 	public BaseMesh

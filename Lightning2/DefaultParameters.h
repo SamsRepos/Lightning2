@@ -29,7 +29,7 @@ const float       DEFAULT_SG_VOLTAGE           = 42.f;
 const float       DEFAULT_SG_INITIAL_PRESSURE  = 65.f;
 const float       DEFAULT_SG_PRESSURE_GRADIENT = -.5f;
 const size_t      DEFAULT_SG_MAX_NUM_LAYERS    = 10;
-const std::string DEFAULT_SG_ANGLE_FIX         = "none";
+const std::string DEFAULT_SG_ANGLE_FIX         = "parent_dist";
 const std::string DEFAULT_SG_GAS_COMPOSITION   = "air";
 
 // Diameter Thinner:
@@ -139,4 +139,4 @@ const float BLUR_MAX_ADJUSTMENT = 50.f;
 
 // Animation parameters:
 const float ANIM_MIN_SPEED = .01f;
-const float ANIM_MAX_SPEED = 1000000000.f; // 1 billion. segment speed in streamer method is nanoseconds
+const float ANIM_MAX_SPEED = 1000.f;

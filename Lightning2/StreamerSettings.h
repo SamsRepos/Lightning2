@@ -11,8 +11,8 @@ enum AngleFixMethods
 
 const std::map<std::string, AngleFixMethods> ANGLE_FIX_OPTIONS = {
 	{"none", AngleFixMethods::NONE},
-	{"lowest Y", AngleFixMethods::LOWEST_Y},
-	{"farthest from parent", AngleFixMethods::FARTHEST_FROM_PARENT}
+	{"lowest_y", AngleFixMethods::LOWEST_Y},
+	{"parent_dist", AngleFixMethods::FARTHEST_FROM_PARENT}
 };
 
 enum GasCompositions
