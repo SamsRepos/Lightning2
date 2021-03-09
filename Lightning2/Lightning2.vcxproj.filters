@@ -64,299 +64,296 @@
     <Filter Include="Source Files\Maths">
       <UniqueIdentifier>{2e85e2ac-4307-427f-9398-5869b9d05713}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Performance">
-      <UniqueIdentifier>{177fa36d-10e1-45fb-a83b-c8e516279ce3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\AppStates">
       <UniqueIdentifier>{fabbf44b-d7fa-45ff-941d-2770e4ca30a3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\AppStates">
       <UniqueIdentifier>{fc0e7ada-9591-48bb-8903-bdf0ab4f2665}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Performance">
-      <UniqueIdentifier>{69448d67-7d42-4b85-bf3f-a2267148e643}</UniqueIdentifier>
+    <Filter Include="Header Files\PerformanceTools">
+      <UniqueIdentifier>{177fa36d-10e1-45fb-a83b-c8e516279ce3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LightShader.cpp">
-      <Filter>Source Files\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="LineShader.cpp">
-      <Filter>Source Files\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Segment.cpp">
+    <ClCompile Include="MySource\App1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="JitterForkGenerator.cpp">
-      <Filter>Source Files\GeometryGenerators</Filter>
-    </ClCompile>
-    <ClCompile Include="StreamerGenerator.cpp">
-      <Filter>Source Files\GeometryGenerators</Filter>
-    </ClCompile>
-    <ClCompile Include="Electrifier.cpp">
-      <Filter>Source Files\GeometryTransformers</Filter>
-    </ClCompile>
-    <ClCompile Include="PathIdentifier.cpp">
-      <Filter>Source Files\GeometryTransformers</Filter>
-    </ClCompile>
-    <ClCompile Include="DiameterTransformer.cpp">
-      <Filter>Source Files\GeometryTransformers</Filter>
-    </ClCompile>
-    <ClCompile Include="LineMesh.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="PipelineMgr.cpp">
+    <ClCompile Include="MySource\PipelineMgrSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PipelineMgrSettings.cpp">
+    <ClCompile Include="MySource\PipelineMgr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SegmentRemoval.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugCsvWriter.cpp">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="LineRenderer.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="CylinderMesh.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="CylinderRenderer.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneObject.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="CylinderShader.cpp">
-      <Filter>Source Files\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="BlurShader.cpp">
-      <Filter>Source Files\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureShader.cpp">
-      <Filter>Source Files\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="WholeTransformer.cpp">
-      <Filter>Source Files\GeometryTransformers</Filter>
-    </ClCompile>
-    <ClCompile Include="DiameterThinner.cpp">
-      <Filter>Source Files\GeometryTransformers</Filter>
-    </ClCompile>
-    <ClCompile Include="MyFloat3.cpp">
-      <Filter>Source Files\Maths</Filter>
-    </ClCompile>
-    <ClCompile Include="RandFloatGen.cpp">
-      <Filter>Source Files\Maths</Filter>
-    </ClCompile>
-    <ClCompile Include="BoxMullerGen.cpp">
+    <ClCompile Include="MySource\Segment.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MyMatrix44.cpp">
-      <Filter>Source Files\Maths</Filter>
-    </ClCompile>
-    <ClCompile Include="MyFloat4.cpp">
-      <Filter>Source Files\Maths</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseState.cpp">
+    <ClCompile Include="MySource\AppStates\BaseState.cpp">
       <Filter>Source Files\AppStates</Filter>
     </ClCompile>
-    <ClCompile Include="PlayState.cpp">
+    <ClCompile Include="MySource\AppStates\PlayState.cpp">
       <Filter>Source Files\AppStates</Filter>
     </ClCompile>
-    <ClCompile Include="TestState.cpp">
+    <ClCompile Include="MySource\AppStates\TestState.cpp">
       <Filter>Source Files\AppStates</Filter>
     </ClCompile>
-    <ClCompile Include="MyGuiUtil.cpp">
-      <Filter>Source Files\Utils</Filter>
+    <ClCompile Include="MySource\GeometryTransformers\Electrifier.cpp">
+      <Filter>Source Files\GeometryTransformers</Filter>
     </ClCompile>
-    <ClCompile Include="StreamerSettings.cpp">
-      <Filter>Source Files\GeometryGenerators</Filter>
+    <ClCompile Include="MySource\GeometryTransformers\PathIdentifier.cpp">
+      <Filter>Source Files\GeometryTransformers</Filter>
     </ClCompile>
-    <ClCompile Include="DxColourLerp.cpp">
-      <Filter>Source Files\Utils</Filter>
+    <ClCompile Include="MySource\GeometryTransformers\WholeTransformer.cpp">
+      <Filter>Source Files\GeometryTransformers</Filter>
     </ClCompile>
-    <ClCompile Include="CylinderObject.cpp">
+    <ClCompile Include="MySource\GeometryTransformers\DiameterThinner.cpp">
+      <Filter>Source Files\GeometryTransformers</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\GeometryTransformers\DiameterTransformer.cpp">
+      <Filter>Source Files\GeometryTransformers</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\CylinderMesh.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="MyLerp.cpp">
+    <ClCompile Include="MySource\Graphics\CylinderObject.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\CylinderRenderer.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\LightningRenderer.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\LineMesh.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\LineRenderer.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\SceneObject.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Maths\MyFloat3.cpp">
       <Filter>Source Files\Maths</Filter>
     </ClCompile>
-    <ClCompile Include="LightningRenderer.cpp">
-      <Filter>Source Files\Graphics</Filter>
+    <ClCompile Include="MySource\Maths\MyFloat4.cpp">
+      <Filter>Source Files\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Maths\MyLerp.cpp">
+      <Filter>Source Files\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Maths\MyMatrix44.cpp">
+      <Filter>Source Files\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Maths\RandFloatGen.cpp">
+      <Filter>Source Files\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Shaders\LineShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Shaders\TextureShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Shaders\BlurShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Shaders\CylinderShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Shaders\LightShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Utils\DebugCsvWriter.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Utils\DxColourLerp.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Utils\MyGuiUtil.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Utils\SegmentRemoval.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Maths\BoxMullerGen.cpp">
+      <Filter>Source Files\Maths</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\GeometryGenerators\JitterForkGenerator.cpp">
+      <Filter>Source Files\GeometryGenerators</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\GeometryGenerators\StreamerGenerator.cpp">
+      <Filter>Source Files\GeometryGenerators</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\GeometryGenerators\StreamerSettings.cpp">
+      <Filter>Source Files\GeometryGenerators</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="App1.h">
+    <ClInclude Include="MySource\App1.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LineShader.h">
-      <Filter>Header Files\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="LightShader.h">
-      <Filter>Header Files\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Segment.h">
+    <ClInclude Include="MySource\ColourValues.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="JitterForkGenerator.h">
-      <Filter>Header Files\GeometryGenerators</Filter>
-    </ClInclude>
-    <ClInclude Include="StreamerGenerator.h">
-      <Filter>Header Files\GeometryGenerators</Filter>
-    </ClInclude>
-    <ClInclude Include="Electrifier.h">
-      <Filter>Header Files\GeometryTransformers</Filter>
-    </ClInclude>
-    <ClInclude Include="PathIdentifier.h">
-      <Filter>Header Files\GeometryTransformers</Filter>
-    </ClInclude>
-    <ClInclude Include="DiameterTransformer.h">
-      <Filter>Header Files\GeometryTransformers</Filter>
-    </ClInclude>
-    <ClInclude Include="LineMesh.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="PipelineMgr.h">
+    <ClInclude Include="MySource\DefaultParameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PipelineMgrSettings.h">
+    <ClInclude Include="MySource\PipelineMgr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SegmentRemoval.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="DefaultParameters.h">
+    <ClInclude Include="MySource\PipelineMgrSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DebugCsvWriter.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="LineRenderer.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="CylinderMesh.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="CylinderRenderer.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="MyVectorUtil.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneObject.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="CylinderShader.h">
-      <Filter>Header Files\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="BlurShader.h">
-      <Filter>Header Files\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureShader.h">
-      <Filter>Header Files\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="ColourValues.h">
+    <ClInclude Include="MySource\Segment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WholeTransformer.h">
-      <Filter>Header Files\GeometryTransformers</Filter>
-    </ClInclude>
-    <ClInclude Include="DiameterThinner.h">
-      <Filter>Header Files\GeometryTransformers</Filter>
-    </ClInclude>
-    <ClInclude Include="BoxMullerGen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MyMath.h">
-      <Filter>Header Files\Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="MyFloat3.h">
-      <Filter>Header Files\Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="MyClamp.h">
-      <Filter>Header Files\Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="RandFloatGen.h">
-      <Filter>Header Files\Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="MyMatrix44.h">
-      <Filter>Header Files\Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="MyFloat4.h">
-      <Filter>Header Files\Maths</Filter>
-    </ClInclude>
-    <ClInclude Include="MyTimer.h">
-      <Filter>Header Files\Performance</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseState.h">
+    <ClInclude Include="MySource\AppStates\BaseState.h">
       <Filter>Header Files\AppStates</Filter>
     </ClInclude>
-    <ClInclude Include="PlayState.h">
+    <ClInclude Include="MySource\AppStates\PlayState.h">
       <Filter>Header Files\AppStates</Filter>
     </ClInclude>
-    <ClInclude Include="TestState.h">
+    <ClInclude Include="MySource\AppStates\TestState.h">
       <Filter>Header Files\AppStates</Filter>
     </ClInclude>
-    <ClInclude Include="MyGuiUtil.h">
-      <Filter>Header Files\Utils</Filter>
+    <ClInclude Include="MySource\GeometryTransformers\DiameterThinner.h">
+      <Filter>Header Files\GeometryTransformers</Filter>
     </ClInclude>
-    <ClInclude Include="StreamerSettings.h">
-      <Filter>Header Files\GeometryGenerators</Filter>
+    <ClInclude Include="MySource\GeometryTransformers\DiameterTransformer.h">
+      <Filter>Header Files\GeometryTransformers</Filter>
     </ClInclude>
-    <ClInclude Include="DxColourLerp.h">
-      <Filter>Header Files\Utils</Filter>
+    <ClInclude Include="MySource\GeometryTransformers\Electrifier.h">
+      <Filter>Header Files\GeometryTransformers</Filter>
     </ClInclude>
-    <ClInclude Include="CylinderObject.h">
+    <ClInclude Include="MySource\GeometryTransformers\PathIdentifier.h">
+      <Filter>Header Files\GeometryTransformers</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\GeometryTransformers\WholeTransformer.h">
+      <Filter>Header Files\GeometryTransformers</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\CylinderMesh.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="MyLerp.h">
+    <ClInclude Include="MySource\Graphics\CylinderObject.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\CylinderRenderer.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\LightningRenderer.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\LineMesh.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\LineRenderer.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\SceneObject.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Maths\MyMath.h">
       <Filter>Header Files\Maths</Filter>
     </ClInclude>
-    <ClInclude Include="MyMemoryMeasurer.h">
-      <Filter>Header Files\Performance</Filter>
+    <ClInclude Include="MySource\Maths\MyMatrix44.h">
+      <Filter>Header Files\Maths</Filter>
     </ClInclude>
-    <ClInclude Include="LightningRenderer.h">
-      <Filter>Header Files\Graphics</Filter>
+    <ClInclude Include="MySource\Maths\RandFloatGen.h">
+      <Filter>Header Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Maths\MyClamp.h">
+      <Filter>Header Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Maths\MyFloat3.h">
+      <Filter>Header Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Maths\MyFloat4.h">
+      <Filter>Header Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Maths\MyLerp.h">
+      <Filter>Header Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\PerformanceTools\MyMemoryMeasurer.h">
+      <Filter>Header Files\PerformanceTools</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\PerformanceTools\MyTimer.h">
+      <Filter>Header Files\PerformanceTools</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Shaders\BlurShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Shaders\CylinderShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Shaders\LightShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Shaders\LineShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Shaders\TextureShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Utils\DebugCsvWriter.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Utils\DxColourLerp.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Utils\MyGuiUtil.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Utils\SegmentRemoval.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Utils\MyVectorUtil.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Maths\BoxMullerGen.h">
+      <Filter>Header Files\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\GeometryGenerators\JitterForkGenerator.h">
+      <Filter>Header Files\GeometryGenerators</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\GeometryGenerators\StreamerGenerator.h">
+      <Filter>Header Files\GeometryGenerators</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\GeometryGenerators\StreamerSettings.h">
+      <Filter>Header Files\GeometryGenerators</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="light_ps.hlsl">
-      <Filter>Resource Files\Light Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="light_vs.hlsl">
-      <Filter>Resource Files\Light Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="line_ps.hlsl">
-      <Filter>Resource Files\Line Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="line_vs.hlsl">
-      <Filter>Resource Files\Line Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="cyl_ps.hlsl">
-      <Filter>Resource Files\CylinderShaders</Filter>
-    </FxCompile>
-    <FxCompile Include="cyl_vs.hlsl">
-      <Filter>Resource Files\CylinderShaders</Filter>
-    </FxCompile>
-    <FxCompile Include="blur_ps.hlsl">
-      <Filter>Resource Files\Blur Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="blur_vs.hlsl">
-      <Filter>Resource Files\Blur Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="texture_ps.hlsl">
+    <FxCompile Include="MySource\Shaders\texture_vs.hlsl">
       <Filter>Resource Files\Texture Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="texture_vs.hlsl">
+    <FxCompile Include="MySource\Shaders\texture_ps.hlsl">
       <Filter>Resource Files\Texture Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="MySource\Shaders\line_ps.hlsl">
+      <Filter>Resource Files\Line Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="MySource\Shaders\line_vs.hlsl">
+      <Filter>Resource Files\Line Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="MySource\Shaders\light_ps.hlsl">
+      <Filter>Resource Files\Light Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="MySource\Shaders\light_vs.hlsl">
+      <Filter>Resource Files\Light Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="MySource\Shaders\cyl_ps.hlsl">
+      <Filter>Resource Files\CylinderShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="MySource\Shaders\cyl_vs.hlsl">
+      <Filter>Resource Files\CylinderShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="MySource\Shaders\blur_ps.hlsl">
+      <Filter>Resource Files\Blur Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="MySource\Shaders\blur_vs.hlsl">
+      <Filter>Resource Files\Blur Shaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

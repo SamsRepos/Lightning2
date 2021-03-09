@@ -109,7 +109,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(solutiondir)\include\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutiondir)\include\;.\MySource\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -169,141 +169,121 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App1.cpp" />
-    <ClCompile Include="BaseState.cpp" />
-    <ClCompile Include="BlurShader.cpp" />
-    <ClCompile Include="BoxMullerGen.cpp" />
-    <ClCompile Include="CylinderMesh.cpp" />
-    <ClCompile Include="CylinderObject.cpp" />
-    <ClCompile Include="CylinderRenderer.cpp" />
-    <ClCompile Include="CylinderShader.cpp" />
-    <ClCompile Include="DebugCsvWriter.cpp" />
-    <ClCompile Include="DiameterThinner.cpp" />
-    <ClCompile Include="DiameterTransformer.cpp" />
-    <ClCompile Include="DxColourLerp.cpp" />
-    <ClCompile Include="JitterForkGenerator.cpp" />
-    <ClCompile Include="LightningRenderer.cpp" />
-    <ClCompile Include="LightShader.cpp" />
-    <ClCompile Include="LineMesh.cpp" />
-    <ClCompile Include="LineRenderer.cpp" />
-    <ClCompile Include="LineShader.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MyLerp.cpp" />
-    <ClCompile Include="MyFloat3.cpp" />
-    <ClCompile Include="MyFloat4.cpp" />
-    <ClCompile Include="MyGuiUtil.cpp" />
-    <ClCompile Include="MyMatrix44.cpp" />
-    <ClCompile Include="PipelineMgr.cpp" />
-    <ClCompile Include="PipelineMgrSettings.cpp" />
-    <ClCompile Include="PlayState.cpp" />
-    <ClCompile Include="SceneObject.cpp" />
-    <ClCompile Include="SegmentRemoval.cpp" />
-    <ClCompile Include="PathIdentifier.cpp" />
-    <ClCompile Include="RandFloatGen.cpp" />
-    <ClCompile Include="Electrifier.cpp" />
-    <ClCompile Include="Segment.cpp" />
-    <ClCompile Include="StreamerGenerator.cpp" />
-    <ClCompile Include="StreamerSettings.cpp" />
-    <ClCompile Include="TestState.cpp" />
-    <ClCompile Include="TextureShader.cpp" />
-    <ClCompile Include="WholeTransformer.cpp" />
+    <ClCompile Include="MySource\App1.cpp" />
+    <ClCompile Include="MySource\AppStates\BaseState.cpp" />
+    <ClCompile Include="MySource\AppStates\PlayState.cpp" />
+    <ClCompile Include="MySource\AppStates\TestState.cpp" />
+    <ClCompile Include="MySource\GeometryGenerators\JitterForkGenerator.cpp" />
+    <ClCompile Include="MySource\GeometryGenerators\StreamerGenerator.cpp" />
+    <ClCompile Include="MySource\GeometryGenerators\StreamerSettings.cpp" />
+    <ClCompile Include="MySource\GeometryTransformers\DiameterThinner.cpp" />
+    <ClCompile Include="MySource\GeometryTransformers\DiameterTransformer.cpp" />
+    <ClCompile Include="MySource\GeometryTransformers\Electrifier.cpp" />
+    <ClCompile Include="MySource\GeometryTransformers\PathIdentifier.cpp" />
+    <ClCompile Include="MySource\GeometryTransformers\WholeTransformer.cpp" />
+    <ClCompile Include="MySource\Graphics\CylinderMesh.cpp" />
+    <ClCompile Include="MySource\Graphics\CylinderObject.cpp" />
+    <ClCompile Include="MySource\Graphics\CylinderRenderer.cpp" />
+    <ClCompile Include="MySource\Graphics\LightningRenderer.cpp" />
+    <ClCompile Include="MySource\Graphics\LineMesh.cpp" />
+    <ClCompile Include="MySource\Graphics\LineRenderer.cpp" />
+    <ClCompile Include="MySource\Graphics\SceneObject.cpp" />
+    <ClCompile Include="MySource\Maths\BoxMullerGen.cpp" />
+    <ClCompile Include="MySource\Maths\MyFloat3.cpp" />
+    <ClCompile Include="MySource\Maths\MyFloat4.cpp" />
+    <ClCompile Include="MySource\Maths\MyLerp.cpp" />
+    <ClCompile Include="MySource\Maths\MyMatrix44.cpp" />
+    <ClCompile Include="MySource\Maths\RandFloatGen.cpp" />
+    <ClCompile Include="MySource\PipelineMgr.cpp" />
+    <ClCompile Include="MySource\PipelineMgrSettings.cpp" />
+    <ClCompile Include="MySource\Segment.cpp" />
+    <ClCompile Include="MySource\Shaders\BlurShader.cpp" />
+    <ClCompile Include="MySource\Shaders\CylinderShader.cpp" />
+    <ClCompile Include="MySource\Shaders\LightShader.cpp" />
+    <ClCompile Include="MySource\Shaders\LineShader.cpp" />
+    <ClCompile Include="MySource\Shaders\TextureShader.cpp" />
+    <ClCompile Include="MySource\Utils\DebugCsvWriter.cpp" />
+    <ClCompile Include="MySource\Utils\DxColourLerp.cpp" />
+    <ClCompile Include="MySource\Utils\MyGuiUtil.cpp" />
+    <ClCompile Include="MySource\Utils\SegmentRemoval.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="App1.h" />
-    <ClInclude Include="BaseState.h" />
-    <ClInclude Include="BlurShader.h" />
-    <ClInclude Include="BoxMullerGen.h" />
-    <ClInclude Include="ColourValues.h" />
-    <ClInclude Include="CylinderMesh.h" />
-    <ClInclude Include="CylinderObject.h" />
-    <ClInclude Include="CylinderRenderer.h" />
-    <ClInclude Include="CylinderShader.h" />
-    <ClInclude Include="DebugCsvWriter.h" />
-    <ClInclude Include="DefaultParameters.h" />
-    <ClInclude Include="DiameterThinner.h" />
-    <ClInclude Include="DiameterTransformer.h" />
-    <ClInclude Include="DxColourLerp.h" />
-    <ClInclude Include="JitterForkGenerator.h" />
-    <ClInclude Include="LightningRenderer.h" />
-    <ClInclude Include="LightShader.h" />
-    <ClInclude Include="LineMesh.h" />
-    <ClInclude Include="LineRenderer.h" />
-    <ClInclude Include="LineShader.h" />
-    <ClInclude Include="MyClamp.h" />
-    <ClInclude Include="MyLerp.h" />
-    <ClInclude Include="MyFloat3.h" />
-    <ClInclude Include="MyFloat4.h" />
-    <ClInclude Include="MyGuiUtil.h" />
-    <ClInclude Include="MyMath.h" />
-    <ClInclude Include="MyMatrix44.h" />
-    <ClInclude Include="MyMemoryMeasurer.h" />
-    <ClInclude Include="MyTimer.h" />
-    <ClInclude Include="MyVectorUtil.h" />
-    <ClInclude Include="PipelineMgr.h" />
-    <ClInclude Include="PipelineMgrSettings.h" />
-    <ClInclude Include="PlayState.h" />
-    <ClInclude Include="SceneObject.h" />
-    <ClInclude Include="SegmentRemoval.h" />
-    <ClInclude Include="PathIdentifier.h" />
-    <ClInclude Include="RandFloatGen.h" />
-    <ClInclude Include="Electrifier.h" />
-    <ClInclude Include="Segment.h" />
-    <ClInclude Include="StreamerGenerator.h" />
-    <ClInclude Include="StreamerSettings.h" />
-    <ClInclude Include="TestState.h" />
-    <ClInclude Include="TextureShader.h" />
-    <ClInclude Include="WholeTransformer.h" />
+    <ClInclude Include="MySource\App1.h" />
+    <ClInclude Include="MySource\AppStates\BaseState.h" />
+    <ClInclude Include="MySource\AppStates\PlayState.h" />
+    <ClInclude Include="MySource\AppStates\TestState.h" />
+    <ClInclude Include="MySource\ColourValues.h" />
+    <ClInclude Include="MySource\DefaultParameters.h" />
+    <ClInclude Include="MySource\GeometryGenerators\JitterForkGenerator.h" />
+    <ClInclude Include="MySource\GeometryGenerators\StreamerGenerator.h" />
+    <ClInclude Include="MySource\GeometryGenerators\StreamerSettings.h" />
+    <ClInclude Include="MySource\GeometryTransformers\DiameterThinner.h" />
+    <ClInclude Include="MySource\GeometryTransformers\DiameterTransformer.h" />
+    <ClInclude Include="MySource\GeometryTransformers\Electrifier.h" />
+    <ClInclude Include="MySource\GeometryTransformers\PathIdentifier.h" />
+    <ClInclude Include="MySource\GeometryTransformers\WholeTransformer.h" />
+    <ClInclude Include="MySource\Graphics\CylinderMesh.h" />
+    <ClInclude Include="MySource\Graphics\CylinderObject.h" />
+    <ClInclude Include="MySource\Graphics\CylinderRenderer.h" />
+    <ClInclude Include="MySource\Graphics\LightningRenderer.h" />
+    <ClInclude Include="MySource\Graphics\LineMesh.h" />
+    <ClInclude Include="MySource\Graphics\LineRenderer.h" />
+    <ClInclude Include="MySource\Graphics\SceneObject.h" />
+    <ClInclude Include="MySource\Maths\BoxMullerGen.h" />
+    <ClInclude Include="MySource\Maths\MyClamp.h" />
+    <ClInclude Include="MySource\Maths\MyFloat3.h" />
+    <ClInclude Include="MySource\Maths\MyFloat4.h" />
+    <ClInclude Include="MySource\Maths\MyLerp.h" />
+    <ClInclude Include="MySource\Maths\MyMath.h" />
+    <ClInclude Include="MySource\Maths\MyMatrix44.h" />
+    <ClInclude Include="MySource\Maths\RandFloatGen.h" />
+    <ClInclude Include="MySource\PerformanceTools\MyMemoryMeasurer.h" />
+    <ClInclude Include="MySource\PerformanceTools\MyTimer.h" />
+    <ClInclude Include="MySource\PipelineMgr.h" />
+    <ClInclude Include="MySource\PipelineMgrSettings.h" />
+    <ClInclude Include="MySource\Segment.h" />
+    <ClInclude Include="MySource\Shaders\BlurShader.h" />
+    <ClInclude Include="MySource\Shaders\CylinderShader.h" />
+    <ClInclude Include="MySource\Shaders\LightShader.h" />
+    <ClInclude Include="MySource\Shaders\LineShader.h" />
+    <ClInclude Include="MySource\Shaders\TextureShader.h" />
+    <ClInclude Include="MySource\Utils\DebugCsvWriter.h" />
+    <ClInclude Include="MySource\Utils\DxColourLerp.h" />
+    <ClInclude Include="MySource\Utils\MyGuiUtil.h" />
+    <ClInclude Include="MySource\Utils\MyVectorUtil.h" />
+    <ClInclude Include="MySource\Utils\SegmentRemoval.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="blur_ps.hlsl">
+    <FxCompile Include="MySource\Shaders\blur_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="blur_vs.hlsl">
+    <FxCompile Include="MySource\Shaders\blur_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="cyl_ps.hlsl">
+    <FxCompile Include="MySource\Shaders\cyl_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="cyl_vs.hlsl">
+    <FxCompile Include="MySource\Shaders\cyl_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="light_ps.hlsl">
+    <FxCompile Include="MySource\Shaders\light_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="light_vs.hlsl">
+    <FxCompile Include="MySource\Shaders\light_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="line_ps.hlsl">
+    <FxCompile Include="MySource\Shaders\line_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="line_vs.hlsl">
+    <FxCompile Include="MySource\Shaders\line_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="texture_ps.hlsl">
+    <FxCompile Include="MySource\Shaders\texture_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="texture_vs.hlsl">
+    <FxCompile Include="MySource\Shaders\texture_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
