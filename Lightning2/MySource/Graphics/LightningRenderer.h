@@ -48,6 +48,8 @@ public:
 		const XMMATRIX& viewMatrix,
 		const XMMATRIX& projMatrix
 	);
+
+	void Clear();
 		
 	inline void SetBlurRenderingActive(bool active) { blurRenderingActive = active; };
 	inline void SetLineRenderingActive(bool active) { lineRenderingActive = active; };

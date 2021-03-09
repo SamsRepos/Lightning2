@@ -102,6 +102,8 @@ public:
 		const XMMATRIX& projMatrix
 	);
 
+	void Clear();
+
 private:
 	void InitProcess();
 

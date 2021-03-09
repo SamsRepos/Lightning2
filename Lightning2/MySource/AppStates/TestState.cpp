@@ -9,9 +9,9 @@
 // PUBLIC:
 ////
 
-TestState::TestState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHeight)
+TestState::TestState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHeight, Input* _input)
 	:
-	BaseState::BaseState(_renderer, _hwnd, _screenWidth, _screenHeight),
+	BaseState::BaseState(_renderer, _hwnd, _screenWidth, _screenHeight, _input),
 	pipelineMgr(NULL)
 {
 	defaultSettings.geometryGenerator         = GeometryGeneratorTypes::STREAMER;

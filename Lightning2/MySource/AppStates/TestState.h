@@ -21,7 +21,7 @@ enum TestTypes
 class TestState : public BaseState
 {
 public:
-	TestState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHeight);
+	TestState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHeight, Input* _input);
 	~TestState();
 
 	void Init();

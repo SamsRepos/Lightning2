@@ -204,17 +204,24 @@ void PipelineMgr::RenderOutput(
 	);
 }
 
-////
-// PRIVATE:
-////
-
-void PipelineMgr::InitProcess()
+void PipelineMgr::Clear()
 {
-	if(segments)
+	if (segments)
 	{
 		DeleteAllVectorData(segments);
 
 		delete segments;
 		segments = NULL;
 	}
+
+	lightningRenderer->Clear();
+}
+
+////
+// PRIVATE:
+////
+
+void PipelineMgr::InitProcess()
+{
+	Clear();	
 }

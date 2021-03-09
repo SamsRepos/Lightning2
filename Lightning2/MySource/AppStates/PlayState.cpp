@@ -5,9 +5,9 @@
 #include "Utils/DebugCsvWriter.h"
 #include "Utils/MyGuiUtil.h"
 
-PlayState::PlayState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHeight, FPCamera* _camera, TextureManager* _textureMgr)
+PlayState::PlayState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHeight, Input* _input, FPCamera* _camera, TextureManager* _textureMgr)
 	:
-	BaseState::BaseState(_renderer, _hwnd, _screenWidth, _screenHeight),
+	BaseState::BaseState(_renderer, _hwnd, _screenWidth, _screenHeight, _input),
 	pipelineMgr(NULL),
 	lightShader(NULL),
 	light(NULL),
@@ -143,7 +143,21 @@ void PlayState::Update(float _dt)
 {
 	BaseState::Update(_dt);
 
-	pipelineMgr->UpdateAnimation(_dt* 10);
+	if (input->isKeyDown('R'))
+	{
+		pipelineMgr->RunProcess();
+		if (debugCsv)
+		{
+			DebugWriteCsv(pipelineMgr->GetSegments());
+		}
+	}
+	if (input->isKeyDown('C'))
+	{
+		pipelineMgr->Clear();
+	}
+
+	pipelineMgr->UpdateAnimation(_dt);
+		
 }
 
 void PlayState::Render()
@@ -176,16 +190,20 @@ void PlayState::Gui()
 {
 	ImGui::Text("PLAY STATE");
 
-	static bool debugCsv = false;
 	ImGui::Checkbox("Write debug CSV", &debugCsv);
 
-	if (ImGui::Button("Run whole process"))
+	if (ImGui::Button("Run whole process [R]"))
 	{
 		pipelineMgr->RunProcess();
 		if (debugCsv)
 		{
 			DebugWriteCsv(pipelineMgr->GetSegments());
 		}
+	}
+
+	if (ImGui::Button("Clear [C]"))
+	{
+		pipelineMgr->Clear();
 	}
 
 	static bool zappy = false;

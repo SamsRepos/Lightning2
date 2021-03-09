@@ -40,7 +40,7 @@ LineRenderer::~LineRenderer()
 
 void LineRenderer::Build(std::vector<AnimSegment*>* animSegs)
 {
-	DeleteAllVectorData(&lines);
+	ClearLines();
 
 	for (AnimSegment* animSeg : *animSegs)
 	{
@@ -85,4 +85,9 @@ void LineRenderer::RenderLines(D3D* renderer, LightningRenderModes renderMode)
 			shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 		}
 	}
+}
+
+void LineRenderer::ClearLines()
+{
+	DeleteAllVectorData(&lines);
 }

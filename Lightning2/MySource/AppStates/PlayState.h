@@ -11,7 +11,7 @@
 class PlayState : public BaseState
 {
 public:
-	PlayState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHeight, FPCamera* _camera, TextureManager* _textureMgr);
+	PlayState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHeight, Input* _input, FPCamera* _camera, TextureManager* _textureMgr);
 	~PlayState();
 
 	void Init();
@@ -32,5 +32,6 @@ private:
 	Light* light;
 	PlaneMesh* planeMesh;
 	XMMATRIX planeMatrix;	
-};
 
+	bool debugCsv = false;
+};

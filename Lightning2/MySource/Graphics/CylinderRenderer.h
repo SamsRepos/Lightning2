@@ -35,6 +35,7 @@ public:
 	void RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode);
 	void RenderCylinders(D3D* renderer, LightningRenderModes renderMode);
 	
+	void ClearCylinders();
 
 private:
 	CylinderMesh* cylinderMesh;

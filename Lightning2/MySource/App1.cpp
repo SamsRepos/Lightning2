@@ -32,9 +32,9 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	camera->setRotation(0.0f, 0.0f, 0.0f);
 
 	// App States:
-	playState = new PlayState(renderer, hwnd, screenWidth, screenHeight, camera, textureMgr);
+	playState = new PlayState(renderer, hwnd, screenWidth, screenHeight, in, camera, textureMgr);
 	playState->Init();
-	testState = new TestState(renderer, hwnd, screenWidth, screenHeight);
+	testState = new TestState(renderer, hwnd, screenWidth, screenHeight, in);
 	testState->Init();
 
 	currentState = playState;

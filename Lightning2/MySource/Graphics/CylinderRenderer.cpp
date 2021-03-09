@@ -68,7 +68,7 @@ CylinderRenderer::~CylinderRenderer()
 		baseCylinder = NULL;
 	}
 
-	DeleteAllVectorData(&cylinderObjects);
+	ClearCylinders();
 }
 
 void CylinderRenderer::SetColours(
@@ -98,8 +98,8 @@ void CylinderRenderer::SetBlurParams(
 
 void CylinderRenderer::Build(std::vector<AnimSegment*>* animSegs)
 {
-	DeleteAllVectorData(&cylinderObjects);
-	
+	ClearCylinders();
+		
 	for (AnimSegment* animSeg : *animSegs)
 	{
 		CylinderObject* newCylinder = new CylinderObject(*baseCylinder);
@@ -239,4 +239,9 @@ void CylinderRenderer::RenderCylinders(D3D* renderer, LightningRenderModes rende
 			mainShader->render(renderer->getDeviceContext(), c->GetMesh()->getIndexCount());
 		}
 	}
+}
+
+void CylinderRenderer::ClearCylinders()
+{
+	DeleteAllVectorData(&cylinderObjects);
 }

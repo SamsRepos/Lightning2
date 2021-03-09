@@ -18,6 +18,8 @@ public:
 	void SetShaderParams(const XMMATRIX& _worldMatrix, const XMMATRIX& _viewMatrix, const XMMATRIX& _projectionMatrix);
 	void RenderLines(D3D* renderer, LightningRenderModes renderMode);
 	
+	void ClearLines();
+
 private:
 	
 	std::vector<Line*> lines;

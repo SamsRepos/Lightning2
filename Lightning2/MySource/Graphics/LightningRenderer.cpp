@@ -27,6 +27,8 @@ LightningRenderer::LightningRenderer(
 
 LightningRenderer::~LightningRenderer()
 {
+	Clear();
+
 	if (lineRenderer)
 	{
 		delete lineRenderer;
@@ -79,7 +81,7 @@ void LightningRenderer::SetAnimationParams(
 
 void LightningRenderer::Build(std::vector<Segment*>* segs)
 {
-	DeleteAllVectorData(&animSegments);
+	Clear();
 
 	Segment* rootSeg = segs->front();
 
@@ -151,6 +153,14 @@ void LightningRenderer::Render(
 	{
 		cylRenderer->RenderCylinders(renderer, renderMode);
 	}
+}
+
+void LightningRenderer::Clear()
+{
+	DeleteAllVectorData(&animSegments);
+
+	lineRenderer->ClearLines();
+	cylRenderer->ClearCylinders();
 }
 
 ////
