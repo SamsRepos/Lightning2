@@ -98,6 +98,7 @@ bool Electrifier::RunIterationRecurs(Segment* seed, Segment* parentSegment)
 
 		newSeedCopy->SetEnergy(seed->GetEnergy());
 		newSeedCopy->SetVelocity(seed->GetVelocity());
+		newSeedCopy->SetStatus(seed->GetStatus());
 		
 		if (parentSegment)
 		{
@@ -154,7 +155,9 @@ std::vector<Segment*> Electrifier::Jitter(Segment* seed, Segment* parent)
 	topSeg->SetVelocity(seed->GetVelocity());
 	bottomSeg->SetVelocity(seed->GetVelocity());
 
-
+	topSeg->SetStatus(seed->GetStatus());
+	bottomSeg->SetStatus(seed->GetStatus());
+	
 	std::vector<Segment*> res = { topSeg, bottomSeg };
 
 	return res;
