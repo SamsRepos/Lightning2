@@ -329,6 +329,9 @@
     <ClInclude Include="MySource\Graphics\AnimSegment.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="MySource\Graphics\RenderSettings.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="MySource\Shaders\texture_vs.hlsl">

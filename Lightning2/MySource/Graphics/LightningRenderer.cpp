@@ -129,24 +129,27 @@ void LightningRenderer::Render(
 {
 	if (blurRenderingActive || cylinderRenderingActive)
 	{
-		cylRenderer->UpdateFromAnimation();
+		if (renderMode == LightningRenderModes::ANIMATED)
+		{
+			cylRenderer->UpdateFromAnimation();
+		}
 		cylRenderer->SetShaderParams(viewMatrix, projMatrix);
 	}
 
 	if (blurRenderingActive)
 	{
-		cylRenderer->RenderBlur(renderer, camera);
+		cylRenderer->RenderBlur(renderer, camera, renderMode);
 	}
 
 	if (lineRenderingActive)
 	{
 		lineRenderer->SetShaderParams(worldMatrix, viewMatrix, projMatrix);
-		lineRenderer->RenderLines(renderer);
+		lineRenderer->RenderLines(renderer, renderMode);
 	}
 
 	if (cylinderRenderingActive)
 	{
-		cylRenderer->RenderCylinders(renderer);
+		cylRenderer->RenderCylinders(renderer, renderMode);
 	}
 }
 

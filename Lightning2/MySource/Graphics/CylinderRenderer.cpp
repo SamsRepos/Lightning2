@@ -131,7 +131,7 @@ void CylinderRenderer::SetShaderParams(const XMMATRIX& _viewMatrix,	const XMMATR
 	projectionMatrix = _projectionMatrix;
 }
 
-void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera)
+void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode)
 {
 	XMMATRIX worldMatrix     = renderer->getWorldMatrix();
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix(); // Default camera position for orthographic rendering
@@ -149,7 +149,10 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera)
 		
 	for (CylinderObject* c : cylinderObjects)
 	{
-		if (c->IsVisible())
+		if (
+			(renderMode == LightningRenderModes::ANIMATED && c->IsVisible()) ||
+			renderMode == LightningRenderModes::STATIC
+			)
 		{
 			XMFLOAT4 colour = blurColour;
 				/*DxColourLerp(
@@ -215,11 +218,14 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera)
 	renderer->setZBuffer(true);
 }
 
-void CylinderRenderer::RenderCylinders(D3D* renderer)
+void CylinderRenderer::RenderCylinders(D3D* renderer, LightningRenderModes renderMode)
 {
 	for (CylinderObject* c : cylinderObjects)
 	{
-		if (c->IsVisible())
+		if (
+			(renderMode == LightningRenderModes::ANIMATED && c->IsVisible()) ||
+			renderMode==LightningRenderModes::STATIC
+		)
 		{
 			XMFLOAT4 colour = cylinderColour;
 			/*DxColourLerp(

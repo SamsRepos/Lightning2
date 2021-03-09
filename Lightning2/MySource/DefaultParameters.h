@@ -49,6 +49,10 @@ const float DEFAULT_E_MAX_SEG_LENGTH = 1.f;
 const float DEFAULT_E_CHAOS_MEAN     = .1f;
 const float DEFAULT_E_CHAOS_STDDEV   = .05f;
 
+// Render Mode:
+const std::string DEFAULT_RENDER_MODE = "animated";
+
+
 // Renderer Colours
 const std::string DEFAULT_BACKGROUND_COLOUR = "background night";
 const std::string DEFAULT_BLUR_COLOUR       = "lightning blue";

@@ -154,6 +154,8 @@ void TestState::InitPipelineMgr()
 
 	LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
 
+	lightningRenderer->SetRenderMode(RENDER_MODE_OPTIONS.at(DEFAULT_RENDER_MODE));
+
 	lightningRenderer->SetColours(
 		COLOUR_OPTIONS.at(DEFAULT_BACKGROUND_COLOUR),
 		COLOUR_OPTIONS.at(DEFAULT_BLUR_COLOUR),

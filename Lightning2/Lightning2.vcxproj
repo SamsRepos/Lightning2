@@ -231,6 +231,7 @@
     <ClInclude Include="MySource\Graphics\LightningRenderer.h" />
     <ClInclude Include="MySource\Graphics\LineMesh.h" />
     <ClInclude Include="MySource\Graphics\LineRenderer.h" />
+    <ClInclude Include="MySource\Graphics\RenderSettings.h" />
     <ClInclude Include="MySource\Graphics\SceneObject.h" />
     <ClInclude Include="MySource\Maths\BoxMullerGen.h" />
     <ClInclude Include="MySource\Maths\MyClamp.h" />

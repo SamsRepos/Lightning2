@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Shaders/LineShader.h"
-#include "Graphics/LineMesh.h"
+#include "LineMesh.h"
 #include "AnimSegment.h"
+#include "RenderSettings.h"
+#include "Shaders/LineShader.h"
 
 class LineRenderer
 {
@@ -15,7 +16,7 @@ public:
 	void Build(std::vector<AnimSegment*>* animSegs);
 	
 	void SetShaderParams(const XMMATRIX& _worldMatrix, const XMMATRIX& _viewMatrix, const XMMATRIX& _projectionMatrix);
-	void RenderLines(D3D* renderer);
+	void RenderLines(D3D* renderer, LightningRenderModes renderMode);
 	
 private:
 	

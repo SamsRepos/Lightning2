@@ -1,11 +1,12 @@
 #pragma once
 
+#include "CylinderMesh.h"
+#include "CylinderObject.h"
 #include "Shaders/CylinderShader.h"
-#include "Graphics/CylinderMesh.h"
-#include "Graphics/CylinderObject.h"
-#include "AnimSegment.h"
 #include "Shaders/BlurShader.h"
 #include "Shaders/TextureShader.h"
+#include "AnimSegment.h"
+#include "RenderSettings.h"
 
 class CylinderRenderer
 {
@@ -31,8 +32,8 @@ public:
 	void UpdateFromAnimation();
 
 	void SetShaderParams(const XMMATRIX& _viewMatrix, const XMMATRIX& _projectionMatrix);
-	void RenderBlur(D3D* renderer, Camera* camera);
-	void RenderCylinders(D3D* renderer);
+	void RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode);
+	void RenderCylinders(D3D* renderer, LightningRenderModes renderMode);
 	
 
 private:

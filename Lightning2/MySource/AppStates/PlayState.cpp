@@ -116,21 +116,25 @@ void PlayState::Init()
 		DEFAULT_E_CHAOS_STDDEV
 	);
 
-	pipelineMgr->GetLightningRenderer()->SetColours(
+	LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
+	
+	lightningRenderer->SetRenderMode(RENDER_MODE_OPTIONS.at(DEFAULT_RENDER_MODE));
+
+	lightningRenderer->SetColours(
 		COLOUR_OPTIONS.at(DEFAULT_BACKGROUND_COLOUR),
 		COLOUR_OPTIONS.at(DEFAULT_BLUR_COLOUR),
 		COLOUR_OPTIONS.at(DEFAULT_LINE_COLOUR),
 		COLOUR_OPTIONS.at(DEFAULT_CYLINDER_COLOUR)
 	);
 
-	pipelineMgr->GetLightningRenderer()->SetBlurParams(
+	lightningRenderer->SetBlurParams(
 		DEFAULT_BLUR_DIRECTIONS,
 		DEFAULT_BLUR_QUALITY,
 		DEFAULT_BLUR_SIZE,
 		DEFAULT_BLUR_ADJUSTMENT
 	);
 
-	pipelineMgr->GetLightningRenderer()->SetAnimationParams(
+	lightningRenderer->SetAnimationParams(
 		DEFAULT_ANIM_SPEED
 	);
 }
@@ -512,6 +516,25 @@ void PlayState::Gui()
 					maxSegmentLength,
 					chaosMean,
 					chaosStdDev
+				);
+			}
+		}
+	}
+
+	// Set Render Mode:
+	{
+		static std::string renderMode = DEFAULT_RENDER_MODE;
+
+		if (ImGui::CollapsingHeader("Set Render Mode"))
+		{
+			bool changeNow = false;
+
+			changeNow = GuiListBox(changeNow, RENDER_MODE_OPTIONS, "Render Mode", &renderMode);
+
+			if (changeNow)
+			{
+				lightningRenderer->SetRenderMode(
+					RENDER_MODE_OPTIONS.at(renderMode)
 				);
 			}
 		}

@@ -64,7 +64,7 @@ void LineRenderer::SetShaderParams(
 	projectionMatrix = _projectionMatrix;
 }
 
-void LineRenderer::RenderLines(D3D* renderer)
+void LineRenderer::RenderLines(D3D* renderer, LightningRenderModes renderMode)
 {
 	if (shader && mesh)
 	{
@@ -81,7 +81,7 @@ void LineRenderer::RenderLines(D3D* renderer)
 				lineColour
 			);
 
-			mesh->sendData(renderer->getDeviceContext(), i);
+			mesh->sendData(renderMode, renderer->getDeviceContext(), i);
 			shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 		}
 	}

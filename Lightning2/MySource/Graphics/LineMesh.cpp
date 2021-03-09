@@ -83,9 +83,9 @@ LineMesh::~LineMesh() {
 	indices = 0;
 }
 
-void LineMesh::sendData(ID3D11DeviceContext* deviceContext, int line, D3D_PRIMITIVE_TOPOLOGY top)
+void LineMesh::sendData(LightningRenderModes renderMode, ID3D11DeviceContext* deviceContext, int line, D3D_PRIMITIVE_TOPOLOGY top)
 {
-	LoadLine(deviceContext, line);
+	LoadLine(deviceContext, line, renderMode);
 	unsigned int stride;
 	unsigned int offset;
 
@@ -115,11 +115,15 @@ int LineMesh::GetLineCount()
 ////
 
 // Set up the heightmap and create or update the appropriate buffers
-void LineMesh::LoadLine( ID3D11DeviceContext* deviceContext, int lineNo) {		
+void LineMesh::LoadLine( ID3D11DeviceContext* deviceContext, int lineNo, LightningRenderModes renderMode) {
 	//Load the line segment into the buffer
-	vertices[0].position = (*lines)[lineNo]->GetStart();
+	Line* line = (*lines)[lineNo];
+
+	vertices[0].position = line->GetStart();
 	vertices[0].texture = XMFLOAT2(0, 0);
-	vertices[1].position = (*lines)[lineNo]->GetCurrentEnd();
+	vertices[1].position = renderMode == LightningRenderModes::ANIMATED ?
+		line->GetCurrentEnd() :
+		line->GetFixedEnd();
 	vertices[1].texture = XMFLOAT2(1, 1);
 
 	//Set up index list

@@ -3,12 +3,7 @@
 #include "LineRenderer.h"
 #include "CylinderRenderer.h"
 #include "AnimSegment.h"
-
-enum LightningRenderModes
-{
-	ANIMATED,
-	STATIC
-};
+#include "RenderSettings.h"
 
 class LightningRenderer
 {
@@ -21,6 +16,8 @@ public:
 	);
 	~LightningRenderer();
 
+	inline void SetRenderMode(LightningRenderModes mode) { renderMode = mode; };
+	inline LightningRenderModes GetRenderMode() { return renderMode; };
 
 	void SetColours(
 		const XMFLOAT4& backgroundColour,
@@ -43,7 +40,6 @@ public:
 	void Build(std::vector<Segment*>* segs);
 
 	void InitAnimation();
-	//void CancelAnimation();
 	bool UpdateAnimation(float dt);
 
 	void Render(
@@ -52,13 +48,11 @@ public:
 		const XMMATRIX& viewMatrix,
 		const XMMATRIX& projMatrix
 	);
-
-	inline void SetRenderMode(LightningRenderModes mode) { renderMode = mode; };
+		
 	inline void SetBlurRenderingActive(bool active) { blurRenderingActive = active; };
 	inline void SetLineRenderingActive(bool active) { lineRenderingActive = active; };
 	inline void SetCylinderRenderingActive(bool active) { cylinderRenderingActive = active; };
 
-	inline LightningRenderModes GetRenderMode() { return renderMode; };
 	inline bool IsBlurRenderingActive() { return blurRenderingActive; };
 	inline bool IsLineRenderingActive() { return lineRenderingActive; };
 	inline bool IsCylinderRenderingActive() { return cylinderRenderingActive; };
@@ -80,4 +74,3 @@ private:
 	bool animatingNow;
 	float animationSpeed;
 };
-
