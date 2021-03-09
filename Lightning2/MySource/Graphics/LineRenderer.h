@@ -2,7 +2,7 @@
 
 #include "Shaders/LineShader.h"
 #include "Graphics/LineMesh.h"
-#include "Segment.h"
+#include "AnimSegment.h"
 
 class LineRenderer
 {
@@ -12,17 +12,13 @@ public:
 	
 	inline void SetColour(const XMFLOAT4& _lineColour) { lineColour = _lineColour; };
 
-	void Build(std::vector<Segment*>* segments);
-	
-	void InitAnimation();
-	bool UpdateAnimation(float dt); //returns true when animation is over
+	void Build(std::vector<AnimSegment*>* animSegs);
 	
 	void SetShaderParams(const XMMATRIX& _worldMatrix, const XMMATRIX& _viewMatrix, const XMMATRIX& _projectionMatrix);
 	void RenderLines(D3D* renderer);
 	
 private:
-	void CreateLinesRecurs(Segment* seg, Line* parentLine);
-
+	
 	std::vector<Line*> lines;
 
 	LineShader* shader;

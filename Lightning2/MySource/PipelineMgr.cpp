@@ -134,7 +134,7 @@ void PipelineMgr::RunProcess()
 	// Generating Geometry:
 	switch (settings->GetGeometryGeneratorType())
 	{
-	case (GeometryGeneratorTypes::JITTER_FORK):
+	case(GeometryGeneratorTypes::JITTER_FORK):
 		jitForkGen.Run();
 		segments = jitForkGen.GetOutput();
 		break;

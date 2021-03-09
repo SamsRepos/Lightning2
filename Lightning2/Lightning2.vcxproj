@@ -182,6 +182,7 @@
     <ClCompile Include="MySource\GeometryTransformers\Electrifier.cpp" />
     <ClCompile Include="MySource\GeometryTransformers\PathIdentifier.cpp" />
     <ClCompile Include="MySource\GeometryTransformers\WholeTransformer.cpp" />
+    <ClCompile Include="MySource\Graphics\AnimSegment.cpp" />
     <ClCompile Include="MySource\Graphics\CylinderMesh.cpp" />
     <ClCompile Include="MySource\Graphics\CylinderObject.cpp" />
     <ClCompile Include="MySource\Graphics\CylinderRenderer.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="MySource\GeometryTransformers\Electrifier.h" />
     <ClInclude Include="MySource\GeometryTransformers\PathIdentifier.h" />
     <ClInclude Include="MySource\GeometryTransformers\WholeTransformer.h" />
+    <ClInclude Include="MySource\Graphics\AnimSegment.h" />
     <ClInclude Include="MySource\Graphics\CylinderMesh.h" />
     <ClInclude Include="MySource\Graphics\CylinderObject.h" />
     <ClInclude Include="MySource\Graphics\CylinderRenderer.h" />

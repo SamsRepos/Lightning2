@@ -189,6 +189,9 @@
     <ClCompile Include="MySource\GeometryGenerators\StreamerSettings.cpp">
       <Filter>Source Files\GeometryGenerators</Filter>
     </ClCompile>
+    <ClCompile Include="MySource\Graphics\AnimSegment.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MySource\App1.h">
@@ -322,6 +325,9 @@
     </ClInclude>
     <ClInclude Include="MySource\GeometryGenerators\StreamerSettings.h">
       <Filter>Header Files\GeometryGenerators</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\AnimSegment.h">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

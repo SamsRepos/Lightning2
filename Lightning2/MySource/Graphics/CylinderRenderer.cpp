@@ -96,40 +96,33 @@ void CylinderRenderer::SetBlurParams(
 	blurFinalAdjustment = _blurFinalAdjustment;
 }
 
-void CylinderRenderer::Build(std::vector<Segment*>* segments, float maxEnergy)
+void CylinderRenderer::Build(std::vector<AnimSegment*>* animSegs)
 {
 	DeleteAllVectorData(&cylinderObjects);
-
-	Segment* rootSeg = segments->front();
-
-	CreateCylinderRecurs(rootSeg, NULL);	
-}
-
-void CylinderRenderer::InitAnimation()
-{
-	animatingNow = true;
-
-	for (CylinderObject* cyl : cylinderObjects)
+	
+	for (AnimSegment* animSeg : *animSegs)
 	{
-		cyl->InitAnimation();
+		CylinderObject* newCylinder = new CylinderObject(*baseCylinder);
+		newCylinder->Init(animSeg);
+		cylinderObjects.push_back(newCylinder);
 	}
-
-	CylinderObject* rootCyl = cylinderObjects.front();
-	rootCyl->SetVisible(true);
+	
+	/*newCylinder->SetBrightness(
+		MyClamp(
+		(seg->GetEnergy() / maxEnergy),
+			0.f,
+			1.f
+		)
+	);*/
 }
 
 //returns true when animation is over
-bool CylinderRenderer::UpdateAnimation(float dt)
+void CylinderRenderer::UpdateFromAnimation()
 {
-	if (cylinderObjects.size() > 0 && animatingNow)
+	for (CylinderObject* cyl : cylinderObjects)
 	{
-		CylinderObject* rootCyl = cylinderObjects.front();
-
-		bool isFinished = rootCyl->UpdateAnimationRecurs(dt);
-		animatingNow = !isFinished;		
+		cyl->UpdateFromAnimation();
 	}
-
-	return !animatingNow;
 }
 
 void CylinderRenderer::SetShaderParams(const XMMATRIX& _viewMatrix,	const XMMATRIX& _projectionMatrix)
@@ -144,7 +137,7 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera)
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix(); // Default camera position for orthographic rendering
 	XMMATRIX orthoMatrix     = renderer->getOrthoMatrix();   // ortho matrix for 2D rendering
 	
-														 //1. Render cylinders to the blur texture:
+	//1. Render cylinders to the blur texture:
 	blurRenderTexture1->setRenderTarget(renderer->getDeviceContext());
 	blurRenderTexture1->clearRenderTarget(
 		renderer->getDeviceContext(),
@@ -158,11 +151,12 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera)
 	{
 		if (c->IsVisible())
 		{
-			XMFLOAT4 colour = DxColourLerp(
+			XMFLOAT4 colour = blurColour;
+				/*DxColourLerp(
 				backgroundColour,
 				blurColour,
 				c->GetBrightness()
-			);
+			);*/
 
 			c->GetMesh()->sendData(renderer->getDeviceContext());
 			mainShader->setShaderParameters(renderer->getDeviceContext(), c->GetTransform(), viewMatrix, projectionMatrix, c->GetTexture(), colour);
@@ -227,47 +221,16 @@ void CylinderRenderer::RenderCylinders(D3D* renderer)
 	{
 		if (c->IsVisible())
 		{
-			XMFLOAT4 colour = DxColourLerp(
+			XMFLOAT4 colour = cylinderColour;
+			/*DxColourLerp(
 				backgroundColour,
 				cylinderColour,
 				c->GetBrightness()
-			);
+			);*/
 
 			c->GetMesh()->sendData(renderer->getDeviceContext());
 			mainShader->setShaderParameters(renderer->getDeviceContext(), c->GetTransform(), viewMatrix, projectionMatrix, c->GetTexture(), colour);
 			mainShader->render(renderer->getDeviceContext(), c->GetMesh()->getIndexCount());
 		}
-	}
-}
-
-////
-// PRIVATE:
-////
-
-void CylinderRenderer::CreateCylinderRecurs(Segment* seg, CylinderObject* parentCyl)
-{
-	CylinderObject* newCylinder = new CylinderObject(*baseCylinder);
-	
-	newCylinder->Init(seg);
-
-	newCylinder->SetBrightness(
-		MyClamp(
-		(seg->GetEnergy() / maxEnergy),
-			0.f,
-			1.f
-		)
-	);
-
-	if (parentCyl)
-	{
-		parentCyl->AddChild(newCylinder);
-		newCylinder->SetParent(parentCyl);
-	}
-
-	cylinderObjects.push_back(newCylinder);
-
-	for (Segment* s : *(seg->GetChildren()))
-	{
-		CreateCylinderRecurs(s, newCylinder);
 	}
 }

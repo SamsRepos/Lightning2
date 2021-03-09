@@ -3,7 +3,7 @@
 #include "Shaders/CylinderShader.h"
 #include "Graphics/CylinderMesh.h"
 #include "Graphics/CylinderObject.h"
-#include "Segment.h"
+#include "AnimSegment.h"
 #include "Shaders/BlurShader.h"
 #include "Shaders/TextureShader.h"
 
@@ -26,13 +26,9 @@ public:
 		float _blurFinalAdjustment
 	);
 
-	void Build(
-		std::vector<Segment*>* segments,
-		float maxEnergy
-	);
+	void Build(std::vector<AnimSegment*>* animSegs);
 
-	void InitAnimation();
-	bool UpdateAnimation(float dt); //returns true when animation is over
+	void UpdateFromAnimation();
 
 	void SetShaderParams(const XMMATRIX& _viewMatrix, const XMMATRIX& _projectionMatrix);
 	void RenderBlur(D3D* renderer, Camera* camera);
@@ -40,8 +36,6 @@ public:
 	
 
 private:
-	void CreateCylinderRecurs(Segment* seg, CylinderObject* parentCyl);
-
 	CylinderMesh* cylinderMesh;
 	CylinderObject* baseCylinder;
 	std::vector<CylinderObject*> cylinderObjects;
@@ -69,9 +63,7 @@ private:
 	
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
-
-	float maxEnergy;
-
+	
 	bool animatingNow;
 };
 

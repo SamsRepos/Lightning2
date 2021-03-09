@@ -11,33 +11,33 @@ CylinderObject::CylinderObject(
 	:
 	SceneObject::SceneObject(_mesh, _texture, _worldOriginTransform)
 {
-	visible = true;
 }
 
-void CylinderObject::Init(Segment* seg)
-{
-	diameter      = seg->GetDiameter();
-	currentLength = seg->GetLength();
-	fixedLength   = seg->GetLength();
-	velocity      = seg->GetVelocity();
+void CylinderObject::Init(AnimSegment* _animSeg){
+
+	animSeg = _animSeg;
 
 	XMFLOAT3 startPosFloat3 = XMFLOAT3(
-		seg->GetStartPoint().x,
-		seg->GetStartPoint().y,
-		seg->GetStartPoint().z
+		animSeg->GetStartPoint().x,
+		animSeg->GetStartPoint().y,
+		animSeg->GetStartPoint().z
 	);
 
 	XMFLOAT3 endPosFloat3 = XMFLOAT3(
-		seg->GetEndPoint().x,
-		seg->GetEndPoint().y,
-		seg->GetEndPoint().z
+		animSeg->GetFixedEndPoint().x,
+		animSeg->GetFixedEndPoint().y,
+		animSeg->GetFixedEndPoint().z
 	);
 
 	//position:
 	SetPosition(XMFLOAT3(startPosFloat3.x, startPosFloat3.y, startPosFloat3.z));
 
 	//scale:
-	SetScale(diameter, fixedLength, diameter);
+	SetScale(
+		animSeg->GetDiameter(),
+		animSeg->GetFixedLength(),
+		animSeg->GetDiameter()
+	);
 
 	//direction for roll/pitch/yaw for rotation:
 	XMVECTOR startPos = XMLoadFloat3(&startPosFloat3);
@@ -59,7 +59,7 @@ void CylinderObject::Init(Segment* seg)
 	float roll = (dirY < 0.f) ? PI : 0.f;
 
 	//pitch down value is determined by tranforming direction coordinates onto the X-axis:
-	XMMATRIX axisChanger    = XMMatrixRotationRollPitchYaw(0.f, -yaw, 0.f);
+	XMMATRIX axisChanger = XMMatrixRotationRollPitchYaw(0.f, -yaw, 0.f);
 	XMVECTOR transDirection = XMVector3Transform(direction, axisChanger);
 
 	float tdirX = XMVectorGetX(transDirection);
@@ -89,81 +89,12 @@ void CylinderObject::Init(Segment* seg)
 	BuildTransform();
 }
 
-void CylinderObject::InitAnimation()
-{	
-	currentLength = 0.f;
-	SetScale(0);
-	BuildTransform();
-	finishedAnimating = false;
-	SetVisible(false);
-}
-
-bool CylinderObject::UpdateAnimationRecurs(float deltaTime)
+void CylinderObject::UpdateFromAnimation()
 {
-	float deltaTimeTaken = 0.f;
-	
-	if (!finishedAnimating) {
-		// Growth:
-		float deltaLength = velocity * deltaTime;
-		
-		// If there is going to be an overshoot...
-		if ((currentLength + deltaLength) > fixedLength)
-		{
-			// just make deltaLength the amount remaining till the end of the segment
-			deltaLength = (fixedLength - currentLength);
-		}
-
-		currentLength += deltaLength;
-
-		SetScale(
-			XMFLOAT3(
-				diameter,
-				currentLength,
-				diameter
-			)
-		);
-		BuildTransform();
-
-		if (currentLength >= fixedLength)
-		{
-			finishedAnimating = true;
-			SetScale(diameter, fixedLength, diameter); // ensuring any slight t>1.f is fixed
-
-			if (children.empty())
-			{
-				return true;
-			}
-			else
-			{
-				for (CylinderObject* child : children)
-				{
-					child->SetVisible(true);
-				}
-			}
-
-			// deltaTimeTaken is calculated now
-			// a possible lightning slow-down due to the frame rate is undesirable...
-			// ...so for the next segment down, we're going now! (next block below)
-			// but, reducing deltaTime so we don't overshoot:
-			deltaTimeTaken = (deltaLength / velocity);
-		}
-	}
-
-	if (finishedAnimating)
-	{
-		bool res = false;
-
-		// Reducing deltaTime:
-		float nextDeltaTime = deltaTime - deltaTimeTaken;
-		nextDeltaTime = max(0.f, nextDeltaTime);
-
-		for (CylinderObject* child : children)
-		{
-			res = child->UpdateAnimationRecurs(nextDeltaTime) && res;
-		}
-		return res;
-	}
-
-
-	return false;
+	SetScale(
+		animSeg->GetDiameter(),
+		animSeg->GetCurrentLength(),
+		animSeg->GetDiameter()
+	);
+	BuildTransform();
 }

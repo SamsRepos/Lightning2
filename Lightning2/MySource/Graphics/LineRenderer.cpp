@@ -38,47 +38,20 @@ LineRenderer::~LineRenderer()
 	}
 }
 
-void LineRenderer::Build(std::vector<Segment*>* segments)
+void LineRenderer::Build(std::vector<AnimSegment*>* animSegs)
 {
 	DeleteAllVectorData(&lines);
 
-	Segment* rootSeg = segments->front();
-
-	CreateLinesRecurs(rootSeg, NULL);
+	for (AnimSegment* animSeg : *animSegs)
+	{
+		lines.push_back(new Line(animSeg));
+	}
 	
 	if (mesh)
 	{
 		mesh->SetLines(&lines);
 	}
 }
-
-void LineRenderer::InitAnimation()
-{
-	animatingNow = true;
-
-	for (Line* line : lines)
-	{
-		line->InitAnimation();
-	}
-
-	Line* rootLine = lines.front();
-	rootLine->SetVisible(true);
-}
-
-//returns true when animation is over
-bool LineRenderer::UpdateAnimation(float dt)
-{
-	if (lines.size() > 0 && animatingNow)
-	{
-		Line* rootLine = lines.front();
-
-		bool isFinished = rootLine->UpdateAnimationRecurs(dt);
-		animatingNow = !isFinished;
-	}
-
-	return !animatingNow;
-}
-
 
 void LineRenderer::SetShaderParams(
 	const XMMATRIX& _worldMatrix,
@@ -111,35 +84,5 @@ void LineRenderer::RenderLines(D3D* renderer)
 			mesh->sendData(renderer->getDeviceContext(), i);
 			shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
 		}
-	}
-}
-
-////
-// PRIVATE:
-////
-
-void LineRenderer::CreateLinesRecurs(Segment* seg, Line* parentLine)
-{
-	Line* newLine = new Line(seg);
-	
-	//newLine->SetBrightness(
-	//	MyClamp(
-	//	(seg->GetEnergy() / maxEnergy),
-	//		0.f,
-	//		1.f
-	//	)
-	//);
-
-	if (parentLine)
-	{
-		parentLine->AddChild(newLine);
-		newLine->SetParent(parentLine);
-	}
-
-	lines.push_back(newLine);
-
-	for (Segment* s : *(seg->GetChildren()))
-	{
-		CreateLinesRecurs(s, newLine);
 	}
 }

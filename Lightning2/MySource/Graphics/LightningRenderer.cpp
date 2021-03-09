@@ -1,5 +1,11 @@
 #include "LightningRenderer.h"
 
+#include "Utils/MyVectorUtil.h"
+
+////
+// PUBLIC:
+////
+
 LightningRenderer::LightningRenderer(
 	D3D* renderer,
 	HWND hwnd,
@@ -12,7 +18,7 @@ LightningRenderer::LightningRenderer(
 	cylRenderer(NULL)
 {
 	lineRenderer = new LineRenderer(renderer, hwnd);
-	cylRenderer = new CylinderRenderer(renderer, hwnd, screenWidth, screenHeight);
+	cylRenderer  = new CylinderRenderer(renderer, hwnd, screenWidth, screenHeight);
 
 	blurRenderingActive = true;
 	lineRenderingActive = true;
@@ -73,27 +79,45 @@ void LightningRenderer::SetAnimationParams(
 
 void LightningRenderer::Build(std::vector<Segment*>* segs)
 {
-	float maxEnergy = 0.f;
+	DeleteAllVectorData(&animSegments);
+
+	Segment* rootSeg = segs->front();
+
+	CreateAnimSegmentsRecurs(rootSeg, NULL);
+
+	/*float maxEnergy = 0.f;
 	for (Segment* seg : *segs)
 	{
 		if (seg->GetEnergy() > maxEnergy);
 		maxEnergy = seg->GetEnergy();
-	}
+	}*/
 
-	lineRenderer->Build(segs);
-	cylRenderer->Build(segs, maxEnergy);
+	lineRenderer->Build(&animSegments);
+	cylRenderer->Build(&animSegments);
 }
 
 void LightningRenderer::InitAnimation()
 {
-	cylRenderer->InitAnimation();
-	lineRenderer->InitAnimation();
+	animatingNow = true;
+
+	for (AnimSegment* animSeg : animSegments)
+	{
+		animSeg->InitAnimation();
+	}
+
+	AnimSegment* rootAnimSeg = animSegments.front();
+	rootAnimSeg->SetVisible(true);
 }
 
-void LightningRenderer::UpdateAnimation(float dt)
+// Returns true if still animating
+bool LightningRenderer::UpdateAnimation(float dt)
 {
-	cylRenderer->UpdateAnimation(dt * animationSpeed);
-	lineRenderer->UpdateAnimation(dt * animationSpeed);
+	if (animSegments.size() > 0 && animatingNow)
+	{
+		AnimSegment* rootAnimSeg = animSegments.front();
+		animatingNow = rootAnimSeg->UpdateAnimationRecurs(dt * animationSpeed);		
+	}
+	return animatingNow;
 }
 
 void LightningRenderer::Render(
@@ -105,6 +129,7 @@ void LightningRenderer::Render(
 {
 	if (blurRenderingActive || cylinderRenderingActive)
 	{
+		cylRenderer->UpdateFromAnimation();
 		cylRenderer->SetShaderParams(viewMatrix, projMatrix);
 	}
 
@@ -122,5 +147,27 @@ void LightningRenderer::Render(
 	if (cylinderRenderingActive)
 	{
 		cylRenderer->RenderCylinders(renderer);
+	}
+}
+
+////
+// PRIVATE:
+////
+
+void LightningRenderer::CreateAnimSegmentsRecurs(Segment* seg, AnimSegment* parent)
+{
+	AnimSegment* newAnimSeg = new AnimSegment(seg);
+
+	if (parent)
+	{
+		parent->AddChild(newAnimSeg);
+		newAnimSeg->SetParent(parent);
+	}
+
+	animSegments.push_back(newAnimSeg);
+
+	for (Segment* s : *(seg->GetChildren()))
+	{
+		CreateAnimSegmentsRecurs(s, newAnimSeg);
 	}
 }

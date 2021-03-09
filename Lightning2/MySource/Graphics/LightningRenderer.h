@@ -2,6 +2,13 @@
 
 #include "LineRenderer.h"
 #include "CylinderRenderer.h"
+#include "AnimSegment.h"
+
+enum LightningRenderModes
+{
+	ANIMATED,
+	STATIC
+};
 
 class LightningRenderer
 {
@@ -13,6 +20,7 @@ public:
 		int screenHeight
 	);
 	~LightningRenderer();
+
 
 	void SetColours(
 		const XMFLOAT4& backgroundColour,
@@ -35,8 +43,8 @@ public:
 	void Build(std::vector<Segment*>* segs);
 
 	void InitAnimation();
-
-	void UpdateAnimation(float dt);
+	//void CancelAnimation();
+	bool UpdateAnimation(float dt);
 
 	void Render(
 		Camera* camera,
@@ -45,23 +53,31 @@ public:
 		const XMMATRIX& projMatrix
 	);
 
+	inline void SetRenderMode(LightningRenderModes mode) { renderMode = mode; };
 	inline void SetBlurRenderingActive(bool active) { blurRenderingActive = active; };
 	inline void SetLineRenderingActive(bool active) { lineRenderingActive = active; };
 	inline void SetCylinderRenderingActive(bool active) { cylinderRenderingActive = active; };
 
+	inline LightningRenderModes GetRenderMode() { return renderMode; };
 	inline bool IsBlurRenderingActive() { return blurRenderingActive; };
 	inline bool IsLineRenderingActive() { return lineRenderingActive; };
 	inline bool IsCylinderRenderingActive() { return cylinderRenderingActive; };
 
 private:
+	void CreateAnimSegmentsRecurs(Segment* seg, AnimSegment* parent);
+
+	std::vector<AnimSegment*> animSegments;
+
 	D3D* renderer;
 	LineRenderer* lineRenderer;
 	CylinderRenderer* cylRenderer;
 
+	LightningRenderModes renderMode;
 	bool blurRenderingActive;
 	bool lineRenderingActive;
 	bool cylinderRenderingActive;
-
+	
+	bool animatingNow;
 	float animationSpeed;
 };
 

@@ -3,7 +3,7 @@
 #include "BaseMesh.h"
 #include <vector>
 
-#include "Segment.h"
+#include "AnimSegment.h"
 #include "Maths/MyLerp.h"
 #include "Maths/MyClamp.h"
 
@@ -13,37 +13,14 @@
 
 class Line {
 public:
-	Line(Segment* seg);
+	Line(AnimSegment* _animSeg);
 	
-	inline XMFLOAT3 GetStart() { return start; };
-	inline XMFLOAT3 GetEnd() { return end; };
-
-	inline void SetVisible(bool _visible) { visible = _visible; };
-	inline bool IsVisible() { return visible; };
-
-	inline void SetParent(Line* _parent) { parent = _parent; };
-	inline Line* GetParent() { return parent; };
-	inline void AddChild(Line* child) { children.push_back(child); };
-	inline std::vector<Line*>* GetChildren() { return &children; };
-	inline Line* GetChild(size_t index) { return children[index]; };
-
-	void InitAnimation();
-
-	bool UpdateAnimationRecurs(float deltaTime);
-
+	XMFLOAT3 GetStart();
+	XMFLOAT3 GetCurrentEnd();
+	XMFLOAT3 GetFixedEnd();
+	
 private:
-	XMFLOAT3 start;
-	XMFLOAT3 end;
-	XMFLOAT3 fixedEnd;
-	
-	float t; // for animation. 0 <= t <= 1
-	float velocity;
-	float length;
-	bool visible;
-	bool finishedAnimating;
-
-	Line* parent;
-	std::vector<Line*> children;
+	AnimSegment* animSeg;
 };
 
 ////

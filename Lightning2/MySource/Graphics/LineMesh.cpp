@@ -7,92 +7,40 @@
 //------------------------------------------------------
 
 
-Line::Line(Segment* seg)
+Line::Line(AnimSegment* _animSeg)
+	:
+	animSeg(_animSeg)
 {
-	start = XMFLOAT3(
-		seg->GetStartPoint().x,
-		seg->GetStartPoint().y,
-		seg->GetStartPoint().z
+}
+
+
+XMFLOAT3 Line::GetStart()
+{
+	return XMFLOAT3(
+		animSeg->GetStartPoint().x,
+		animSeg->GetStartPoint().y,
+		animSeg->GetStartPoint().z
 	);
+}
 
-	end = XMFLOAT3(
-		seg->GetEndPoint().x,
-		seg->GetEndPoint().y,
-		seg->GetEndPoint().z
+XMFLOAT3 Line::GetCurrentEnd()
+{
+	return XMFLOAT3(
+		animSeg->GetCurrentEndPoint().x,
+		animSeg->GetCurrentEndPoint().y,
+		animSeg->GetCurrentEndPoint().z
 	);
-
-	fixedEnd = end;
-	velocity = seg->GetVelocity();
-	length = seg->GetLength();
 }
 
-void Line::InitAnimation()
+XMFLOAT3 Line::GetFixedEnd()
 {
-	t = 0.f;
-	end = start;
-	finishedAnimating = false;
-	SetVisible(false);
+	return XMFLOAT3(
+		animSeg->GetFixedEndPoint().x,
+		animSeg->GetFixedEndPoint().y,
+		animSeg->GetFixedEndPoint().z
+	);
 }
 
-bool Line::UpdateAnimationRecurs(float deltaTime)
-{
-	float deltaTimeTaken = 0.f;
-
-	if (!finishedAnimating)
-	{
-		// Growth:
-		float deltaLength = velocity * deltaTime;
-		t += deltaLength / length;
-		t = MyClamp(t, 0.f, 1.f);
-
-		end = XMFLOAT3(
-			MyLerp(start.x, fixedEnd.x, t),
-			MyLerp(start.y, fixedEnd.y, t),
-			MyLerp(start.z, fixedEnd.z, t)
-		);
-
-		if (t >= 1.f)
-		{
-			finishedAnimating = true;
-			end = fixedEnd; // ensuring any slight t>1.f is fixed
-
-			if (children.empty())
-			{
-				return true;
-			}
-			else
-			{
-				for (Line* child : children)
-				{
-					child->SetVisible(true);
-				}
-			}
-
-			// deltaTimeTaken is calculated now
-			// a possible lightning slow-down due to the frame rate is undesirable...
-			// ...so for the next segment down, we're going now! (next block below)
-			// but, reducing deltaTime so we don't overshoot:
-			deltaTimeTaken = (deltaLength / velocity);
-		}
-	}
-	
-	if (finishedAnimating)
-	{
-		bool res = false;
-
-		// Reducing deltaTime:
-		float nextDeltaTime = deltaTime - deltaTimeTaken;
-		nextDeltaTime = max(0.f, nextDeltaTime);
-
-		for (Line* child : children)
-		{
-			res = child->UpdateAnimationRecurs(nextDeltaTime) && res;
-		}
-		return res;
-	}	
-
-	return false;
-}
 
 //------------------------------------------------------
 // LineMesh
@@ -171,7 +119,7 @@ void LineMesh::LoadLine( ID3D11DeviceContext* deviceContext, int lineNo) {
 	//Load the line segment into the buffer
 	vertices[0].position = (*lines)[lineNo]->GetStart();
 	vertices[0].texture = XMFLOAT2(0, 0);
-	vertices[1].position = (*lines)[lineNo]->GetEnd();
+	vertices[1].position = (*lines)[lineNo]->GetCurrentEnd();
 	vertices[1].texture = XMFLOAT2(1, 1);
 
 	//Set up index list
