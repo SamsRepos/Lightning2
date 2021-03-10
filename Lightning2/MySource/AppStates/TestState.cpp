@@ -143,7 +143,7 @@ void TestState::InitPipelineMgr()
 	pipelineMgr->InitBranchifier(
 		DEFAULT_B_INITIAL_DIAMETER,
 		DEFAULT_B_DIAMETER_SCALEDOWN,
-		DEFUALT_B_VELOCITY_SCALEDOWN,
+		DEFUALT_B_ANIMATION_TIME,
 		DEFAULT_B_MAX_NUM_BRANCH_LEVELS
 	);
 
@@ -338,7 +338,7 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 	pipelineMgr->InitBranchifier(
 		DEFAULT_B_INITIAL_DIAMETER,
 		DEFAULT_B_DIAMETER_SCALEDOWN,
-		DEFUALT_B_VELOCITY_SCALEDOWN,
+		DEFUALT_B_ANIMATION_TIME,
 		4
 	);
 

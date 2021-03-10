@@ -103,14 +103,14 @@ void PipelineMgr::InitWholeTransformer(
 void PipelineMgr::InitBranchifier(
 	float initialDiameter,
 	float diameterScaledown,
-	float velocityScaledown,
+	float animationTime,
 	size_t maxNumBranchLevels
 )
 {
 	branchifier.InitParameters(
 		initialDiameter,
 		diameterScaledown,
-		velocityScaledown,
+		animationTime,
 		maxNumBranchLevels
 	);
 }

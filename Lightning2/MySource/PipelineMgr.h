@@ -72,7 +72,7 @@ public:
 	void InitBranchifier(
 		float initialDiameter,
 		float diameterScaledown,
-		float velocityScaledown,
+		float animationTime,
 		size_t maxNumBranchLevels
 	);
 
