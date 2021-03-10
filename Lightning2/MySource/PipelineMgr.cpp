@@ -103,12 +103,14 @@ void PipelineMgr::InitWholeTransformer(
 void PipelineMgr::InitBranchifier(
 	float initialDiameter,
 	float diameterScaledown,
+	float velocityScaledown,
 	size_t maxNumBranchLevels
 )
 {
 	branchifier.InitParameters(
 		initialDiameter,
-		MyClamp(diameterScaledown, 0.f, 1.f),
+		diameterScaledown,
+		velocityScaledown,
 		maxNumBranchLevels
 	);
 }

@@ -8,8 +8,14 @@ Segment::Segment(MyFloat3 startPoint, MyFloat3 endPoint, float diameter, float m
 	endPoint(endPoint),
 	diameter(diameter),
 	minDiameter(minDiameter),
-	parent(NULL)
+	parent(NULL),
+	cullMe(false)
+{	
+}
+
+Segment::~Segment()
 {
+
 }
 
 void Segment::SetToBeCulled()

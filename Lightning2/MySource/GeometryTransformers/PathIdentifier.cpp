@@ -23,6 +23,8 @@ void PathIdentifier::Run()
 
 void PathIdentifier::FarthestDistOnPathSetterRecurs(Segment* root, Segment* currentSegment)
 {	
+	currentSegment->SetDistanceFromRoot(root);
+
 	if (currentSegment->GetChildren()->size() > 0)
 	{
 		for (Segment* child : *(currentSegment->GetChildren()))
@@ -44,8 +46,6 @@ void PathIdentifier::FarthestDistOnPathSetterRecurs(Segment* root, Segment* curr
 	}
 	else
 	{
-		currentSegment->SetDistanceFromRoot(root);
-
 		currentSegment->SetFarthestDistanceOnThisPath(
 			currentSegment->GetDistanceFromRoot()
 		);

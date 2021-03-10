@@ -19,6 +19,7 @@ public:
 		float diameter      = 1.f,
 		float minDiameter   = 1.f
 	);
+	~Segment();
 
 	inline void SetStartPoint(MyFloat3 startPt) { startPoint = startPt; };
 	inline MyFloat3 GetStartPoint() { return startPoint; };
@@ -77,5 +78,5 @@ private:
 	float energy;
 	float velocity;
 
-	bool cullMe = false;
+	bool cullMe;
 };

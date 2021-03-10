@@ -42,6 +42,7 @@ const MyFloat3 DEFAULT_WT_END_POINT   = MyFloat3(0.f, 0.f, 0.f);
 // Branchifier
 const float  DEFAULT_B_INITIAL_DIAMETER      = .2f;
 const float  DEFAULT_B_DIAMETER_SCALEDOWN    = .5f;
+const float  DEFUALT_B_VELOCITY_SCALEDOWN    = .5f;
 const size_t DEFAULT_B_MAX_NUM_BRANCH_LEVELS = 4;
 
 // Electrifier
@@ -113,6 +114,9 @@ const float B_MAX_INITIAL_DIAMETER = 2.f;
 
 const float B_MIN_DIAMETER_SCALEDOWN = 0.f;
 const float B_MAX_DIAMETER_SCALEDOWN = 1.f;
+
+const float B_MIN_VELOCITY_SCALEDOWN = 0.f;
+const float B_MAX_VELOCITY_SCALEDOWN = 1.f;
 
 const size_t B_MIN_MAX_NUM_BRANCH_LEVELS = 1;
 const size_t B_MAX_MAX_NUM_BRANCH_LEVELS = 10;
