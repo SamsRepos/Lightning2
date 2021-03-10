@@ -61,7 +61,7 @@ public:
 
 private:
 	void CreateAnimSegmentsRecurs(Segment* seg, AnimSegment* parent);
-
+	
 	std::vector<AnimSegment*> animSegments;
 
 	D3D* renderer;

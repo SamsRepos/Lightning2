@@ -14,14 +14,16 @@ public:
 		
 	void Init(AnimSegment* _animSeg);
 
-	//inline void SetBrightness(float _brightness) { brightness = _brightness; };
-	//inline float GetBrightness() { return brightness; };
+	inline void SetBrightness(float _brightness) { brightness = _brightness; };
+	inline float GetBrightness() { return brightness; };
 
 	inline bool IsVisible() { return animSeg->IsVisible(); };
 
 	void UpdateFromAnimation();
 	
 private:
-	AnimSegment* animSeg;	
+	AnimSegment* animSeg;
+
+	float brightness;
 };
 

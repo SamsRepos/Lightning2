@@ -38,6 +38,8 @@ public:
 	void ClearCylinders();
 
 private:
+	float CalculateMaxEnergyLog10(std::vector<AnimSegment*>* animSegs);
+
 	CylinderMesh* cylinderMesh;
 	CylinderObject* baseCylinder;
 	std::vector<CylinderObject*> cylinderObjects;
@@ -66,7 +68,7 @@ private:
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
 	
-	bool animatingNow;
+	bool animatingNow;	
 };
 
 

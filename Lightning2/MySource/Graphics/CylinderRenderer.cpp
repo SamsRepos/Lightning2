@@ -5,6 +5,10 @@
 #include "Utils/DxColourLerp.h"
 #include "Maths/MyClamp.h"
 
+////
+// PUBLIC:
+////
+
 CylinderRenderer::CylinderRenderer(D3D* renderer, HWND hwnd, int _screenWidth, int _screenHeight)
 	:
 	cylinderMesh(NULL),
@@ -99,21 +103,24 @@ void CylinderRenderer::SetBlurParams(
 void CylinderRenderer::Build(std::vector<AnimSegment*>* animSegs)
 {
 	ClearCylinders();
-		
+	
 	for (AnimSegment* animSeg : *animSegs)
 	{
 		CylinderObject* newCylinder = new CylinderObject(*baseCylinder);
 		newCylinder->Init(animSeg);
+
+		float maxEnergyLog10 = CalculateMaxEnergyLog10(animSegs);
+
+		newCylinder->SetBrightness(
+			MyClamp(
+			(log10(animSeg->GetEnergy()) / maxEnergyLog10),
+				0.f,
+				1.f
+			)
+		);
+
 		cylinderObjects.push_back(newCylinder);
-	}
-	
-	/*newCylinder->SetBrightness(
-		MyClamp(
-		(seg->GetEnergy() / maxEnergy),
-			0.f,
-			1.f
-		)
-	);*/
+	}	
 }
 
 //returns true when animation is over
@@ -154,12 +161,11 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRender
 			renderMode == LightningRenderModes::STATIC
 			)
 		{
-			XMFLOAT4 colour = blurColour;
-				/*DxColourLerp(
+			XMFLOAT4 colour = DxColourLerp(
 				backgroundColour,
 				blurColour,
 				c->GetBrightness()
-			);*/
+			);
 
 			c->GetMesh()->sendData(renderer->getDeviceContext());
 			mainShader->setShaderParameters(renderer->getDeviceContext(), c->GetTransform(), viewMatrix, projectionMatrix, c->GetTexture(), colour);
@@ -227,12 +233,11 @@ void CylinderRenderer::RenderCylinders(D3D* renderer, LightningRenderModes rende
 			renderMode==LightningRenderModes::STATIC
 		)
 		{
-			XMFLOAT4 colour = cylinderColour;
-			/*DxColourLerp(
+			XMFLOAT4 colour = DxColourLerp(
 				backgroundColour,
 				cylinderColour,
 				c->GetBrightness()
-			);*/
+			);
 
 			c->GetMesh()->sendData(renderer->getDeviceContext());
 			mainShader->setShaderParameters(renderer->getDeviceContext(), c->GetTransform(), viewMatrix, projectionMatrix, c->GetTexture(), colour);
@@ -244,4 +249,21 @@ void CylinderRenderer::RenderCylinders(D3D* renderer, LightningRenderModes rende
 void CylinderRenderer::ClearCylinders()
 {
 	DeleteAllVectorData(&cylinderObjects);
+}
+
+////
+// PRIVATE:
+////
+
+float CylinderRenderer::CalculateMaxEnergyLog10(std::vector<AnimSegment*>* animSegs)
+{
+	float maxEnergy = 0.f;
+	for (AnimSegment* animSeg : *animSegs)
+	{
+		if (animSeg->GetEnergy() > maxEnergy)
+		{
+			maxEnergy = animSeg->GetEnergy();
+		}
+	}
+	return log10(maxEnergy);
 }
