@@ -9,8 +9,8 @@ void DiameterThinner::InitParameters(
 {
 	scale = MyClamp(
 		_scale,
-		DTHIN_MIN_SCALEDOWN,
-		DTHIN_MAX_SCALEDOWN
+		DT_MIN_SCALEDOWN,
+		DT_MAX_SCALEDOWN
 	);
 }
 

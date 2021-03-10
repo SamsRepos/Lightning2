@@ -178,7 +178,7 @@
     <ClCompile Include="MySource\GeometryGenerators\StreamerGenerator.cpp" />
     <ClCompile Include="MySource\GeometryGenerators\StreamerSettings.cpp" />
     <ClCompile Include="MySource\GeometryTransformers\DiameterThinner.cpp" />
-    <ClCompile Include="MySource\GeometryTransformers\DiameterTransformer.cpp" />
+    <ClCompile Include="MySource\GeometryTransformers\Branchifier.cpp" />
     <ClCompile Include="MySource\GeometryTransformers\Electrifier.cpp" />
     <ClCompile Include="MySource\GeometryTransformers\PathIdentifier.cpp" />
     <ClCompile Include="MySource\GeometryTransformers\WholeTransformer.cpp" />
@@ -207,6 +207,7 @@
     <ClCompile Include="MySource\Utils\DebugCsvWriter.cpp" />
     <ClCompile Include="MySource\Utils\DxColourLerp.cpp" />
     <ClCompile Include="MySource\Utils\MyGuiUtil.cpp" />
+    <ClCompile Include="MySource\Utils\MyInputUtil.cpp" />
     <ClCompile Include="MySource\Utils\SegmentRemoval.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -220,7 +221,7 @@
     <ClInclude Include="MySource\GeometryGenerators\StreamerGenerator.h" />
     <ClInclude Include="MySource\GeometryGenerators\StreamerSettings.h" />
     <ClInclude Include="MySource\GeometryTransformers\DiameterThinner.h" />
-    <ClInclude Include="MySource\GeometryTransformers\DiameterTransformer.h" />
+    <ClInclude Include="MySource\GeometryTransformers\Branchifier.h" />
     <ClInclude Include="MySource\GeometryTransformers\Electrifier.h" />
     <ClInclude Include="MySource\GeometryTransformers\PathIdentifier.h" />
     <ClInclude Include="MySource\GeometryTransformers\WholeTransformer.h" />
@@ -254,6 +255,7 @@
     <ClInclude Include="MySource\Utils\DebugCsvWriter.h" />
     <ClInclude Include="MySource\Utils\DxColourLerp.h" />
     <ClInclude Include="MySource\Utils\MyGuiUtil.h" />
+    <ClInclude Include="MySource\Utils\MyInputUtil.h" />
     <ClInclude Include="MySource\Utils\MyVectorUtil.h" />
     <ClInclude Include="MySource\Utils\SegmentRemoval.h" />
   </ItemGroup>

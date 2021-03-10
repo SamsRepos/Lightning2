@@ -20,6 +20,8 @@ public:
 	void Gui();
 
 private:
+	void HandleInput();
+	
 	FPCamera* camera;
 	TextureManager* textureMgr;
 
@@ -34,4 +36,6 @@ private:
 	XMMATRIX planeMatrix;	
 
 	bool debugCsv = false;
+
+	Input previousInput;
 };

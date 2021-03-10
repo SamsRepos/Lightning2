@@ -8,7 +8,7 @@
 
 #include "GeometryTransformers/DiameterThinner.h"
 #include "GeometryTransformers/PathIdentifier.h"
-#include "GeometryTransformers/DiameterTransformer.h"
+#include "GeometryTransformers/Branchifier.h"
 #include "GeometryTransformers/WholeTransformer.h"
 #include "GeometryTransformers/Electrifier.h"
 
@@ -34,7 +34,7 @@ public:
 	//toggle post-generation transform stages
 	inline void SetDiameterThinnerActive(bool active) { settings->SetDiameterThinnerActive(active); };
 	inline void SetWholeTransformerActive(bool active) { settings->SetWholeTransformerActive(active); };
-	inline void SetDiameterTransformerActive(bool active) { settings->SetDiameterTransformerActive(active); };
+	inline void SetBranchifierActive(bool active) { settings->SetBranchifierActive(active); };
 	inline void SetElectifierActive(bool active) { settings->SetElectifierActive(active); };
 
 	//setters for all parameters
@@ -69,7 +69,7 @@ public:
 		MyFloat3 endPoint
 	);
 
-	void InitDiameterTransformer(
+	void InitBranchifier(
 		float initialDiameter,
 		float diameterScaledown,
 		size_t maxNumBranchLevels
@@ -121,7 +121,7 @@ private:
 	DiameterThinner diameterThinner;
 	PathIdentifier pathIdentifier;
 	WholeTransformer wholeTransformer;
-	DiameterTransformer diameterTransformer;
+	Branchifier branchifier;
 	Electrifier electrifier;
 
 	//Graphics renderers:

@@ -100,13 +100,13 @@ void PipelineMgr::InitWholeTransformer(
 	);
 }
 
-void PipelineMgr::InitDiameterTransformer(
+void PipelineMgr::InitBranchifier(
 	float initialDiameter,
 	float diameterScaledown,
 	size_t maxNumBranchLevels
 )
 {
-	diameterTransformer.InitParameters(
+	branchifier.InitParameters(
 		initialDiameter,
 		MyClamp(diameterScaledown, 0.f, 1.f),
 		maxNumBranchLevels
@@ -160,10 +160,10 @@ void PipelineMgr::RunProcess()
 		wholeTransformer.SetSegments(segments);
 		wholeTransformer.Run();
 	}
-	if (settings->IsDiameterTransformerActive())
+	if (settings->IsBranchifierActive())
 	{
-		diameterTransformer.SetSegments(segments);
-		diameterTransformer.Run();
+		branchifier.SetSegments(segments);
+		branchifier.Run();
 	}	
 	if (settings->IsElectrifierActive())
 	{

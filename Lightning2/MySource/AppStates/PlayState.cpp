@@ -4,6 +4,11 @@
 #include "DefaultParameters.h"
 #include "Utils/DebugCsvWriter.h"
 #include "Utils/MyGuiUtil.h"
+#include "Utils/MyInputUtil.h"
+
+////
+// PUBLIC:
+////
 
 PlayState::PlayState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHeight, Input* _input, FPCamera* _camera, TextureManager* _textureMgr)
 	:
@@ -16,12 +21,12 @@ PlayState::PlayState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHe
 	textureMgr(_textureMgr)
 {
 	//PIPELINE MANAGER:
-	defaultSettings.geometryGenerator         = GeometryGeneratorTypes::STREAMER;
-	defaultSettings.diameterThinnerActive     = false;
-	defaultSettings.wholeTransformerActive    = false;
-	defaultSettings.diameterTransformerActive = false;
-	defaultSettings.electrifierActive         = false;
-	defaultSettings.renderingActive           = true;	
+	defaultSettings.geometryGenerator      = GeometryGeneratorTypes::STREAMER;
+	defaultSettings.diameterThinnerActive  = false;
+	defaultSettings.wholeTransformerActive = false;
+	defaultSettings.branchifierActive      = false;
+	defaultSettings.electrifierActive      = false;
+	defaultSettings.renderingActive        = true;	
 
 	pipelineMgr = new PipelineMgr(
 		defaultSettings,
@@ -96,7 +101,7 @@ void PlayState::Init()
 	);
 
 	pipelineMgr->InitDiameterThinner(
-		DEFAULT_DTHIN_SCALEDOWN
+		DEFAULT_DT_SCALEDOWN
 	);
 
 	pipelineMgr->InitWholeTransformer(
@@ -104,10 +109,10 @@ void PlayState::Init()
 		DEFAULT_WT_END_POINT
 	);
 
-	pipelineMgr->InitDiameterTransformer(
-		DEFAULT_DT_INITIAL_DIAMETER,
-		DEFAULT_DT_DIAMETER_SCALEDOWN,
-		DEFAULT_DT_MAX_NUM_BRANCH_LEVELS
+	pipelineMgr->InitBranchifier(
+		DEFAULT_B_INITIAL_DIAMETER,
+		DEFAULT_B_DIAMETER_SCALEDOWN,
+		DEFAULT_B_MAX_NUM_BRANCH_LEVELS
 	);
 
 	pipelineMgr->InitElectrifier(
@@ -143,19 +148,8 @@ void PlayState::Update(float _dt)
 {
 	BaseState::Update(_dt);
 
-	if (input->isKeyDown('R'))
-	{
-		pipelineMgr->RunProcess();
-		if (debugCsv)
-		{
-			DebugWriteCsv(pipelineMgr->GetSegments());
-		}
-	}
-	if (input->isKeyDown('C'))
-	{
-		pipelineMgr->Clear();
-	}
-
+	HandleInput();
+	
 	pipelineMgr->UpdateAnimation(_dt);
 		
 }
@@ -265,9 +259,9 @@ void PlayState::Gui()
 		{
 			ImGui::Text("- Whole Transformer");
 		}
-		if (settings->IsDiameterTransformerActive())
+		if (settings->IsBranchifierActive())
 		{
-			ImGui::Text("- Diameter Transformer");
+			ImGui::Text("- Branchifier");
 		}
 		if (settings->IsElectrifierActive())
 		{
@@ -326,10 +320,10 @@ void PlayState::Gui()
 				);
 			}
 
-			if (GuiToggleButton("Toggle Diameter Transformer", settings->IsDiameterTransformerActive()))
+			if (GuiToggleButton("Toggle Branchifier", settings->IsBranchifierActive()))
 			{
-				pipelineMgr->SetDiameterTransformerActive(
-					!(settings->IsDiameterTransformerActive())
+				pipelineMgr->SetBranchifierActive(
+					!(settings->IsBranchifierActive())
 				);
 			}
 
@@ -450,13 +444,13 @@ void PlayState::Gui()
 
 	//Adjust Diameter Thinner Parameters:
 	{
-		static float scaledown = DEFAULT_DTHIN_SCALEDOWN;
+		static float scaledown = DEFAULT_DT_SCALEDOWN;
 
 		if (ImGui::CollapsingHeader("Set Diameter Thinner Parameters"))
 		{
 			bool changeNow = false;
 
-			changeNow = GuiSliderFloat(changeNow, "DTHIN scaledown", &scaledown, DTHIN_MIN_SCALEDOWN, DTHIN_MAX_SCALEDOWN);
+			changeNow = GuiSliderFloat(changeNow, "DT scaledown", &scaledown, DT_MIN_SCALEDOWN, DT_MAX_SCALEDOWN);
 
 			if (changeNow)
 			{
@@ -489,23 +483,23 @@ void PlayState::Gui()
 		}
 	}
 
-	//Adjust Diameter Transformer Parameters
+	//Adjust Branchifier Parameters
 	{
-		static float initialDiameter = DEFAULT_DT_INITIAL_DIAMETER;
-		static float diameterScaledown = DEFAULT_DT_DIAMETER_SCALEDOWN;
-		static int maxNumBranchLevels = DEFAULT_DT_MAX_NUM_BRANCH_LEVELS;
+		static float initialDiameter = DEFAULT_B_INITIAL_DIAMETER;
+		static float diameterScaledown = DEFAULT_B_DIAMETER_SCALEDOWN;
+		static int maxNumBranchLevels = DEFAULT_B_MAX_NUM_BRANCH_LEVELS;
 
-		if (ImGui::CollapsingHeader("Set Diameter Transformer Parameters"))
+		if (ImGui::CollapsingHeader("Set Branchifier Parameters"))
 		{
 			bool changeNow = false;
 
-			changeNow = GuiSliderFloat(changeNow, "DT initial diameter", &initialDiameter, DT_MIN_INITIAL_DIAMETER, DT_MAX_INITIAL_DIAMETER);
-			changeNow = GuiSliderFloat(changeNow, "DT diameter scaledown", &diameterScaledown, DT_MIN_DIAMETER_SCALEDOWN, DT_MAX_DIAMETER_SCALEDOWN);
-			changeNow = GuiSliderInt(changeNow, "DT max num branch levels", &maxNumBranchLevels, DT_MIN_MAX_NUM_BRANCH_LEVELS, DT_MAX_MAX_NUM_BRANCH_LEVELS);
+			changeNow = GuiSliderFloat(changeNow, "B initial diameter", &initialDiameter, B_MIN_INITIAL_DIAMETER, B_MAX_INITIAL_DIAMETER);
+			changeNow = GuiSliderFloat(changeNow, "B diameter scaledown", &diameterScaledown, B_MIN_DIAMETER_SCALEDOWN, B_MAX_DIAMETER_SCALEDOWN);
+			changeNow = GuiSliderInt(changeNow, "B max num branch levels", &maxNumBranchLevels, B_MIN_MAX_NUM_BRANCH_LEVELS, B_MAX_MAX_NUM_BRANCH_LEVELS);
 
 			if (changeNow)
 			{
-				pipelineMgr->InitDiameterTransformer(
+				pipelineMgr->InitBranchifier(
 					initialDiameter,
 					diameterScaledown,
 					maxNumBranchLevels
@@ -632,4 +626,28 @@ void PlayState::Gui()
 			}
 		}
 	}
+}
+
+////
+// PRIVATE:
+////
+
+void PlayState::HandleInput()
+{
+	static MyInputUtil inputUtil(input, &previousInput);
+
+	if (inputUtil.IsKeyPressedNow('R'))
+	{
+		pipelineMgr->RunProcess();
+		if (debugCsv)
+		{
+			DebugWriteCsv(pipelineMgr->GetSegments());
+		}
+	}
+	if (inputUtil.IsKeyPressedNow('C'))
+	{
+		pipelineMgr->Clear();
+	}
+
+	inputUtil.EndFrame();
 }

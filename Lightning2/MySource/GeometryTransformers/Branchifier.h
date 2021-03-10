@@ -4,7 +4,7 @@
 
 #include "Segment.h"
 
-class DiameterTransformer
+class Branchifier
 {
 public:
 	void InitParameters(

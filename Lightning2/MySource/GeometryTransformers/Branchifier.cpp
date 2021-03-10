@@ -1,4 +1,4 @@
-#include "DiameterTransformer.h"
+#include "Branchifier.h"
 
 #include "Utils/SegmentRemoval.h"
 
@@ -6,14 +6,14 @@
 // PUBLIC:
 ////
 
-void DiameterTransformer::InitParameters(float _initialDiameter, float _diameterScaledown, size_t _maxNumBranchLevels)
+void Branchifier::InitParameters(float _initialDiameter, float _diameterScaledown, size_t _maxNumBranchLevels)
 {
 	initialDiameter    = _initialDiameter;
 	diamterScaledown   = _diameterScaledown;
 	maxNumBranchLevels = _maxNumBranchLevels;
 }
 
-void DiameterTransformer::Run()
+void Branchifier::Run()
 {
 	Segment* root = segments->front();
 
@@ -26,7 +26,7 @@ void DiameterTransformer::Run()
 // PRIVATE
 ////
 
-void DiameterTransformer::DiameterTransformRecurs(Segment* segment, float diameter, size_t branchLevel)
+void Branchifier::DiameterTransformRecurs(Segment* segment, float diameter, size_t branchLevel)
 {
 	if (branchLevel < maxNumBranchLevels)
 	{

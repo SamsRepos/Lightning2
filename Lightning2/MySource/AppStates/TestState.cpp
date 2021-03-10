@@ -14,12 +14,12 @@ TestState::TestState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHe
 	BaseState::BaseState(_renderer, _hwnd, _screenWidth, _screenHeight, _input),
 	pipelineMgr(NULL)
 {
-	defaultSettings.geometryGenerator         = GeometryGeneratorTypes::STREAMER;
-	defaultSettings.diameterThinnerActive     = false;
-	defaultSettings.wholeTransformerActive    = false;
-	defaultSettings.diameterTransformerActive = false;
-	defaultSettings.electrifierActive         = false;
-	defaultSettings.renderingActive           = false;
+	defaultSettings.geometryGenerator      = GeometryGeneratorTypes::STREAMER;
+	defaultSettings.diameterThinnerActive  = false;
+	defaultSettings.wholeTransformerActive = false;
+	defaultSettings.branchifierActive      = false;
+	defaultSettings.electrifierActive      = false;
+	defaultSettings.renderingActive        = false;
 
 	pipelineMgr = new PipelineMgr(
 		defaultSettings,
@@ -132,7 +132,7 @@ void TestState::InitPipelineMgr()
 	);
 
 	pipelineMgr->InitDiameterThinner(
-		DEFAULT_DTHIN_SCALEDOWN
+		DEFAULT_DT_SCALEDOWN
 	);
 
 	pipelineMgr->InitWholeTransformer(
@@ -140,10 +140,10 @@ void TestState::InitPipelineMgr()
 		DEFAULT_WT_END_POINT
 	);
 
-	pipelineMgr->InitDiameterTransformer(
-		DEFAULT_DT_INITIAL_DIAMETER,
-		DEFAULT_DT_DIAMETER_SCALEDOWN,
-		DEFAULT_DT_MAX_NUM_BRANCH_LEVELS
+	pipelineMgr->InitBranchifier(
+		DEFAULT_B_INITIAL_DIAMETER,
+		DEFAULT_B_DIAMETER_SCALEDOWN,
+		DEFAULT_B_MAX_NUM_BRANCH_LEVELS
 	);
 
 	pipelineMgr->InitElectrifier(
@@ -334,9 +334,9 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 	
 	pipelineMgr->SetElectifierActive(true);
 
-	pipelineMgr->InitDiameterTransformer(
-		DEFAULT_DT_INITIAL_DIAMETER,
-		DEFAULT_DT_DIAMETER_SCALEDOWN,
+	pipelineMgr->InitBranchifier(
+		DEFAULT_B_INITIAL_DIAMETER,
+		DEFAULT_B_DIAMETER_SCALEDOWN,
 		4
 	);
 
@@ -404,7 +404,7 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 			}
 			
 
-			pipelineMgr->SetDiameterTransformerActive(false);
+			pipelineMgr->SetBranchifierActive(false);
 
 			// JITTER-FORK:
 			pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::JITTER_FORK);
@@ -438,7 +438,7 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 			streamerNoCullSegmentsRunningTotal += pipelineMgr->GetSegments()->size();
 			streamerNoCullKbRunningTotal       += segMeasuerer.GetKbUsed();
 
-			pipelineMgr->SetDiameterTransformerActive(true);
+			pipelineMgr->SetBranchifierActive(true);
 
 			timer.Start();
 				pipelineMgr->RunProcess();

@@ -111,9 +111,6 @@
     <ClCompile Include="MySource\GeometryTransformers\DiameterThinner.cpp">
       <Filter>Source Files\GeometryTransformers</Filter>
     </ClCompile>
-    <ClCompile Include="MySource\GeometryTransformers\DiameterTransformer.cpp">
-      <Filter>Source Files\GeometryTransformers</Filter>
-    </ClCompile>
     <ClCompile Include="MySource\Graphics\CylinderMesh.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
@@ -192,6 +189,12 @@
     <ClCompile Include="MySource\Graphics\AnimSegment.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="MySource\GeometryTransformers\Branchifier.cpp">
+      <Filter>Source Files\GeometryTransformers</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Utils\MyInputUtil.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MySource\App1.h">
@@ -222,9 +225,6 @@
       <Filter>Header Files\AppStates</Filter>
     </ClInclude>
     <ClInclude Include="MySource\GeometryTransformers\DiameterThinner.h">
-      <Filter>Header Files\GeometryTransformers</Filter>
-    </ClInclude>
-    <ClInclude Include="MySource\GeometryTransformers\DiameterTransformer.h">
       <Filter>Header Files\GeometryTransformers</Filter>
     </ClInclude>
     <ClInclude Include="MySource\GeometryTransformers\Electrifier.h">
@@ -331,6 +331,12 @@
     </ClInclude>
     <ClInclude Include="MySource\Graphics\RenderSettings.h">
       <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\GeometryTransformers\Branchifier.h">
+      <Filter>Header Files\GeometryTransformers</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Utils\MyInputUtil.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

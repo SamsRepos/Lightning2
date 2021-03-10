@@ -33,16 +33,16 @@ const std::string DEFAULT_SG_ANGLE_FIX         = "parent_dist";
 const std::string DEFAULT_SG_GAS_COMPOSITION   = "air";
 
 // Diameter Thinner:
-const float DEFAULT_DTHIN_SCALEDOWN = .5f;
+const float DEFAULT_DT_SCALEDOWN = .5f;
 
 // Whole Transformer:
 const MyFloat3 DEFAULT_WT_START_POINT = MyFloat3(0.f, 100.f, 0.f);
 const MyFloat3 DEFAULT_WT_END_POINT   = MyFloat3(0.f, 0.f, 0.f);
 
-// Diameter Transformer
-const float  DEFAULT_DT_INITIAL_DIAMETER      = .2f;
-const float  DEFAULT_DT_DIAMETER_SCALEDOWN    = .5f;
-const size_t DEFAULT_DT_MAX_NUM_BRANCH_LEVELS = 4;
+// Branchifier
+const float  DEFAULT_B_INITIAL_DIAMETER      = .2f;
+const float  DEFAULT_B_DIAMETER_SCALEDOWN    = .5f;
+const size_t DEFAULT_B_MAX_NUM_BRANCH_LEVELS = 4;
 
 // Electrifier
 const float DEFAULT_E_MAX_SEG_LENGTH = 1.f;
@@ -51,7 +51,6 @@ const float DEFAULT_E_CHAOS_STDDEV   = .05f;
 
 // Render Mode:
 const std::string DEFAULT_RENDER_MODE = "animated";
-
 
 // Renderer Colours
 const std::string DEFAULT_BACKGROUND_COLOUR = "background night";
@@ -66,7 +65,7 @@ const float DEFAULT_BLUR_SIZE       = 30.f;
 const float DEFAULT_BLUR_ADJUSTMENT = 15.f;
 
 // Animation parameters:
-const float DEFAULT_ANIM_SPEED = 1.f;
+const float DEFAULT_ANIM_SPEED = 400.f;
 
 ////
 // MIN & MAX VALUES:
@@ -105,18 +104,18 @@ const size_t SG_MIN_MAX_NUM_LAYERS = 1;
 const size_t SG_MAX_MAX_NUM_LAYERS = 20;
 
 // Diameter Thinner
-const float DTHIN_MIN_SCALEDOWN = 0.f;
-const float DTHIN_MAX_SCALEDOWN = 1.f;
+const float DT_MIN_SCALEDOWN = 0.f;
+const float DT_MAX_SCALEDOWN = 1.f;
 
-// Diameter Transformer
-const float DT_MIN_INITIAL_DIAMETER = .1f;
-const float DT_MAX_INITIAL_DIAMETER = 2.f;
+// Branchifier
+const float B_MIN_INITIAL_DIAMETER = .1f;
+const float B_MAX_INITIAL_DIAMETER = 2.f;
 
-const float DT_MIN_DIAMETER_SCALEDOWN = 0.f;
-const float DT_MAX_DIAMETER_SCALEDOWN = 1.f;
+const float B_MIN_DIAMETER_SCALEDOWN = 0.f;
+const float B_MAX_DIAMETER_SCALEDOWN = 1.f;
 
-const size_t DT_MIN_MAX_NUM_BRANCH_LEVELS = 1;
-const size_t DT_MAX_MAX_NUM_BRANCH_LEVELS = 10;
+const size_t B_MIN_MAX_NUM_BRANCH_LEVELS = 1;
+const size_t B_MAX_MAX_NUM_BRANCH_LEVELS = 10;
 
 // Electrifier
 const float E_MIN_MAX_SEG_LENGTH = .1f;
@@ -142,5 +141,5 @@ const float BLUR_MIN_ADJUSTMENT = 0.f;
 const float BLUR_MAX_ADJUSTMENT = 50.f;
 
 // Animation parameters:
-const float ANIM_MIN_SPEED = .01f;
+const float ANIM_MIN_SPEED = 1.f;
 const float ANIM_MAX_SPEED = 1000.f;
