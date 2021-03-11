@@ -8,8 +8,6 @@
 #include "Light.h"
 #include "PlaneMesh.h"
 
-#include "Graphics/Cylinder/DomeMesh.h"
-
 class PlayState : public BaseState
 {
 public:
@@ -38,8 +36,4 @@ private:
 	XMMATRIX planeMatrix;	
 
 	bool debugCsv = false;
-
-	Input previousInput;
-
-	DomeMesh* dome;
 };

@@ -12,17 +12,25 @@
 CylinderRenderer::CylinderRenderer(D3D* renderer, HWND hwnd, int _screenWidth, int _screenHeight)
 	:
 	cylinderMesh(NULL),
-	baseCylinder(NULL)
+	domeMesh(NULL),
+	baseCapsule(NULL)
 {
 	cylinderMesh = new CylinderMesh(
 		renderer->getDevice(),
 		renderer->getDeviceContext(),
 		.5f, //diameter of 1, which matches default height
-		5 // resolution
+		10 // resolution
+	);
+
+	domeMesh = new DomeMesh(
+		renderer->getDevice(),
+		renderer->getDeviceContext(),
+		.5f,
+		10
 	);
 
 	//Scene objects:
-	baseCylinder = new CylinderObject(cylinderMesh, NULL, renderer->getWorldMatrix());
+	baseCapsule = new CapsuleObject(cylinderMesh, domeMesh, NULL, renderer->getWorldMatrix());
 
 	//Shaders:
 	blurShader    = new BlurShader(renderer->getDevice(), hwnd);
@@ -58,7 +66,7 @@ CylinderRenderer::CylinderRenderer(D3D* renderer, HWND hwnd, int _screenWidth, i
 
 CylinderRenderer::~CylinderRenderer()
 {
-	cylinderObjects.clear();
+	capsuleObjects.clear();
 
 	if (cylinderMesh)
 	{
@@ -66,10 +74,16 @@ CylinderRenderer::~CylinderRenderer()
 		cylinderMesh = NULL;
 	}
 
-	if (baseCylinder)
+	if (domeMesh)
 	{
-		delete baseCylinder;
-		baseCylinder = NULL;
+		delete domeMesh;
+		domeMesh = NULL;
+	}
+
+	if (baseCapsule)
+	{
+		delete baseCapsule;
+		baseCapsule = NULL;
 	}
 
 	ClearCylinders();
@@ -106,7 +120,7 @@ void CylinderRenderer::Build(std::vector<AnimSegment*>* animSegs)
 	
 	for (AnimSegment* animSeg : *animSegs)
 	{
-		CylinderObject* newCylinder = new CylinderObject(*baseCylinder);
+		CapsuleObject* newCylinder = new CapsuleObject(*baseCapsule);
 		newCylinder->Init(animSeg);
 
 		float maxEnergy = MaxEnergy(animSegs);
@@ -123,14 +137,14 @@ void CylinderRenderer::Build(std::vector<AnimSegment*>* animSegs)
 			)
 		);
 
-		cylinderObjects.push_back(newCylinder);
+		capsuleObjects.push_back(newCylinder);
 	}	
 }
 
 //returns true when animation is over
 void CylinderRenderer::UpdateFromAnimation()
 {
-	for (CylinderObject* cyl : cylinderObjects)
+	for (CapsuleObject* cyl : capsuleObjects)
 	{
 		cyl->UpdateFromAnimation();
 	}
@@ -158,7 +172,7 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRender
 		backgroundColour.w
 	);
 		
-	for (CylinderObject* c : cylinderObjects)
+	for (CapsuleObject* c : capsuleObjects)
 	{
 		if (
 			(renderMode == LightningRenderModes::ANIMATED && c->IsVisible()) ||
@@ -230,7 +244,7 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRender
 
 void CylinderRenderer::RenderCylinders(D3D* renderer, LightningRenderModes renderMode)
 {
-	for (CylinderObject* c : cylinderObjects)
+	for (CapsuleObject* c : capsuleObjects)
 	{
 		if (
 			(renderMode == LightningRenderModes::ANIMATED && c->IsVisible()) ||
@@ -248,13 +262,36 @@ void CylinderRenderer::RenderCylinders(D3D* renderer, LightningRenderModes rende
 			c->GetMesh()->sendData(renderer->getDeviceContext());
 			mainShader->setShaderParameters(renderer->getDeviceContext(), c->GetTransform(), viewMatrix, projectionMatrix, c->GetTexture(), colour);
 			mainShader->render(renderer->getDeviceContext(), c->GetMesh()->getIndexCount());
+
+			c->GetDomeMesh()->sendData(renderer->getDeviceContext());
+			mainShader->setShaderParameters(
+				renderer->getDeviceContext(),
+				c->GetDomeTransform1(),
+				viewMatrix,
+				projectionMatrix,
+				c->GetTexture(),
+				colour
+			);
+			mainShader->render(renderer->getDeviceContext(), c->GetDomeMesh()->getIndexCount());
+
+			c->GetDomeMesh()->sendData(renderer->getDeviceContext());
+			mainShader->setShaderParameters(
+				renderer->getDeviceContext(),
+				c->GetDomeTransform2(),
+				viewMatrix,
+				projectionMatrix,
+				c->GetTexture(),
+				colour
+			);
+			mainShader->render(renderer->getDeviceContext(), c->GetDomeMesh()->getIndexCount());
+
 		}
 	}
 }
 
 void CylinderRenderer::ClearCylinders()
 {
-	DeleteAllVectorData(&cylinderObjects);
+	DeleteAllVectorData(&capsuleObjects);
 }
 
 ////

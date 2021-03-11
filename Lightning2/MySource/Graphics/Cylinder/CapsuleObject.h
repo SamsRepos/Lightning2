@@ -15,11 +15,16 @@ public:
 	
 	void UpdateFromAnimation();
 
-	XMMATRIX GetDomeTransform1();
-	XMMATRIX GetDomeTransform2();
+	inline XMMATRIX GetDomeTransform1() { return domeTransform1; };
+	inline XMMATRIX GetDomeTransform2() { return domeTransform2; };
 	inline BaseMesh* GetDomeMesh() { return domeMesh; };
 	
 private:
+	void BuildDomeTransforms();
+
 	BaseMesh* domeMesh;
+	
+	XMMATRIX domeTransform1;
+	XMMATRIX domeTransform2;
 };
 

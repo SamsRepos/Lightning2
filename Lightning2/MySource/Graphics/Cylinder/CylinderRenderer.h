@@ -1,7 +1,8 @@
 #pragma once
 
 #include "CylinderMesh.h"
-#include "CylinderObject.h"
+#include "DomeMesh.h"
+#include "CapsuleObject.h"
 #include "Shaders/CylinderShader.h"
 #include "Shaders/BlurShader.h"
 #include "Shaders/TextureShader.h"
@@ -41,8 +42,9 @@ private:
 	float MaxEnergy(std::vector<AnimSegment*>* animSegs);
 
 	CylinderMesh* cylinderMesh;
-	CylinderObject* baseCylinder;
-	std::vector<CylinderObject*> cylinderObjects;
+	DomeMesh* domeMesh;
+	CapsuleObject* baseCapsule;
+	std::vector<CapsuleObject*> capsuleObjects;
 
 	BlurShader* blurShader;
 	TextureShader* textureShader;

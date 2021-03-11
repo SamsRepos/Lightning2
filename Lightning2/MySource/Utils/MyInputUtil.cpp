@@ -1,8 +1,7 @@
 #include "MyInputUtil.h"
 
-MyInputUtil::MyInputUtil(Input* _currentInput, Input* _previousInput)
+MyInputUtil::MyInputUtil(Input* input)
 	:
-	currentInput(_currentInput),
-	previousInput(_previousInput)
+	currentInput(input)
 {
 }
