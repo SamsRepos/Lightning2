@@ -1,7 +1,7 @@
 #pragma once
 
-#include "LineRenderer.h"
-#include "CylinderRenderer.h"
+#include "Line/LineRenderer.h"
+#include "Cylinder/CylinderRenderer.h"
 #include "AnimSegment.h"
 #include "RenderSettings.h"
 

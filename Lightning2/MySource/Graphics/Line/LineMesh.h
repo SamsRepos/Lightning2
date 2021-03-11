@@ -3,8 +3,8 @@
 #include "BaseMesh.h"
 #include <vector>
 
-#include "AnimSegment.h"
-#include "RenderSettings.h"
+#include "../AnimSegment.h"
+#include "../RenderSettings.h"
 #include "Maths/MyLerp.h"
 #include "Maths/MyClamp.h"
 

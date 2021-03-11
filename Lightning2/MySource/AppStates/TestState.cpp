@@ -2,7 +2,6 @@
 
 #include "DefaultParameters.h"
 #include "Utils/MyGuiUtil.h"
-#include "Graphics/CylinderObject.h"
 
 
 ////

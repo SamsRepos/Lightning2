@@ -47,6 +47,8 @@ PlayState::PlayState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHe
 	// Mesh
 	planeMesh = new PlaneMesh(renderer->getDevice(), renderer->getDeviceContext());
 	planeMatrix = DirectX::XMMatrixTranslation(-50.f, 0.f, -50.f);
+
+	dome = new DomeMesh(renderer->getDevice(), renderer->getDeviceContext(), 15.f);
 }
 
 PlayState::~PlayState()
@@ -179,6 +181,11 @@ void PlayState::Render()
 		viewMatrix,
 		projectionMatrix
 	);
+
+	
+	dome->sendData(renderer->getDeviceContext());
+	lightShader->setShaderParameters(renderer->getDeviceContext(), planeMatrix , viewMatrix, projectionMatrix, textureMgr->getTexture(L"metal"), light);
+	lightShader->render(renderer->getDeviceContext(), dome->getIndexCount());
 }
 
 void PlayState::Gui()

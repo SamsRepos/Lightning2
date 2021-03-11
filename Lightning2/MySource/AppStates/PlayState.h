@@ -8,6 +8,8 @@
 #include "Light.h"
 #include "PlaneMesh.h"
 
+#include "Graphics/Cylinder/DomeMesh.h"
+
 class PlayState : public BaseState
 {
 public:
@@ -38,4 +40,6 @@ private:
 	bool debugCsv = false;
 
 	Input previousInput;
+
+	DomeMesh* dome;
 };

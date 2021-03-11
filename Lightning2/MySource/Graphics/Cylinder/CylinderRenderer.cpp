@@ -109,11 +109,15 @@ void CylinderRenderer::Build(std::vector<AnimSegment*>* animSegs)
 		CylinderObject* newCylinder = new CylinderObject(*baseCylinder);
 		newCylinder->Init(animSeg);
 
-		float maxEnergyLog10 = CalculateMaxEnergyLog10(animSegs);
+		float maxEnergy = MaxEnergy(animSegs);
+		float maxEnergyLogE = log(maxEnergy);
+		float maxEnergyLog10 = log10(maxEnergy);
 
 		newCylinder->SetBrightness(
 			MyClamp(
-			(log10(animSeg->GetEnergy()) / maxEnergyLog10),
+				//(log10(animSeg->GetEnergy()) / maxEnergyLog10),
+				//(log(animSeg->GetEnergy()) / maxEnergyLogE),
+				(animSeg->GetEnergy() / maxEnergy),
 				0.f,
 				1.f
 			)
@@ -233,11 +237,13 @@ void CylinderRenderer::RenderCylinders(D3D* renderer, LightningRenderModes rende
 			renderMode==LightningRenderModes::STATIC
 		)
 		{
-			XMFLOAT4 colour = DxColourLerp(
-				backgroundColour,
-				cylinderColour,
-				c->GetBrightness()
-			);
+			XMFLOAT4 colour = cylinderColour;
+			
+			//DxColourLerp(
+			//	backgroundColour,
+			//	cylinderColour,
+			//	c->GetBrightness()
+			//);
 
 			c->GetMesh()->sendData(renderer->getDeviceContext());
 			mainShader->setShaderParameters(renderer->getDeviceContext(), c->GetTransform(), viewMatrix, projectionMatrix, c->GetTexture(), colour);
@@ -255,7 +261,7 @@ void CylinderRenderer::ClearCylinders()
 // PRIVATE:
 ////
 
-float CylinderRenderer::CalculateMaxEnergyLog10(std::vector<AnimSegment*>* animSegs)
+float CylinderRenderer::MaxEnergy(std::vector<AnimSegment*>* animSegs)
 {
 	float maxEnergy = 0.f;
 	for (AnimSegment* animSeg : *animSegs)
@@ -265,5 +271,5 @@ float CylinderRenderer::CalculateMaxEnergyLog10(std::vector<AnimSegment*>* animS
 			maxEnergy = animSeg->GetEnergy();
 		}
 	}
-	return log10(maxEnergy);
+	return maxEnergy;
 }

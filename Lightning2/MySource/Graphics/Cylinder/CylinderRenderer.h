@@ -5,8 +5,8 @@
 #include "Shaders/CylinderShader.h"
 #include "Shaders/BlurShader.h"
 #include "Shaders/TextureShader.h"
-#include "AnimSegment.h"
-#include "RenderSettings.h"
+#include "../AnimSegment.h"
+#include "../RenderSettings.h"
 
 class CylinderRenderer
 {
@@ -38,7 +38,7 @@ public:
 	void ClearCylinders();
 
 private:
-	float CalculateMaxEnergyLog10(std::vector<AnimSegment*>* animSegs);
+	float MaxEnergy(std::vector<AnimSegment*>* animSegs);
 
 	CylinderMesh* cylinderMesh;
 	CylinderObject* baseCylinder;

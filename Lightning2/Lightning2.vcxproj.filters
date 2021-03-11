@@ -73,6 +73,18 @@
     <Filter Include="Header Files\PerformanceTools">
       <UniqueIdentifier>{177fa36d-10e1-45fb-a83b-c8e516279ce3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Graphics\Cylinder">
+      <UniqueIdentifier>{959dddf3-fa58-4c52-baa1-575bdb45b1ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\Line">
+      <UniqueIdentifier>{c155867c-2f48-471c-8c62-370b1dd71916}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\Cylinder">
+      <UniqueIdentifier>{c50f725c-f68f-46dd-91bb-e9d21200734a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\Line">
+      <UniqueIdentifier>{ea570222-1ffa-48a5-ba13-bd496552e5f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -111,22 +123,7 @@
     <ClCompile Include="MySource\GeometryTransformers\DiameterThinner.cpp">
       <Filter>Source Files\GeometryTransformers</Filter>
     </ClCompile>
-    <ClCompile Include="MySource\Graphics\CylinderMesh.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="MySource\Graphics\CylinderObject.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="MySource\Graphics\CylinderRenderer.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="MySource\Graphics\LightningRenderer.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="MySource\Graphics\LineMesh.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="MySource\Graphics\LineRenderer.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="MySource\Graphics\SceneObject.cpp">
@@ -195,6 +192,27 @@
     <ClCompile Include="MySource\Utils\MyInputUtil.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="MySource\Graphics\Cylinder\CylinderMesh.cpp">
+      <Filter>Source Files\Graphics\Cylinder</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\Cylinder\CylinderObject.cpp">
+      <Filter>Source Files\Graphics\Cylinder</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\Cylinder\CylinderRenderer.cpp">
+      <Filter>Source Files\Graphics\Cylinder</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\Line\LineRenderer.cpp">
+      <Filter>Source Files\Graphics\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\Line\LineMesh.cpp">
+      <Filter>Source Files\Graphics\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\Cylinder\CapsuleObject.cpp">
+      <Filter>Source Files\Graphics\Cylinder</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\Cylinder\DomeMesh.cpp">
+      <Filter>Source Files\Graphics\Cylinder</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MySource\App1.h">
@@ -236,22 +254,7 @@
     <ClInclude Include="MySource\GeometryTransformers\WholeTransformer.h">
       <Filter>Header Files\GeometryTransformers</Filter>
     </ClInclude>
-    <ClInclude Include="MySource\Graphics\CylinderMesh.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="MySource\Graphics\CylinderObject.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="MySource\Graphics\CylinderRenderer.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="MySource\Graphics\LightningRenderer.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="MySource\Graphics\LineMesh.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="MySource\Graphics\LineRenderer.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="MySource\Graphics\SceneObject.h">
@@ -337,6 +340,27 @@
     </ClInclude>
     <ClInclude Include="MySource\Utils\MyInputUtil.h">
       <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\Cylinder\CylinderObject.h">
+      <Filter>Header Files\Graphics\Cylinder</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\Cylinder\CylinderRenderer.h">
+      <Filter>Header Files\Graphics\Cylinder</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\Cylinder\CylinderMesh.h">
+      <Filter>Header Files\Graphics\Cylinder</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\Line\LineMesh.h">
+      <Filter>Header Files\Graphics\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\Line\LineRenderer.h">
+      <Filter>Header Files\Graphics\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\Cylinder\CapsuleObject.h">
+      <Filter>Header Files\Graphics\Cylinder</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\Cylinder\DomeMesh.h">
+      <Filter>Header Files\Graphics\Cylinder</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

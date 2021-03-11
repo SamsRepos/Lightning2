@@ -1,8 +1,8 @@
 #pragma once
 
 #include "LineMesh.h"
-#include "AnimSegment.h"
-#include "RenderSettings.h"
+#include "../AnimSegment.h"
+#include "../RenderSettings.h"
 #include "Shaders/LineShader.h"
 
 class LineRenderer

@@ -1,7 +1,7 @@
 #pragma once
-#include "SceneObject.h"
+#include "../SceneObject.h"
 
-#include "AnimSegment.h"
+#include "../AnimSegment.h"
 
 class CylinderObject : public SceneObject
 {
@@ -21,7 +21,7 @@ public:
 
 	void UpdateFromAnimation();
 	
-private:
+protected:
 	AnimSegment* animSeg;
 
 	float brightness;
