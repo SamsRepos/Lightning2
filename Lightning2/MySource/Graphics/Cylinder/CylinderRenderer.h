@@ -53,6 +53,8 @@ private:
 	RenderTexture* blurRenderTexture1;
 	RenderTexture* blurRenderTexture2;
 	
+	RenderTexture* energyTexture;
+
 	OrthoMesh* fullScreenMesh;
 
 	int screenWidth;

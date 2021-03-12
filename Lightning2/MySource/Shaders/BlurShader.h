@@ -24,7 +24,13 @@ public:
 	~BlurShader();
 	
 	void setScreenSize(ID3D11DeviceContext* deviceContext, XMINT2 size);
-	void updateBlurParameters(ID3D11DeviceContext* deviceContext, float _directions = 16.f, float _quality = 30.f, float _size = 9.f, float _finalAdjustment = 15.f);
+	void updateBlurParameters(
+		ID3D11DeviceContext* deviceContext, 
+		RenderTexture* energyTexture,
+		float _directions = 16.f, 
+		float _quality = 30.f, 
+		float _size = 9.f, 
+		float _finalAdjustment = 15.f);
 	
 	void setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &world, const XMMATRIX &view, const XMMATRIX &projection, ID3D11ShaderResourceView* texture);
 private:
@@ -35,5 +41,7 @@ private:
 	
 	ID3D11Buffer* screenSizeBuffer;	
 	ID3D11Buffer* blurBuffer;
+
+	ID3D11SamplerState* energySampleState;
 };
 

@@ -1,7 +1,8 @@
 Texture2D texture0 : register(t0);
 SamplerState Sampler0 : register(s0);
 
-#define MAX_MOTION_TEXTURES_NUM 4
+Texture2D energyMap0 : register(t1);
+SamplerState energySampler0 : register(s1);
 
 #define TWO_PI 6.28318530718f
 
@@ -43,10 +44,17 @@ float4 main(InputType input) : SV_TARGET
 		{
 			float2 deltaTex = float2(cos(theta), sin(theta)) * radius * i;
 
-			colour += texture0.Sample(				
+			float4 colourAtSample = texture0.Sample(
 				Sampler0,
 				input.tex + deltaTex
 			);
+
+			//float energyAtSample = energyMap0.Sample(
+			//	energySampler0,
+			//	input.tex + deltaTex
+			//).x;
+
+			colour += colourAtSample; // *energyAtSample;
 		}
 	}
 
