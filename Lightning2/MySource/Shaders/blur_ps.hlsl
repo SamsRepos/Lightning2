@@ -36,25 +36,30 @@ float4 main(InputType input) : SV_TARGET
 
 	float4 colour = texture0.Sample(Sampler0, input.tex);
 	
+	// looping around the circle
 	float deltaTheta = TWO_PI / directions;
 	for (float theta = 0.f; theta < TWO_PI; theta += deltaTheta)
 	{
+		// looping across the radius
 		float deltaI = 1.f / quality;
-		for (float i = 1.f / quality; i < 1.f; i += deltaI)
+		for (float i = deltaI; i < 1.f; i += deltaI)
 		{
 			float2 deltaTex = float2(cos(theta), sin(theta)) * radius * i;
 
-			float4 colourAtSample = texture0.Sample(
-				Sampler0,
+			float energyAtSample = energyMap0.Sample(
+				energySampler0,
 				input.tex + deltaTex
-			);
+			).x;
 
-			//float energyAtSample = energyMap0.Sample(
-			//	energySampler0,
-			//	input.tex + deltaTex
-			//).x;
+			if (energyAtSample > i)
+			{
+				float4 colourAtSample = texture0.Sample(
+					Sampler0,
+					input.tex + deltaTex
+				);
 
-			colour += colourAtSample; // *energyAtSample;
+				colour += colourAtSample; // *energyAtSample;
+			}
 		}
 	}
 

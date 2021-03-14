@@ -36,4 +36,5 @@ private:
 	XMMATRIX planeMatrix;	
 
 	bool debugCsv = false;
+	bool animatingNow = true;
 };

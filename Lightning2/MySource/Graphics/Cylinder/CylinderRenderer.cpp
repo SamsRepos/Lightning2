@@ -179,9 +179,9 @@ void CylinderRenderer::Build(std::vector<AnimSegment*>* animSegs)
 
 		newCylinder->SetBrightness(
 			MyClamp(
-				//(log10(animSeg->GetEnergy()) / maxEnergyLog10),
+				(log10(animSeg->GetEnergy()) / maxEnergyLog10),
 				//(log(animSeg->GetEnergy()) / maxEnergyLogE),
-				(animSeg->GetEnergy() / maxEnergy),
+				//(animSeg->GetEnergy() / maxEnergy),
 				0.f,
 				1.f
 			)
@@ -215,7 +215,7 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRender
 	energyTexture->setRenderTarget(renderer->getDeviceContext());
 	energyTexture->clearRenderTarget(
 		renderer->getDeviceContext(),
-		0.f, 0.f, 0.f, 1.f
+		1.f, 1.f, 1.f, 1.f
 	);
 
 	for (CapsuleObject* c : capsuleObjects)

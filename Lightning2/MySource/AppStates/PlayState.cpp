@@ -151,17 +151,15 @@ void PlayState::Update(float _dt)
 
 	HandleInput();
 	
-	pipelineMgr->UpdateAnimation(_dt);
+	if (animatingNow)
+	{
+		pipelineMgr->UpdateAnimation(_dt);
+	}
 		
 }
 
 void PlayState::Render()
 {
-	if (!(pipelineMgr->GetSettings()->IsRenderingActive()))
-	{
-		return;
-	}
-
 	XMMATRIX worldMatrix = renderer->getWorldMatrix();
 	XMMATRIX viewMatrix = camera->getViewMatrix();
 	XMMATRIX projectionMatrix = renderer->getProjectionMatrix();
@@ -187,7 +185,7 @@ void PlayState::Gui()
 
 	ImGui::Checkbox("Write debug CSV", &debugCsv);
 
-	if (ImGui::Button("Run whole process [R]"))
+	if (ImGui::Button("[R] Run process"))
 	{
 		pipelineMgr->RunProcess();
 		if (debugCsv)
@@ -196,9 +194,14 @@ void PlayState::Gui()
 		}
 	}
 
-	if (ImGui::Button("Clear [C]"))
+	if (ImGui::Button("[C] Clear"))
 	{
 		pipelineMgr->Clear();
+	}
+
+	if(GuiToggleButton("[T] Toggle animating", animatingNow))
+	{
+		animatingNow = !animatingNow;		
 	}
 
 	static bool zappy = false;
@@ -653,6 +656,39 @@ void PlayState::HandleInput()
 	{
 		pipelineMgr->Clear();
 	}
+	if (inputUtil.IsKeyPressedNow('T'))
+	{
+		animatingNow = !animatingNow;
+	}
+
+
+	// Abandoning these for now, they conflict with camera controls
+	/*PipelineMgrSettings* settings = pipelineMgr->GetSettings();
+
+	if (inputUtil.IsKeyPressedNow('T'))
+	{
+		pipelineMgr->SetDiameterThinnerActive(
+			!(settings->IsDiameterThinnerActive())
+		);
+	}
+	if (inputUtil.IsKeyPressedNow('W'))
+	{
+		pipelineMgr->SetWholeTransformerActive(
+			!(settings->IsWholeTransformerActive())
+		);
+	}
+	if (inputUtil.IsKeyPressedNow('B'))
+	{
+		pipelineMgr->SetBranchifierActive(
+			!(settings->IsBranchifierActive())
+		);
+	}
+	if (inputUtil.IsKeyPressedNow('E'))
+	{
+		pipelineMgr->SetElectifierActive(
+			!(settings->IsElectrifierActive())
+		);
+	}*/
 
 	inputUtil.EndFrame();
 }
