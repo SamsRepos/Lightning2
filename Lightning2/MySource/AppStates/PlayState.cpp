@@ -492,7 +492,7 @@ void PlayState::Gui()
 	{
 		static float initialDiameter = DEFAULT_B_INITIAL_DIAMETER;
 		static float diameterScaledown = DEFAULT_B_DIAMETER_SCALEDOWN;
-		static float velocityScaledown = DEFUALT_B_ANIMATION_TIME;
+		static float animationTime = DEFUALT_B_ANIMATION_TIME;
 		static int maxNumBranchLevels = DEFAULT_B_MAX_NUM_BRANCH_LEVELS;
 
 		if (ImGui::CollapsingHeader("Set Branchifier Parameters"))
@@ -501,7 +501,7 @@ void PlayState::Gui()
 
 			changeNow = GuiSliderFloat(changeNow, "B initial diameter", &initialDiameter, B_MIN_INITIAL_DIAMETER, B_MAX_INITIAL_DIAMETER);
 			changeNow = GuiSliderFloat(changeNow, "B diameter scaledown", &diameterScaledown, B_MIN_DIAMETER_SCALEDOWN, B_MAX_DIAMETER_SCALEDOWN);
-			changeNow = GuiSliderFloat(changeNow, "B velocity scaledown", &velocityScaledown, B_MIN_ANIMATION_TIME, B_MAX_ANIMATION_TIME);
+			changeNow = GuiSliderFloat(changeNow, "B animation time", &animationTime, B_MIN_ANIMATION_TIME, B_MAX_ANIMATION_TIME);
 			changeNow = GuiSliderInt(changeNow, "B max num branch levels", &maxNumBranchLevels, B_MIN_MAX_NUM_BRANCH_LEVELS, B_MAX_MAX_NUM_BRANCH_LEVELS);
 			
 
@@ -510,7 +510,7 @@ void PlayState::Gui()
 				pipelineMgr->InitBranchifier(
 					initialDiameter,
 					diameterScaledown,
-					velocityScaledown,
+					animationTime,
 					maxNumBranchLevels
 				);
 			}
