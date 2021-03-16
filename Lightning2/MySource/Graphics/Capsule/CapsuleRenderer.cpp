@@ -179,8 +179,8 @@ void CapsuleRenderer::Build(std::vector<AnimSegment*>* animSegs)
 
 		newCylinder->SetBrightness(
 			MyClamp(
-				//(log10(animSeg->GetEnergy()) / maxEnergyLog10),
-				(log(animSeg->GetEnergy()) / maxEnergyLogE),
+				//(log(animSeg->GetEnergy()) / maxEnergyLogE),
+				(log10(animSeg->GetEnergy()) / maxEnergyLog10),
 				//(animSeg->GetEnergy() / maxEnergy),
 				0.f,
 				1.f
@@ -332,13 +332,17 @@ void CapsuleRenderer::RenderCapsules(D3D* renderer, LightningRenderModes renderM
 	{
 		if (ShouldBeRendered(renderMode, c))
 		{
+#if 0
 			XMFLOAT4 colour = cylinderColour;
+#else
+			XMFLOAT4 colour = DxColourLerp(
+				backgroundColour,
+				cylinderColour,
+				c->GetBrightness()
+			);
+#endif
 			
-			//DxColourLerp(
-			//	backgroundColour,
-			//	cylinderColour,
-			//	c->GetBrightness()
-			//);
+			
 
 			mainShader->SetColour(renderer->getDeviceContext(), colour);
 			c->Render(

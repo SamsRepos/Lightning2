@@ -546,7 +546,7 @@ void PlayState::Gui()
 	{
 		static std::string renderMode = DEFAULT_RENDER_MODE;
 
-		if (ImGui::CollapsingHeader("Set Render Mode"))
+		if (ImGui::CollapsingHeader("Set Render [M]ode"))
 		{
 			bool changeNow = false;
 
@@ -660,6 +660,17 @@ void PlayState::HandleInput()
 	if (inputUtil.IsKeyPressedNow('T'))
 	{
 		animatingNow = !animatingNow;
+	}
+
+	if (inputUtil.IsKeyPressedNow('M'))
+	{
+		LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
+		lightningRenderer->SetRenderMode(
+			(lightningRenderer->GetRenderMode() == LightningRenderModes::ANIMATED) ?
+			LightningRenderModes::STATIC :
+			LightningRenderModes::ANIMATED
+		);		
+
 	}
 
 
