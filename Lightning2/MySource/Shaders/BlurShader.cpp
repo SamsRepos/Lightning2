@@ -1,6 +1,8 @@
 #include "BlurShader.h"
 
-BlurShader::BlurShader(ID3D11Device* device, HWND hwnd) : BaseShader(device, hwnd)
+BlurShader::BlurShader(ID3D11Device* device, HWND hwnd) 
+	: 
+	MyBaseShader(device, hwnd)
 {
 	initShader(L"blur_vs.cso", L"blur_ps.cso");
 }
@@ -22,7 +24,7 @@ BlurShader::~BlurShader()
 	}
 	
 
-	BaseShader::~BaseShader();
+	MyBaseShader::~MyBaseShader();
 }
 
 void BlurShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilename)
@@ -93,7 +95,7 @@ void BlurShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilename
 
 }
 
-void BlurShader::setScreenSize(ID3D11DeviceContext* deviceContext, XMINT2 size) {
+void BlurShader::SetScreenSize(ID3D11DeviceContext* deviceContext, XMINT2 size) {
 
 	ScreenSizeBufferType* sPtr;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -109,7 +111,7 @@ void BlurShader::setScreenSize(ID3D11DeviceContext* deviceContext, XMINT2 size) 
 
 }
 
-void BlurShader::updateBlurParameters(
+void BlurShader::SetBlurParameters(
 	ID3D11DeviceContext* deviceContext,
 	RenderTexture* energyTexture,
 	float _directions,
@@ -138,7 +140,14 @@ void BlurShader::updateBlurParameters(
 
 }
 
-void BlurShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &world, const XMMATRIX &view, const XMMATRIX &projection, ID3D11ShaderResourceView* texture) {
+void BlurShader::SetShaderParameters(
+	ID3D11DeviceContext* deviceContext,
+	const XMMATRIX &world,
+	const XMMATRIX &view, 
+	const XMMATRIX &projection, 
+	ID3D11ShaderResourceView* texture
+)
+{
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 

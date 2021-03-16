@@ -130,7 +130,7 @@ void PlayState::Init()
 		COLOUR_OPTIONS.at(DEFAULT_BACKGROUND_COLOUR),
 		COLOUR_OPTIONS.at(DEFAULT_BLUR_COLOUR),
 		COLOUR_OPTIONS.at(DEFAULT_LINE_COLOUR),
-		COLOUR_OPTIONS.at(DEFAULT_CYLINDER_COLOUR)
+		COLOUR_OPTIONS.at(DEFAULT_CAPSULE_COLOUR)
 	);
 
 	lightningRenderer->SetBlurParams(
@@ -167,7 +167,8 @@ void PlayState::Render()
 	if (!(pipelineMgr->GetLightningRenderer()->IsBlurRenderingActive()))
 	{
 		planeMesh->sendData(renderer->getDeviceContext());
-		lightShader->setShaderParameters(renderer->getDeviceContext(), planeMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"metal"), light);
+		lightShader->SetShaderParameters(renderer->getDeviceContext(), planeMatrix, viewMatrix, projectionMatrix, textureMgr->getTexture(L"metal"));
+		lightShader->SetLight(renderer->getDeviceContext(), light);
 		lightShader->render(renderer->getDeviceContext(), planeMesh->getIndexCount());
 	}
 
@@ -185,7 +186,7 @@ void PlayState::Gui()
 
 	ImGui::Checkbox("Write debug CSV", &debugCsv);
 
-	if (ImGui::Button("[R] Run process"))
+	if (ImGui::Button("[R]un process"))
 	{
 		pipelineMgr->RunProcess();
 		if (debugCsv)
@@ -194,12 +195,12 @@ void PlayState::Gui()
 		}
 	}
 
-	if (ImGui::Button("[C] Clear"))
+	if (ImGui::Button("[C]lear segments"))
 	{
 		pipelineMgr->Clear();
 	}
 
-	if(GuiToggleButton("[T] Toggle animating", animatingNow))
+	if(GuiToggleButton("[T]oggle animating", animatingNow))
 	{
 		animatingNow = !animatingNow;		
 	}
@@ -284,9 +285,9 @@ void PlayState::Gui()
 		{
 			ImGui::Text("- Line Rendering");
 		}
-		if (lightningRenderer->IsCylinderRenderingActive())
+		if (lightningRenderer->IsCapsuleRenderingActive())
 		{
-			ImGui::Text("- Cylinder Rendering");
+			ImGui::Text("- Capsule Rendering");
 		}
 		ImGui::Unindent();
 
@@ -356,10 +357,10 @@ void PlayState::Gui()
 				);
 			}
 
-			if (GuiToggleButton("Toggle Cylinder Rendering", lightningRenderer->IsCylinderRenderingActive()))
+			if (GuiToggleButton("Toggle Capsule Rendering", lightningRenderer->IsCapsuleRenderingActive()))
 			{
-				pipelineMgr->SetCylinderRenderingActive(
-					!(lightningRenderer->IsCylinderRenderingActive())
+				pipelineMgr->SetCapsuleRenderingActive(
+					!(lightningRenderer->IsCapsuleRenderingActive())
 				);
 			}
 		}
@@ -565,7 +566,7 @@ void PlayState::Gui()
 		static std::string backgroundColour = DEFAULT_BACKGROUND_COLOUR;
 		static std::string blurColour = DEFAULT_BLUR_COLOUR;
 		static std::string lineColour = DEFAULT_LINE_COLOUR;
-		static std::string cylinderColour = DEFAULT_CYLINDER_COLOUR;
+		static std::string cylinderColour = DEFAULT_CAPSULE_COLOUR;
 
 		if (ImGui::CollapsingHeader("Set Colour Parameters"))
 		{

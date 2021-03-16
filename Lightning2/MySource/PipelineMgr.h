@@ -85,7 +85,7 @@ public:
 	// Rendering
 	inline void SetBlurRenderingActive(bool active) { lightningRenderer->SetBlurRenderingActive(active); };
 	inline void SetLineRenderingActive(bool active) { lightningRenderer->SetLineRenderingActive(active); };
-	inline void SetCylinderRenderingActive(bool active) { lightningRenderer->SetCylinderRenderingActive(active); };
+	inline void SetCapsuleRenderingActive(bool active) { lightningRenderer->SetCapsuleRenderingActive(active); };
 
 	inline LightningRenderer* GetLightningRenderer() { return lightningRenderer; };
 

@@ -47,7 +47,7 @@ private:
 
 	MyTimer timer;
 	MyMemoryMeasurer segMeasuerer;
-	MyMemoryMeasurer cylMeasurer;
+	MyMemoryMeasurer capMeasurer;
 
 	int iterationsPerTest;
 	int iterationsDone;

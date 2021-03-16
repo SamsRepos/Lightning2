@@ -1,4 +1,4 @@
-#include "CylinderRenderer.h"
+#include "CapsuleRenderer.h"
 
 #include "Utils/MyVectorUtil.h"
 #include "Maths/MyMath.h"
@@ -9,7 +9,7 @@
 // PUBLIC:
 ////
 
-CylinderRenderer::CylinderRenderer(D3D* renderer, HWND hwnd, int _screenWidth, int _screenHeight)
+CapsuleRenderer::CapsuleRenderer(D3D* renderer, HWND hwnd, int _screenWidth, int _screenHeight)
 	:
 	cylinderMesh(NULL),
 	domeMesh(NULL),
@@ -35,7 +35,7 @@ CylinderRenderer::CylinderRenderer(D3D* renderer, HWND hwnd, int _screenWidth, i
 	//Shaders:
 	blurShader    = new BlurShader(renderer->getDevice(), hwnd);
 	textureShader = new TextureShader(renderer->getDevice(), hwnd);
-	mainShader    = new CylinderShader(renderer->getDevice(), hwnd);
+	mainShader    = new CapsuleShader(renderer->getDevice(), hwnd);
 
 	screenWidth  = _screenWidth;
 	screenHeight = _screenHeight;
@@ -74,7 +74,7 @@ CylinderRenderer::CylinderRenderer(D3D* renderer, HWND hwnd, int _screenWidth, i
 	);
 }
 
-CylinderRenderer::~CylinderRenderer()
+CapsuleRenderer::~CapsuleRenderer()
 {
 	if (cylinderMesh)
 	{
@@ -136,10 +136,10 @@ CylinderRenderer::~CylinderRenderer()
 		fullScreenMesh = NULL;
 	}
 
-	ClearCylinders();
+	ClearCapsules();
 }
 
-void CylinderRenderer::SetColours(
+void CapsuleRenderer::SetColours(
 	const XMFLOAT4& _backgroundColour,
 	const XMFLOAT4& _blurColour,
 	const XMFLOAT4& _cylinderColour
@@ -151,7 +151,7 @@ void CylinderRenderer::SetColours(
 	
 }
 
-void CylinderRenderer::SetBlurParams(
+void CapsuleRenderer::SetBlurParams(
 	float _blurDirections,
 	float _blurQuality,
 	float _blurSize,
@@ -164,9 +164,9 @@ void CylinderRenderer::SetBlurParams(
 	blurFinalAdjustment = _blurFinalAdjustment;
 }
 
-void CylinderRenderer::Build(std::vector<AnimSegment*>* animSegs)
+void CapsuleRenderer::Build(std::vector<AnimSegment*>* animSegs)
 {
-	ClearCylinders();
+	ClearCapsules();
 	
 	for (AnimSegment* animSeg : *animSegs)
 	{
@@ -179,8 +179,8 @@ void CylinderRenderer::Build(std::vector<AnimSegment*>* animSegs)
 
 		newCylinder->SetBrightness(
 			MyClamp(
-				(log10(animSeg->GetEnergy()) / maxEnergyLog10),
-				//(log(animSeg->GetEnergy()) / maxEnergyLogE),
+				//(log10(animSeg->GetEnergy()) / maxEnergyLog10),
+				(log(animSeg->GetEnergy()) / maxEnergyLogE),
 				//(animSeg->GetEnergy() / maxEnergy),
 				0.f,
 				1.f
@@ -191,27 +191,27 @@ void CylinderRenderer::Build(std::vector<AnimSegment*>* animSegs)
 	}	
 }
 
-void CylinderRenderer::UpdateFromAnimation()
+void CapsuleRenderer::UpdateFromAnimation()
 {
-	for (CapsuleObject* cyl : capsuleObjects)
+	for (CapsuleObject* c : capsuleObjects)
 	{
-		cyl->UpdateFromAnimation();
+		c->UpdateFromAnimation();
 	}
 }
 
-void CylinderRenderer::SetShaderParams(const XMMATRIX& _viewMatrix,	const XMMATRIX& _projectionMatrix)
+void CapsuleRenderer::SetShaderParams(const XMMATRIX& _viewMatrix,	const XMMATRIX& _projectionMatrix)
 {
 	viewMatrix       = _viewMatrix;
 	projectionMatrix = _projectionMatrix;
 }
 
-void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode)
+void CapsuleRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode)
 {
 	XMMATRIX worldMatrix     = renderer->getWorldMatrix();
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix(); // Default camera position for orthographic rendering
 	XMMATRIX orthoMatrix     = renderer->getOrthoMatrix();   // ortho matrix for 2D rendering
 	
-	//0. Energy pass:
+	//1. Energy pass:
 	energyTexture->setRenderTarget(renderer->getDeviceContext());
 	energyTexture->clearRenderTarget(
 		renderer->getDeviceContext(),
@@ -220,10 +220,7 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRender
 
 	for (CapsuleObject* c : capsuleObjects)
 	{
-		if (
-			(renderMode == LightningRenderModes::ANIMATED && c->IsVisible()) ||
-			renderMode == LightningRenderModes::STATIC
-			)
+		if(ShouldBeRendered(renderMode, c))
 		{
 			// Colour is brightness, IE relative energy (0 <= e <= 1)
 			XMFLOAT4 colour = XMFLOAT4(
@@ -233,15 +230,20 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRender
 				1.f
 			);
 
-			c->GetMesh()->sendData(renderer->getDeviceContext());
-			mainShader->setShaderParameters(renderer->getDeviceContext(), c->GetTransform(), viewMatrix, projectionMatrix, c->GetTexture(), colour);
-			mainShader->render(renderer->getDeviceContext(), c->GetMesh()->getIndexCount());
+			mainShader->SetColour(renderer->getDeviceContext(), colour);
+			c->Render(
+				mainShader,
+				renderer,
+				viewMatrix,
+				projectionMatrix,
+				colour
+			);
 		}
 	}
 
 
 
-	//1. Render cylinders to the blur texture:
+	//2. Render cylinders to the blur texture:
 	blurRenderTexture1->setRenderTarget(renderer->getDeviceContext());
 	blurRenderTexture1->clearRenderTarget(
 		renderer->getDeviceContext(),
@@ -253,10 +255,7 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRender
 		
 	for (CapsuleObject* c : capsuleObjects)
 	{
-		if (
-			(renderMode == LightningRenderModes::ANIMATED && c->IsVisible()) ||
-			renderMode == LightningRenderModes::STATIC
-			)
+		if (ShouldBeRendered(renderMode, c))
 		{
 			XMFLOAT4 colour = blurColour; /* DxColourLerp(
 				backgroundColour,
@@ -264,13 +263,18 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRender
 				c->GetBrightness()
 			);*/
 
-			c->GetMesh()->sendData(renderer->getDeviceContext());
-			mainShader->setShaderParameters(renderer->getDeviceContext(), c->GetTransform(), viewMatrix, projectionMatrix, c->GetTexture(), colour);
-			mainShader->render(renderer->getDeviceContext(), c->GetMesh()->getIndexCount());
+			mainShader->SetColour(renderer->getDeviceContext(), colour);
+			c->Render(
+				mainShader,
+				renderer,
+				viewMatrix,
+				projectionMatrix,
+				colour
+			);
 		}
 	}
 
-	//2. Render blur texture for blur pass:
+	//3. Render blur texture for blur pass:
 	blurRenderTexture2->setRenderTarget(renderer->getDeviceContext());
 	blurRenderTexture2->clearRenderTarget(
 		renderer->getDeviceContext(),
@@ -282,9 +286,9 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRender
 
 	renderer->setZBuffer(false);
 
-	blurShader->setScreenSize(renderer->getDeviceContext(), XMINT2(screenWidth, screenHeight));
+	blurShader->SetScreenSize(renderer->getDeviceContext(), XMINT2(screenWidth, screenHeight));
 	fullScreenMesh->sendData(renderer->getDeviceContext());
-	blurShader->setShaderParameters(
+	blurShader->SetShaderParameters(
 		renderer->getDeviceContext(),
 		worldMatrix,
 		orthoViewMatrix,
@@ -292,7 +296,7 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRender
 		blurRenderTexture1->getShaderResourceView()
 	);
 
-	blurShader->updateBlurParameters(
+	blurShader->SetBlurParameters(
 		renderer->getDeviceContext(),
 		energyTexture,
 		blurDirections,
@@ -306,7 +310,7 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRender
 		fullScreenMesh->getIndexCount()
 	);
 
-	//3. Render blur texture:
+	//4. Render blur texture:
 	renderer->setBackBufferRenderTarget();
 
 	fullScreenMesh->sendData(renderer->getDeviceContext());
@@ -322,14 +326,11 @@ void CylinderRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRender
 	renderer->setZBuffer(true);
 }
 
-void CylinderRenderer::RenderCylinders(D3D* renderer, LightningRenderModes renderMode)
+void CapsuleRenderer::RenderCapsules(D3D* renderer, LightningRenderModes renderMode)
 {
 	for (CapsuleObject* c : capsuleObjects)
 	{
-		if (
-			(renderMode == LightningRenderModes::ANIMATED && c->IsVisible()) ||
-			renderMode==LightningRenderModes::STATIC
-		)
+		if (ShouldBeRendered(renderMode, c))
 		{
 			XMFLOAT4 colour = cylinderColour;
 			
@@ -339,37 +340,20 @@ void CylinderRenderer::RenderCylinders(D3D* renderer, LightningRenderModes rende
 			//	c->GetBrightness()
 			//);
 
-			c->GetMesh()->sendData(renderer->getDeviceContext());
-			mainShader->setShaderParameters(renderer->getDeviceContext(), c->GetTransform(), viewMatrix, projectionMatrix, c->GetTexture(), colour);
-			mainShader->render(renderer->getDeviceContext(), c->GetMesh()->getIndexCount());
-
-			c->GetDomeMesh()->sendData(renderer->getDeviceContext());
-			mainShader->setShaderParameters(
-				renderer->getDeviceContext(),
-				c->GetDomeTransform1(),
+			mainShader->SetColour(renderer->getDeviceContext(), colour);
+			c->Render(
+				mainShader,
+				renderer,
 				viewMatrix,
 				projectionMatrix,
-				c->GetTexture(),
 				colour
 			);
-			mainShader->render(renderer->getDeviceContext(), c->GetDomeMesh()->getIndexCount());
-
-			c->GetDomeMesh()->sendData(renderer->getDeviceContext());
-			mainShader->setShaderParameters(
-				renderer->getDeviceContext(),
-				c->GetDomeTransform2(),
-				viewMatrix,
-				projectionMatrix,
-				c->GetTexture(),
-				colour
-			);
-			mainShader->render(renderer->getDeviceContext(), c->GetDomeMesh()->getIndexCount());
 
 		}
 	}
 }
 
-void CylinderRenderer::ClearCylinders()
+void CapsuleRenderer::ClearCapsules()
 {
 	DeleteAllVectorData(&capsuleObjects);
 }
@@ -378,7 +362,7 @@ void CylinderRenderer::ClearCylinders()
 // PRIVATE:
 ////
 
-float CylinderRenderer::MaxEnergy(std::vector<AnimSegment*>* animSegs)
+float CapsuleRenderer::MaxEnergy(std::vector<AnimSegment*>* animSegs)
 {
 	float maxEnergy = 0.f;
 	for (AnimSegment* animSeg : *animSegs)

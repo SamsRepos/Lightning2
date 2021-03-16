@@ -36,11 +36,11 @@ float4 main(InputType input) : SV_TARGET
 
 	float4 colour = texture0.Sample(Sampler0, input.tex);
 	
-	// looping around the circle
+	// iterating around the circle:
 	float deltaTheta = TWO_PI / directions;
 	for (float theta = 0.f; theta < TWO_PI; theta += deltaTheta)
 	{
-		// looping across the radius
+		// iterating along the radius:
 		float deltaI = 1.f / quality;
 		for (float i = deltaI; i < 1.f; i += deltaI)
 		{

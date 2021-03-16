@@ -15,14 +15,14 @@ LightningRenderer::LightningRenderer(
 	:
 	renderer(renderer),
 	lineRenderer(NULL),
-	cylRenderer(NULL)
+	capRenderer(NULL)
 {
 	lineRenderer = new LineRenderer(renderer, hwnd);
-	cylRenderer  = new CylinderRenderer(renderer, hwnd, screenWidth, screenHeight);
+	capRenderer  = new CapsuleRenderer(renderer, hwnd, screenWidth, screenHeight);
 
 	blurRenderingActive = true;
 	lineRenderingActive = true;
-	cylinderRenderingActive = true;
+	capsuleRenderingActive = true;
 }
 
 LightningRenderer::~LightningRenderer()
@@ -34,10 +34,10 @@ LightningRenderer::~LightningRenderer()
 		delete lineRenderer;
 		lineRenderer = NULL;
 	}
-	if (cylRenderer)
+	if (capRenderer)
 	{
-		delete cylRenderer;
-		cylRenderer = NULL;
+		delete capRenderer;
+		capRenderer = NULL;
 	}
 }
 
@@ -50,7 +50,7 @@ void LightningRenderer::SetColours(
 {
 	lineRenderer->SetColour(lineColour);
 
-	cylRenderer->SetColours(
+	capRenderer->SetColours(
 		backgroundColour,
 		blurColour,
 		cylinderColour
@@ -64,7 +64,7 @@ void LightningRenderer::SetBlurParams(
 	float blurAdjustment
 )
 {
-	cylRenderer->SetBlurParams(
+	capRenderer->SetBlurParams(
 		blurDirections,
 		blurQuality,
 		blurSize,
@@ -95,7 +95,7 @@ void LightningRenderer::Build(std::vector<Segment*>* segs)
 	}*/
 
 	lineRenderer->Build(&animSegments);
-	cylRenderer->Build(&animSegments);
+	capRenderer->Build(&animSegments);
 }
 
 void LightningRenderer::InitAnimation()
@@ -129,18 +129,18 @@ void LightningRenderer::Render(
 	const XMMATRIX& projMatrix
 )
 {
-	if (blurRenderingActive || cylinderRenderingActive)
+	if (blurRenderingActive || capsuleRenderingActive)
 	{
 		if (renderMode == LightningRenderModes::ANIMATED)
 		{
-			cylRenderer->UpdateFromAnimation();
+			capRenderer->UpdateFromAnimation();
 		}
-		cylRenderer->SetShaderParams(viewMatrix, projMatrix);
+		capRenderer->SetShaderParams(viewMatrix, projMatrix);
 	}
 
 	if (blurRenderingActive)
 	{
-		cylRenderer->RenderBlur(renderer, camera, renderMode);
+		capRenderer->RenderBlur(renderer, camera, renderMode);
 	}
 
 	if (lineRenderingActive)
@@ -149,9 +149,9 @@ void LightningRenderer::Render(
 		lineRenderer->RenderLines(renderer, renderMode);
 	}
 
-	if (cylinderRenderingActive)
+	if (capsuleRenderingActive)
 	{
-		cylRenderer->RenderCylinders(renderer, renderMode);
+		capRenderer->RenderCapsules(renderer, renderMode);
 	}
 }
 
@@ -160,7 +160,7 @@ void LightningRenderer::Clear()
 	DeleteAllVectorData(&animSegments);
 
 	lineRenderer->ClearLines();
-	cylRenderer->ClearCylinders();
+	capRenderer->ClearCapsules();
 }
 
 ////

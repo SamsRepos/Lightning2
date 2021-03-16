@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Line/LineRenderer.h"
-#include "Cylinder/CylinderRenderer.h"
+#include "Capsule/CapsuleRenderer.h"
 #include "AnimSegment.h"
 #include "RenderSettings.h"
 
@@ -53,11 +53,11 @@ public:
 		
 	inline void SetBlurRenderingActive(bool active) { blurRenderingActive = active; };
 	inline void SetLineRenderingActive(bool active) { lineRenderingActive = active; };
-	inline void SetCylinderRenderingActive(bool active) { cylinderRenderingActive = active; };
+	inline void SetCapsuleRenderingActive(bool active) { capsuleRenderingActive = active; };
 
 	inline bool IsBlurRenderingActive() { return blurRenderingActive; };
 	inline bool IsLineRenderingActive() { return lineRenderingActive; };
-	inline bool IsCylinderRenderingActive() { return cylinderRenderingActive; };
+	inline bool IsCapsuleRenderingActive() { return capsuleRenderingActive; };
 
 private:
 	void CreateAnimSegmentsRecurs(Segment* seg, AnimSegment* parent);
@@ -66,12 +66,12 @@ private:
 
 	D3D* renderer;
 	LineRenderer* lineRenderer;
-	CylinderRenderer* cylRenderer;
+	CapsuleRenderer* capRenderer;
 
 	LightningRenderModes renderMode;
 	bool blurRenderingActive;
 	bool lineRenderingActive;
-	bool cylinderRenderingActive;
+	bool capsuleRenderingActive;
 	
 	bool animatingNow;
 	float animationSpeed;

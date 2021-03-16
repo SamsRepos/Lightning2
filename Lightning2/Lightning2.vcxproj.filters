@@ -73,17 +73,17 @@
     <Filter Include="Header Files\PerformanceTools">
       <UniqueIdentifier>{177fa36d-10e1-45fb-a83b-c8e516279ce3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Graphics\Cylinder">
-      <UniqueIdentifier>{959dddf3-fa58-4c52-baa1-575bdb45b1ae}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Graphics\Line">
       <UniqueIdentifier>{c155867c-2f48-471c-8c62-370b1dd71916}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Graphics\Cylinder">
-      <UniqueIdentifier>{c50f725c-f68f-46dd-91bb-e9d21200734a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Graphics\Line">
       <UniqueIdentifier>{ea570222-1ffa-48a5-ba13-bd496552e5f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\Capsule">
+      <UniqueIdentifier>{c50f725c-f68f-46dd-91bb-e9d21200734a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\Capsule">
+      <UniqueIdentifier>{959dddf3-fa58-4c52-baa1-575bdb45b1ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -153,9 +153,6 @@
     <ClCompile Include="MySource\Shaders\BlurShader.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="MySource\Shaders\CylinderShader.cpp">
-      <Filter>Source Files\Shaders</Filter>
-    </ClCompile>
     <ClCompile Include="MySource\Shaders\LightShader.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
@@ -192,26 +189,29 @@
     <ClCompile Include="MySource\Utils\MyInputUtil.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="MySource\Graphics\Cylinder\CylinderMesh.cpp">
-      <Filter>Source Files\Graphics\Cylinder</Filter>
-    </ClCompile>
-    <ClCompile Include="MySource\Graphics\Cylinder\CylinderObject.cpp">
-      <Filter>Source Files\Graphics\Cylinder</Filter>
-    </ClCompile>
-    <ClCompile Include="MySource\Graphics\Cylinder\CylinderRenderer.cpp">
-      <Filter>Source Files\Graphics\Cylinder</Filter>
-    </ClCompile>
     <ClCompile Include="MySource\Graphics\Line\LineRenderer.cpp">
       <Filter>Source Files\Graphics\Line</Filter>
     </ClCompile>
     <ClCompile Include="MySource\Graphics\Line\LineMesh.cpp">
       <Filter>Source Files\Graphics\Line</Filter>
     </ClCompile>
-    <ClCompile Include="MySource\Graphics\Cylinder\CapsuleObject.cpp">
-      <Filter>Source Files\Graphics\Cylinder</Filter>
+    <ClCompile Include="MySource\Graphics\Capsule\CapsuleObject.cpp">
+      <Filter>Source Files\Graphics\Capsule</Filter>
     </ClCompile>
-    <ClCompile Include="MySource\Graphics\Cylinder\DomeMesh.cpp">
-      <Filter>Source Files\Graphics\Cylinder</Filter>
+    <ClCompile Include="MySource\Graphics\Capsule\CylinderMesh.cpp">
+      <Filter>Source Files\Graphics\Capsule</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\Capsule\DomeMesh.cpp">
+      <Filter>Source Files\Graphics\Capsule</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Graphics\Capsule\CapsuleRenderer.cpp">
+      <Filter>Source Files\Graphics\Capsule</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Shaders\CapsuleShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="MySource\Shaders\MyBaseShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -290,9 +290,6 @@
     <ClInclude Include="MySource\Shaders\BlurShader.h">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="MySource\Shaders\CylinderShader.h">
-      <Filter>Header Files\Shaders</Filter>
-    </ClInclude>
     <ClInclude Include="MySource\Shaders\LightShader.h">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
@@ -341,26 +338,29 @@
     <ClInclude Include="MySource\Utils\MyInputUtil.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="MySource\Graphics\Cylinder\CylinderObject.h">
-      <Filter>Header Files\Graphics\Cylinder</Filter>
-    </ClInclude>
-    <ClInclude Include="MySource\Graphics\Cylinder\CylinderRenderer.h">
-      <Filter>Header Files\Graphics\Cylinder</Filter>
-    </ClInclude>
-    <ClInclude Include="MySource\Graphics\Cylinder\CylinderMesh.h">
-      <Filter>Header Files\Graphics\Cylinder</Filter>
-    </ClInclude>
     <ClInclude Include="MySource\Graphics\Line\LineMesh.h">
       <Filter>Header Files\Graphics\Line</Filter>
     </ClInclude>
     <ClInclude Include="MySource\Graphics\Line\LineRenderer.h">
       <Filter>Header Files\Graphics\Line</Filter>
     </ClInclude>
-    <ClInclude Include="MySource\Graphics\Cylinder\CapsuleObject.h">
-      <Filter>Header Files\Graphics\Cylinder</Filter>
+    <ClInclude Include="MySource\Graphics\Capsule\CapsuleObject.h">
+      <Filter>Header Files\Graphics\Capsule</Filter>
     </ClInclude>
-    <ClInclude Include="MySource\Graphics\Cylinder\DomeMesh.h">
-      <Filter>Header Files\Graphics\Cylinder</Filter>
+    <ClInclude Include="MySource\Graphics\Capsule\CylinderMesh.h">
+      <Filter>Header Files\Graphics\Capsule</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\Capsule\DomeMesh.h">
+      <Filter>Header Files\Graphics\Capsule</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Graphics\Capsule\CapsuleRenderer.h">
+      <Filter>Header Files\Graphics\Capsule</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Shaders\CapsuleShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Shaders\MyBaseShader.h">
+      <Filter>Header Files\Shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

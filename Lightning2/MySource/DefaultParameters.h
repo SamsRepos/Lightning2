@@ -57,7 +57,7 @@ const std::string DEFAULT_RENDER_MODE = "animated";
 const std::string DEFAULT_BACKGROUND_COLOUR = "background night";
 const std::string DEFAULT_BLUR_COLOUR       = "lightning blue";
 const std::string DEFAULT_LINE_COLOUR       = "lightning white";
-const std::string DEFAULT_CYLINDER_COLOUR   = "lightning white";
+const std::string DEFAULT_CAPSULE_COLOUR    = "lightning white";
 
 // Blur Parameters
 const float DEFAULT_BLUR_DIRECTIONS = 16.f;

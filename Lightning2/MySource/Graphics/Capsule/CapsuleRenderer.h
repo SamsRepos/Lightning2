@@ -3,17 +3,17 @@
 #include "CylinderMesh.h"
 #include "DomeMesh.h"
 #include "CapsuleObject.h"
-#include "Shaders/CylinderShader.h"
+#include "Shaders/CapsuleShader.h"
 #include "Shaders/BlurShader.h"
 #include "Shaders/TextureShader.h"
 #include "../AnimSegment.h"
 #include "../RenderSettings.h"
 
-class CylinderRenderer
+class CapsuleRenderer
 {
 public:
-	CylinderRenderer(D3D* renderer, HWND hwnd, int _screenWidth, int _screenHeight);
-	~CylinderRenderer();
+	CapsuleRenderer(D3D* renderer, HWND hwnd, int _screenWidth, int _screenHeight);
+	~CapsuleRenderer();
 
 	void SetColours(
 		const XMFLOAT4& _backgroundColour,
@@ -34,12 +34,17 @@ public:
 
 	void SetShaderParams(const XMMATRIX& _viewMatrix, const XMMATRIX& _projectionMatrix);
 	void RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode);
-	void RenderCylinders(D3D* renderer, LightningRenderModes renderMode);
+	void RenderCapsules(D3D* renderer, LightningRenderModes renderMode);
 	
-	void ClearCylinders();
+	void ClearCapsules();
 
 private:
 	float MaxEnergy(std::vector<AnimSegment*>* animSegs);
+	
+	inline bool ShouldBeRendered(LightningRenderModes renderMode, CapsuleObject* c) {
+		return ((renderMode == LightningRenderModes::ANIMATED) && c->IsVisible()) ||
+			   (renderMode == LightningRenderModes::STATIC);
+	};
 
 	CylinderMesh* cylinderMesh;
 	DomeMesh* domeMesh;
@@ -48,7 +53,7 @@ private:
 
 	BlurShader* blurShader;
 	TextureShader* textureShader;
-	CylinderShader* mainShader;
+	CapsuleShader* mainShader;
 
 	RenderTexture* blurRenderTexture1;
 	RenderTexture* blurRenderTexture2;

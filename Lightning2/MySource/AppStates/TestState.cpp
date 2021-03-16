@@ -51,7 +51,7 @@ void TestState::Init()
 	testRunning       = false;
 
 	segMeasuerer.SetObjectSize(sizeof(Segment));
-	cylMeasurer.SetObjectSize(sizeof(CylinderObject));
+	capMeasurer.SetObjectSize(sizeof(CapsuleObject));
 }
 
 void TestState::Update(float _dt)
@@ -160,7 +160,7 @@ void TestState::InitPipelineMgr()
 		COLOUR_OPTIONS.at(DEFAULT_BACKGROUND_COLOUR),
 		COLOUR_OPTIONS.at(DEFAULT_BLUR_COLOUR),
 		COLOUR_OPTIONS.at(DEFAULT_LINE_COLOUR),
-		COLOUR_OPTIONS.at(DEFAULT_CYLINDER_COLOUR)
+		COLOUR_OPTIONS.at(DEFAULT_CAPSULE_COLOUR)
 	);
 
 	lightningRenderer->SetBlurParams(

@@ -1,10 +1,8 @@
 #pragma once
 
-#include "DXF.h"
+#include "MyBaseShader.h"
 
-using namespace DirectX;
-
-class BlurShader : public BaseShader
+class BlurShader : public MyBaseShader
 {
 	struct ScreenSizeBufferType {
 		XMFLOAT2 screenSize;
@@ -23,8 +21,9 @@ public:
 	BlurShader(ID3D11Device* device, HWND hwnd);
 	~BlurShader();
 	
-	void setScreenSize(ID3D11DeviceContext* deviceContext, XMINT2 size);
-	void updateBlurParameters(
+	void SetScreenSize(ID3D11DeviceContext* deviceContext, XMINT2 size);
+	
+	void SetBlurParameters(
 		ID3D11DeviceContext* deviceContext, 
 		RenderTexture* energyTexture,
 		float _directions = 16.f, 
@@ -32,7 +31,14 @@ public:
 		float _size = 9.f, 
 		float _finalAdjustment = 15.f);
 	
-	void setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &world, const XMMATRIX &view, const XMMATRIX &projection, ID3D11ShaderResourceView* texture);
+	void SetShaderParameters(
+		ID3D11DeviceContext* deviceContext,
+		const XMMATRIX &world,
+		const XMMATRIX &view,
+		const XMMATRIX &projection,
+		ID3D11ShaderResourceView* texture
+	);
+
 private:
 	void initShader(const wchar_t* vs, const wchar_t* ps);
 	

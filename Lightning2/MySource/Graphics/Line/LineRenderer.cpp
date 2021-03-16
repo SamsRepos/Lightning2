@@ -72,12 +72,16 @@ void LineRenderer::RenderLines(D3D* renderer, LightningRenderModes renderMode)
 
 		for (int i = 0; i < linesToRender; i++)
 		{
-			shader->setShaderParameters(
+			shader->SetShaderParameters(
 				renderer->getDeviceContext(),
 				worldMatrix,
 				viewMatrix,
 				projectionMatrix,
-				NULL,
+				NULL
+			);
+
+			shader->SetColour(
+				renderer->getDeviceContext(),
 				lineColour
 			);
 

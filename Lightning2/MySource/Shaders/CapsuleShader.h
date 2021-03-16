@@ -1,27 +1,27 @@
 #pragma once
 
-//#include "DXF.h"
-#include "DXF.h"
+#include "MyBaseShader.h"
 
-using namespace std;
-using namespace DirectX;
-
-class CylinderShader : public BaseShader
+class CapsuleShader : public MyBaseShader
 {
 private:
 	struct ColourBufferType {
 		XMFLOAT4 colour;
 	};
 public:
-	CylinderShader(ID3D11Device* device, HWND hwnd);
-	~CylinderShader();
+	CapsuleShader(ID3D11Device* device, HWND hwnd);
+	~CapsuleShader();
 
-	void setShaderParameters(
+	void SetShaderParameters(
 		ID3D11DeviceContext* deviceContext,
 		const XMMATRIX &world,
 		const XMMATRIX &view,
 		const XMMATRIX &projection,
-		ID3D11ShaderResourceView* texture,
+		ID3D11ShaderResourceView* texture		
+	);
+
+	void SetColour(
+		ID3D11DeviceContext* deviceContext,
 		XMFLOAT4 colour
 	);
 

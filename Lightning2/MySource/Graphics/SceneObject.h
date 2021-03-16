@@ -30,7 +30,7 @@ public:
 	void BuildTransform();
 	inline XMMATRIX GetTransform() { return transform; };
 
-protected:
+private:
 	BaseMesh *mesh;
 	ID3D11ShaderResourceView* texture;
 

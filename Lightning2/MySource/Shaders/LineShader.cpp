@@ -1,6 +1,8 @@
 #include "LineShader.h"
 
-LineShader::LineShader(ID3D11Device* device, HWND hwnd) : BaseShader(device, hwnd)
+LineShader::LineShader(ID3D11Device* device, HWND hwnd) 
+	:
+	MyBaseShader(device, hwnd)
 {
 	initShader(L"line_vs.cso", L"line_ps.cso");
 }
@@ -37,7 +39,7 @@ LineShader::~LineShader()
 	}
 
 	//Release base shader components
-	BaseShader::~BaseShader();
+	MyBaseShader::~MyBaseShader();
 }
 
 void LineShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilename)
@@ -84,7 +86,13 @@ void LineShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilename
 
 }
 
-void LineShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const XMMATRIX &worldMatrix, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT4 colour)
+void LineShader::SetShaderParameters(
+	ID3D11DeviceContext* deviceContext,
+	const XMMATRIX &worldMatrix,
+	const XMMATRIX &viewMatrix,
+	const XMMATRIX &projectionMatrix,
+	ID3D11ShaderResourceView* texture
+)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -105,18 +113,24 @@ void LineShader::setShaderParameters(ID3D11DeviceContext* deviceContext, const X
 	deviceContext->Unmap(matrixBuffer, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
 
-	//Additional
-	// Send light data to pixel shader
+	// Set shader texture resource in the pixel shader.
+	deviceContext->PSSetShaderResources(0, 1, &texture);
+	deviceContext->PSSetSamplers(0, 1, &sampleState);
+}
+
+void LineShader::SetColour(
+	ID3D11DeviceContext* deviceContext,
+	XMFLOAT4 colour
+)
+{
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+
 	ColourBufferType* colourPtr;
 	deviceContext->Map(colourBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	colourPtr = (ColourBufferType*)mappedResource.pData;
-	
+
 	colourPtr->colour = colour;
 
 	deviceContext->Unmap(colourBuffer, 0);
 	deviceContext->PSSetConstantBuffers(0, 1, &colourBuffer);
-
-	// Set shader texture resource in the pixel shader.
-	deviceContext->PSSetShaderResources(0, 1, &texture);
-	deviceContext->PSSetSamplers(0, 1, &sampleState);
 }

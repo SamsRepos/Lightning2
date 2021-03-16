@@ -1,12 +1,13 @@
-#include "CylinderShader.h"
+#include "CapsuleShader.h"
 
-CylinderShader::CylinderShader(ID3D11Device* device, HWND hwnd) : BaseShader(device, hwnd)
+CapsuleShader::CapsuleShader(ID3D11Device* device, HWND hwnd) 
+	: 
+	MyBaseShader(device, hwnd)
 {
 	initShader(L"cyl_vs.cso", L"cyl_ps.cso");
 }
 
-
-CylinderShader::~CylinderShader()
+CapsuleShader::~CapsuleShader()
 {
 	// Release the sampler state.
 	if (sampleState)
@@ -37,10 +38,10 @@ CylinderShader::~CylinderShader()
 	}
 
 	//Release base shader components
-	BaseShader::~BaseShader();
+	MyBaseShader::~MyBaseShader();
 }
 
-void CylinderShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilename)
+void CapsuleShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilename)
 {
 	D3D11_BUFFER_DESC matrixBufferDesc;
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -85,13 +86,12 @@ void CylinderShader::initShader(const wchar_t* vsFilename, const wchar_t* psFile
 }
 
 
-void CylinderShader::setShaderParameters(
+void CapsuleShader::SetShaderParameters(
 	ID3D11DeviceContext* deviceContext,
 	const XMMATRIX &worldMatrix,
 	const XMMATRIX &viewMatrix,
 	const XMMATRIX &projectionMatrix,
-	ID3D11ShaderResourceView* texture,
-	XMFLOAT4 colour
+	ID3D11ShaderResourceView* texture
 )
 {
 	HRESULT result;
@@ -112,17 +112,23 @@ void CylinderShader::setShaderParameters(
 	dataPtr->projection = tproj;
 	deviceContext->Unmap(matrixBuffer, 0);
 	deviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer);
+		
+	// Set shader texture resource in the pixel shader.
+	deviceContext->PSSetShaderResources(0, 1, &texture);
+	deviceContext->PSSetSamplers(0, 1, &sampleState);
+}
 
-	//Additional
-	// Send light data to pixel shader
+void CapsuleShader::SetColour(
+	ID3D11DeviceContext* deviceContext,
+	XMFLOAT4 colour
+)
+{
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+
 	ColourBufferType* colourPtr;
 	deviceContext->Map(colourBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	colourPtr = (ColourBufferType*)mappedResource.pData;
 	colourPtr->colour = colour;
 	deviceContext->Unmap(colourBuffer, 0);
-	deviceContext->PSSetConstantBuffers(0, 1, &colourBuffer);
-
-	// Set shader texture resource in the pixel shader.
-	deviceContext->PSSetShaderResources(0, 1, &texture);
-	deviceContext->PSSetSamplers(0, 1, &sampleState);
+	deviceContext->PSSetConstantBuffers(0, 1, &colourBuffer);	
 }
