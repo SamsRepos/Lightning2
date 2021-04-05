@@ -332,7 +332,7 @@ void CapsuleRenderer::RenderCapsules(D3D* renderer, LightningRenderModes renderM
 	{
 		if (ShouldBeRendered(renderMode, c))
 		{
-#if 0
+#if 1
 			XMFLOAT4 colour = cylinderColour;
 #else
 			XMFLOAT4 colour = DxColourLerp(

@@ -37,4 +37,5 @@ private:
 
 	bool debugCsv = false;
 	bool animatingNow = true;
+	bool zappy = false;
 };

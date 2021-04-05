@@ -32,9 +32,9 @@ public:
 	inline void SetGeometryGeneratorType(GeometryGeneratorTypes type) { settings->SetGeometryGeneratorType(type); };
 
 	//toggle post-generation transform stages
-	inline void SetDiameterThinnerActive(bool active) { settings->SetDiameterThinnerActive(active); };
 	inline void SetWholeTransformerActive(bool active) { settings->SetWholeTransformerActive(active); };
 	inline void SetBranchifierActive(bool active) { settings->SetBranchifierActive(active); };
+	inline void SetDiameterThinnerActive(bool active) { settings->SetDiameterThinnerActive(active); };
 	inline void SetElectifierActive(bool active) { settings->SetElectifierActive(active); };
 
 	//setters for all parameters
@@ -59,11 +59,7 @@ public:
 		AngleFixMethods angleFixMethod,
 		GasCompositions gasComposition
 	);
-
-	void InitDiameterThinner(
-		float scale
-	);
-
+	
 	void InitWholeTransformer(
 		MyFloat3 startPoint,
 		MyFloat3 endPoint
@@ -74,6 +70,10 @@ public:
 		float diameterScaledown,
 		float animationTime,
 		size_t maxNumBranchLevels
+	);
+
+	void InitDiameterThinner(
+		float scale
 	);
 
 	void InitElectrifier(
@@ -119,10 +119,10 @@ private:
 	StreamerGenerator streamGen;
 
 	//Geometry transformers:
-	DiameterThinner diameterThinner;
 	PathIdentifier pathIdentifier;
 	WholeTransformer wholeTransformer;
 	Branchifier branchifier;
+	DiameterThinner diameterThinner;
 	Electrifier electrifier;
 
 	//Graphics renderers:

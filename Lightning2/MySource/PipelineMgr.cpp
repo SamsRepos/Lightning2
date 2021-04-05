@@ -80,15 +80,6 @@ void PipelineMgr::InitStreamerGenerator(
 	);
 }
 
-void PipelineMgr::InitDiameterThinner(
-	float scale
-)
-{
-	diameterThinner.InitParameters(
-		scale
-	);
-}
-
 void PipelineMgr::InitWholeTransformer(
 	MyFloat3  startPoint,
 	MyFloat3 endPoint
@@ -112,6 +103,15 @@ void PipelineMgr::InitBranchifier(
 		diameterScaledown,
 		animationTime,
 		maxNumBranchLevels
+	);
+}
+
+void PipelineMgr::InitDiameterThinner(
+	float scale
+)
+{
+	diameterThinner.InitParameters(
+		scale
 	);
 }
 
@@ -146,12 +146,7 @@ void PipelineMgr::RunProcess()
 		break;
 	}
 
-	// Transforming Geometry:
-	if (settings->IsDiameterThinnerActive())
-	{
-		diameterThinner.SetSegments(segments);
-		diameterThinner.Run();
-	}
+	// Transforming Geometry:	
 	if (settings->IsPathIdentifierActive())
 	{
 		pathIdentifier.SetSegments(segments);
@@ -166,7 +161,12 @@ void PipelineMgr::RunProcess()
 	{
 		branchifier.SetSegments(segments);
 		branchifier.Run();
-	}	
+	}
+	if (settings->IsDiameterThinnerActive())
+	{
+		diameterThinner.SetSegments(segments);
+		diameterThinner.Run();
+	}
 	if (settings->IsElectrifierActive())
 	{
 		electrifier.SetSegments(segments);
@@ -174,11 +174,8 @@ void PipelineMgr::RunProcess()
 	}
 
 	// Building Meshes:
-	if (settings->IsRenderingActive())
-	{
-		lightningRenderer->Build(segments);
-		lightningRenderer->InitAnimation();
-	}	
+	lightningRenderer->Build(segments);
+	lightningRenderer->InitAnimation();	
 }
 
 void PipelineMgr::UpdateAnimation(float dt)
@@ -193,17 +190,15 @@ void PipelineMgr::RenderOutput(
 	const XMMATRIX& projMatrix	
 )
 {
-	if (!(settings->IsRenderingActive()))
+	if (settings->IsRenderingActive())
 	{
-		return;
+		lightningRenderer->Render(
+			camera,
+			worldMatrix,
+			viewMatrix,
+			projMatrix
+		);
 	}
-
-	lightningRenderer->Render(
-		camera,
-		worldMatrix,
-		viewMatrix,
-		projMatrix
-	);
 }
 
 void PipelineMgr::Clear()

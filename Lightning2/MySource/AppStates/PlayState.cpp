@@ -200,13 +200,10 @@ void PlayState::Gui()
 		pipelineMgr->Clear();
 	}
 
-	if(GuiToggleButton("[T]oggle animating", animatingNow))
-	{
-		animatingNow = !animatingNow;		
-	}
-
-	static bool zappy = false;
-	ImGui::Checkbox("ZAPPY", &zappy);
+	ImGui::Checkbox("A[N]imating now", &animatingNow);
+	
+	ImGui::Checkbox("[Z]APPY", &zappy);
+	
 	if (zappy)
 	{
 		static float currentTime = 0.f;
@@ -227,6 +224,11 @@ void PlayState::Gui()
 
 	PipelineMgrSettings* settings = pipelineMgr->GetSettings();
 	LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
+
+	if (ImGui::Button("[I]nit Animation"))
+	{
+		lightningRenderer->InitAnimation();
+	}
 
 	// Pipeline stages:
 	{
@@ -251,11 +253,7 @@ void PlayState::Gui()
 
 		//Transform stages:
 		ImGui::Text("Active Transformers: ");
-		ImGui::Indent();
-		if (settings->IsDiameterThinnerActive())
-		{
-			ImGui::Text("- Diameter Thinner");
-		}
+		ImGui::Indent();		
 		if (settings->IsPathIdentifierActive())
 		{
 			ImGui::Text("- Path Identifier (auto)");
@@ -267,6 +265,10 @@ void PlayState::Gui()
 		if (settings->IsBranchifierActive())
 		{
 			ImGui::Text("- Branchifier");
+		}
+		if (settings->IsDiameterThinnerActive())
+		{
+			ImGui::Text("- Diameter Thinner");
 		}
 		if (settings->IsElectrifierActive())
 		{
@@ -311,28 +313,28 @@ void PlayState::Gui()
 		// Toggle pipeline stages
 		if (ImGui::CollapsingHeader("Toggle Transformer Stages On/Off"))
 		{
-			if (GuiToggleButton("Toggle Diameter Thinner", settings->IsDiameterThinnerActive()))
-			{
-				pipelineMgr->SetDiameterThinnerActive(
-					!(settings->IsDiameterThinnerActive())
-				);
-			}
-
-			if (GuiToggleButton("Toggle Whole Transformer", settings->IsWholeTransformerActive()))
+			if (GuiToggleBox("Toggle Whole Transformer", settings->IsWholeTransformerActive()))
 			{
 				pipelineMgr->SetWholeTransformerActive(
 					!(settings->IsWholeTransformerActive())
 				);
 			}
 
-			if (GuiToggleButton("Toggle Branchifier", settings->IsBranchifierActive()))
+			if (GuiToggleBox("Toggle Branchifier", settings->IsBranchifierActive()))
 			{
 				pipelineMgr->SetBranchifierActive(
 					!(settings->IsBranchifierActive())
 				);
 			}
 
-			if (GuiToggleButton("Toggle Electrifier", settings->IsElectrifierActive()))
+			if (GuiToggleBox("Toggle Diameter Thinner", settings->IsDiameterThinnerActive()))
+			{
+				pipelineMgr->SetDiameterThinnerActive(
+					!(settings->IsDiameterThinnerActive())
+				);
+			}
+
+			if (GuiToggleBox("Toggle Electrifier", settings->IsElectrifierActive()))
 			{
 				pipelineMgr->SetElectifierActive(
 					!(settings->IsElectrifierActive())
@@ -343,21 +345,21 @@ void PlayState::Gui()
 		//Toggle renderers:
 		if (ImGui::CollapsingHeader("Toggle Rendering Stages On/Off"))
 		{
-			if (GuiToggleButton("Toggle Blur Rendering", lightningRenderer->IsBlurRenderingActive()))
+			if (GuiToggleBox("Toggle Blur Rendering", lightningRenderer->IsBlurRenderingActive()))
 			{
 				pipelineMgr->SetBlurRenderingActive(
 					!(lightningRenderer->IsBlurRenderingActive())
 				);
 			}
 
-			if (GuiToggleButton("Toggle Line Rendering", lightningRenderer->IsLineRenderingActive()))
+			if (GuiToggleBox("Toggle Line Rendering", lightningRenderer->IsLineRenderingActive()))
 			{
 				pipelineMgr->SetLineRenderingActive(
 					!(lightningRenderer->IsLineRenderingActive())
 				);
 			}
 
-			if (GuiToggleButton("Toggle Capsule Rendering", lightningRenderer->IsCapsuleRenderingActive()))
+			if (GuiToggleBox("Toggle Capsule Rendering", lightningRenderer->IsCapsuleRenderingActive()))
 			{
 				pipelineMgr->SetCapsuleRenderingActive(
 					!(lightningRenderer->IsCapsuleRenderingActive())
@@ -447,25 +449,6 @@ void PlayState::Gui()
 		}
 	}
 
-	//Adjust Diameter Thinner Parameters:
-	{
-		static float scaledown = DEFAULT_DT_SCALEDOWN;
-
-		if (ImGui::CollapsingHeader("Set Diameter Thinner Parameters"))
-		{
-			bool changeNow = false;
-
-			changeNow = GuiSliderFloat(changeNow, "DT scaledown", &scaledown, DT_MIN_SCALEDOWN, DT_MAX_SCALEDOWN);
-
-			if (changeNow)
-			{
-				pipelineMgr->InitDiameterThinner(
-					scaledown
-				);
-			}
-		}
-	}
-
 	//Adjust Whole Transformer Parameters:
 	{
 		static MyFloat3 startPoint = DEFAULT_WT_START_POINT;
@@ -512,6 +495,25 @@ void PlayState::Gui()
 					diameterScaledown,
 					animationTime,
 					maxNumBranchLevels
+				);
+			}
+		}
+	}
+
+	//Adjust Diameter Thinner Parameters:
+	{
+		static float scaledown = DEFAULT_DT_SCALEDOWN;
+
+		if (ImGui::CollapsingHeader("Set Diameter Thinner Parameters"))
+		{
+			bool changeNow = false;
+
+			changeNow = GuiSliderFloat(changeNow, "DT scaledown", &scaledown, DT_MIN_SCALEDOWN, DT_MAX_SCALEDOWN);
+
+			if (changeNow)
+			{
+				pipelineMgr->InitDiameterThinner(
+					scaledown
 				);
 			}
 		}
@@ -657,7 +659,7 @@ void PlayState::HandleInput()
 	{
 		pipelineMgr->Clear();
 	}
-	if (inputUtil.IsKeyPressedNow('T'))
+	if (inputUtil.IsKeyPressedNow('N'))
 	{
 		animatingNow = !animatingNow;
 	}
@@ -673,6 +675,16 @@ void PlayState::HandleInput()
 
 	}
 
+	if (inputUtil.IsKeyPressedNow('I'))
+	{
+		LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
+		lightningRenderer->InitAnimation();
+	}
+
+	if (inputUtil.IsKeyPressedNow('Z'))
+	{
+		zappy = !zappy;
+	}
 
 	// Abandoning these for now, they conflict with camera controls
 	/*PipelineMgrSettings* settings = pipelineMgr->GetSettings();

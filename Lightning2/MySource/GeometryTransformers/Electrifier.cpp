@@ -45,7 +45,7 @@ void Electrifier::Run()
 		delete previousSegments;
 		previousSegments = currentSegments;
 
-	} while(anySegmentTooLong);
+	} while(anySegmentTooLong && (previousSegments->size() < MAX_NUM_SEGMENTS));
 
 	//output vector:
 	if (segments)

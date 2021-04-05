@@ -16,6 +16,8 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow)
 {
+	cout << __cplusplus;
+
 	App1* app = new App1();
 	System* system;
 

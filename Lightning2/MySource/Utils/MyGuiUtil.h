@@ -10,7 +10,14 @@
 const float GUI_MY_FLOAT_3_MIN = -100.f;
 const float GUI_MY_FLOAT_3_MAX = 100.f;
 
-bool GuiToggleButton(std::string buttonMsg, bool currentlyOn);
+// These functions all return true if...
+// 1) there's been a change/interaction
+// or..
+// 2) changeFlag is true
+
+bool GuiToggleBox(std::string msg, bool b);
+
+//bool GuiToggleButton(std::string buttonMsg, bool currentlyOn);
 
 bool GuiCheckBox(bool changeFlag, const char* msg, bool* b);
 

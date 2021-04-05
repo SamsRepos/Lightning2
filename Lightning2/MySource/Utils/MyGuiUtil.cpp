@@ -1,5 +1,10 @@
 #include "MyGuiUtil.h"
 
+bool GuiToggleBox(std::string msg, bool b)
+{
+	return ImGui::Checkbox(msg.c_str(), &b);	
+}
+
 bool GuiToggleButton(std::string buttonMsg, bool currentlyOn)
 {
 	buttonMsg.append(currentlyOn ? " to Off" : " to On");

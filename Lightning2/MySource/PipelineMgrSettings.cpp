@@ -8,9 +8,9 @@ PipelineMgrSettings::PipelineMgrSettings(const PipelineMgrDefaultSettings& defau
 void PipelineMgrSettings::Init(const PipelineMgrDefaultSettings& defaultSettings)
 {
 	currentGeometryGenerator  = defaultSettings.geometryGenerator;
-	diameterThinnerActive     = defaultSettings.diameterThinnerActive;
 	wholeTransformerActive    = defaultSettings.wholeTransformerActive;
 	branchifierActive         = defaultSettings.branchifierActive;
+	diameterThinnerActive     = defaultSettings.diameterThinnerActive;
 	electrifierActive         = defaultSettings.electrifierActive;
 	renderingActive           = defaultSettings.renderingActive;
 }
