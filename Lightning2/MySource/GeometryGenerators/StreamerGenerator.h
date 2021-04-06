@@ -26,9 +26,9 @@ const float INIT_VOLTAGE_COEFF = DIAMETER_RISE / VOLTAGE_RUN;
 //  In ambient air, L / d = 11 +- 4 (Briels et al., 2008b)
 const float AIR_DIAMETER_TO_LENGTH_MEAN   = 11.f;
 const float AIR_DIAMETER_TO_LENGTH_STDDEV = 4.f;
-// In N2 Gas, L / d = 8 +- 4
-const float N2_DIAMETER_TO_LENGTH_MEAN   = 8.f;
-const float N2_DIAMETER_TO_LENGTH_STDDEV = 4.f;
+// In N2 Gas, L / d = 9 +- 3
+const float N2_DIAMETER_TO_LENGTH_MEAN   = 9.f;
+const float N2_DIAMETER_TO_LENGTH_STDDEV = 3.f;
 
 // PRESSURE => MINIMUM DIAMETER
 //  In ambient air, pressure * d_min = 0.20 +- 0.02 (Briels et al., 2008b)
@@ -39,11 +39,13 @@ const float N2_PRESSURE_TO_MIN_DIAMETER_MEAN   = .12f;
 const float N2_PRESSURE_TO_MIN_DIAMETER_STDDEV = .03f;
 
 // ANGLES (degrees)
-const float DELTA_ANGLE_MEAN   = 35.f;
-const float DELTA_ANGLE_STDDEV = 5.f;
-
+//  Pairs of inner angles (Nijdam et al., 2008):
 const float INNER_ANGLE_MEAN   = 43.f;
 const float INNER_ANGLE_STDDEV = 12.3f;
+
+// Angle delta, i.e. relative to parent:
+const float DELTA_ANGLE_MEAN = INNER_ANGLE_MEAN / 2.f;
+const float DELTA_ANGLE_STDDEV = INNER_ANGLE_STDDEV / 2.f;
 
 // ENERGY (J):
 const float ENERGY_COEFF = 100000; // energy = 10^5 * L (Bailey et al., 2014)
@@ -51,9 +53,9 @@ const float ENERGY_COEFF = 100000; // energy = 10^5 * L (Bailey et al., 2014)
 // VELOCITY (mm/ns):
 const float VELOCITY_COEFF = .5f; // v = 0.5 d^2 (Briels et al., 2008a)
 
-// COULD DO:
+// COULD YET DO:
 // - Custom user gaussian gens, with arbitrary mean and std dev
-// - User controls on overall streamer shape / direction
+// - User controls to govern overall streamer shape / direction
 
 class StreamerGenerator
 {

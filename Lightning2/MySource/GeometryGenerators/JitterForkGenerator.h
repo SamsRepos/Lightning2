@@ -28,11 +28,7 @@ private:
 
 	void RunIterationRecursive(Segment* seed, float forkProb, Segment* parentSegment);
 
-	std::vector<Segment*> JitterAndFork(
-		Segment* seed,
-		float forkProbNow,
-		Segment* parent		
-	);
+	std::vector<Segment*> JitterAndFork(Segment* seed, float forkProbNow, Segment* parent);
 
 	Segment originalSeed;
 	int iterations;

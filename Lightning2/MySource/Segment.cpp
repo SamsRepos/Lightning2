@@ -9,8 +9,10 @@ Segment::Segment(MyFloat3 startPoint, MyFloat3 endPoint, float diameter, float m
 	diameter(diameter),
 	minDiameter(minDiameter),
 	parent(NULL),
-	cullMe(false)
-{	
+	cullMe(false),
+	energy(1.f),
+	velocity(1.f)
+{
 }
 
 Segment::~Segment()

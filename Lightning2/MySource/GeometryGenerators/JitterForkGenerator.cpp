@@ -78,12 +78,7 @@ void JitterForkGenerator::Run()
 	currentSegments  = NULL;
 	previousSegments = NULL; 
 
-	//Energy - not provided by this method
-	for (Segment* seg : *output)
-	{
-		seg->SetEnergy(1.f);
-		seg->SetVelocity(1.f);
-	}
+	//Note, for all segments, energy and velocity are left as default - not provided by this method	
 }
 
 ////
@@ -103,11 +98,7 @@ void JitterForkGenerator::RunIterationRecursive(Segment* seed, float forkProb, S
 	}
 }
 
-std::vector<Segment*> JitterForkGenerator::JitterAndFork(
-	Segment* seed,
-	float forkProbNow,
-	Segment* parent
-)
+std::vector<Segment*> JitterForkGenerator::JitterAndFork(Segment* seed, float forkProbNow, Segment* parent)
 {
 	// 1. Get offset point
 	MyFloat3 offset       = RandomPerpendicularUnitVector(seed->GetDirection());
@@ -142,9 +133,7 @@ std::vector<Segment*> JitterForkGenerator::JitterAndFork(
 		forkedSeg->SetParent(topSeg);
 		topSeg->AddChild(forkedSeg);
 
-		res.push_back(
-			forkedSeg
-		);
+		res.push_back(forkedSeg);
 	}
 		
 	return res;
