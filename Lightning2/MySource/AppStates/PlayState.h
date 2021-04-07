@@ -2,8 +2,8 @@
 
 #include "BaseState.h"
 
+#include "DefaultParameters.h"
 #include "PipelineMgr.h"
-
 #include "Shaders/Lightshader.h"
 #include "Light.h"
 #include "PlaneMesh.h"
@@ -38,4 +38,5 @@ private:
 	bool debugCsv = false;
 	bool animatingNow = true;
 	bool zappy = false;
+	std::string renderMode = DEFAULT_RENDER_MODE;
 };

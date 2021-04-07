@@ -1,7 +1,6 @@
 #include "PlayState.h"
 
 #include "Maths/MyClamp.h"
-#include "DefaultParameters.h"
 #include "Utils/DebugCsvWriter.h"
 #include "Utils/MyGuiUtil.h"
 #include "Utils/MyInputUtil.h"
@@ -311,30 +310,30 @@ void PlayState::Gui()
 		}
 
 		// Toggle pipeline stages
-		if (ImGui::CollapsingHeader("Toggle Transformer Stages On/Off"))
+		if (ImGui::CollapsingHeader("Toggle Transformer Stages"))
 		{
-			if (GuiToggleBox("Toggle Whole Transformer", settings->IsWholeTransformerActive()))
+			if (GuiToggleBox("Whole Transformer", settings->IsWholeTransformerActive()))
 			{
 				pipelineMgr->SetWholeTransformerActive(
 					!(settings->IsWholeTransformerActive())
 				);
 			}
 
-			if (GuiToggleBox("Toggle Branchifier", settings->IsBranchifierActive()))
+			if (GuiToggleBox("Branchifier", settings->IsBranchifierActive()))
 			{
 				pipelineMgr->SetBranchifierActive(
 					!(settings->IsBranchifierActive())
 				);
 			}
 
-			if (GuiToggleBox("Toggle Diameter Thinner", settings->IsDiameterThinnerActive()))
+			if (GuiToggleBox("Diameter Thinner", settings->IsDiameterThinnerActive()))
 			{
 				pipelineMgr->SetDiameterThinnerActive(
 					!(settings->IsDiameterThinnerActive())
 				);
 			}
 
-			if (GuiToggleBox("Toggle Electrifier", settings->IsElectrifierActive()))
+			if (GuiToggleBox("Electrifier", settings->IsElectrifierActive()))
 			{
 				pipelineMgr->SetElectifierActive(
 					!(settings->IsElectrifierActive())
@@ -343,23 +342,23 @@ void PlayState::Gui()
 		}
 
 		//Toggle renderers:
-		if (ImGui::CollapsingHeader("Toggle Rendering Stages On/Off"))
+		if (ImGui::CollapsingHeader("Toggle Rendering Stages"))
 		{
-			if (GuiToggleBox("Toggle Blur Rendering", lightningRenderer->IsBlurRenderingActive()))
+			if (GuiToggleBox("Blur Rendering", lightningRenderer->IsBlurRenderingActive()))
 			{
 				pipelineMgr->SetBlurRenderingActive(
 					!(lightningRenderer->IsBlurRenderingActive())
 				);
 			}
 
-			if (GuiToggleBox("Toggle Line Rendering", lightningRenderer->IsLineRenderingActive()))
+			if (GuiToggleBox("Line Rendering", lightningRenderer->IsLineRenderingActive()))
 			{
 				pipelineMgr->SetLineRenderingActive(
 					!(lightningRenderer->IsLineRenderingActive())
 				);
 			}
 
-			if (GuiToggleBox("Toggle Capsule Rendering", lightningRenderer->IsCapsuleRenderingActive()))
+			if (GuiToggleBox("Capsule Rendering", lightningRenderer->IsCapsuleRenderingActive()))
 			{
 				pipelineMgr->SetCapsuleRenderingActive(
 					!(lightningRenderer->IsCapsuleRenderingActive())
@@ -546,8 +545,6 @@ void PlayState::Gui()
 
 	// Set Render Mode:
 	{
-		static std::string renderMode = DEFAULT_RENDER_MODE;
-
 		if (ImGui::CollapsingHeader("Set Render [M]ode"))
 		{
 			bool changeNow = false;
@@ -666,13 +663,9 @@ void PlayState::HandleInput()
 
 	if (inputUtil.IsKeyPressedNow('M'))
 	{
+		renderMode = renderMode == "animated" ? "static" : "animated";
 		LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
-		lightningRenderer->SetRenderMode(
-			(lightningRenderer->GetRenderMode() == LightningRenderModes::ANIMATED) ?
-			LightningRenderModes::STATIC :
-			LightningRenderModes::ANIMATED
-		);		
-
+		lightningRenderer->SetRenderMode(RENDER_MODE_OPTIONS.at(renderMode));
 	}
 
 	if (inputUtil.IsKeyPressedNow('I'))
