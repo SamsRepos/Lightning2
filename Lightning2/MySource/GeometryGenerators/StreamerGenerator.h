@@ -53,10 +53,6 @@ const float ENERGY_COEFF = 100000; // energy = 10^5 * L (Bailey et al., 2014)
 // VELOCITY (mm/ns):
 const float VELOCITY_COEFF = .5f; // v = 0.5 d^2 (Briels et al., 2008a)
 
-// COULD YET DO:
-// - Custom user gaussian gens, with arbitrary mean and std dev
-// - User controls to govern overall streamer shape / direction
-
 class StreamerGenerator
 {
 public:

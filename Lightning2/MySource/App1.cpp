@@ -24,7 +24,6 @@ void App1::init(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeigh
 	srand(time(NULL));
 
 	//TEXTURES:
-	textureMgr->loadTexture(L"grass", L"res/grass.jpg");
 	textureMgr->loadTexture(L"metal", L"res/metal.jpg");
 	
 	//Camera:
