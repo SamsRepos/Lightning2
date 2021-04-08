@@ -11,8 +11,8 @@ public:
 	void Run();
 
 private:
-	void FarthestDistOnPathSetterRecurs(Segment* root, Segment* currentSegment);
-	void StatusSetterRecurs(Segment* currentSegment);
+	void RunRecurs(Segment* root, Segment* currentSegment);
+	//void StatusSetterRecurs(Segment* currentSegment);
 
 	std::vector<Segment*>* segments;
 };
