@@ -11,7 +11,7 @@ public:
 	void Run();
 
 private:
-	void RunRecurs(Segment* root, Segment* currentSegment);
+	void RunRecurs(Segment* root, Segment* currentSegment, float distFromRoot);
 	//void StatusSetterRecurs(Segment* currentSegment);
 
 	std::vector<Segment*>* segments;

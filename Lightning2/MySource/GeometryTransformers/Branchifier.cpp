@@ -54,17 +54,10 @@ void Branchifier::BranchifyRecurs(Segment* segment, float diameter, float veloci
 			}
 			else if (child->GetStatus() == SegmentStatuses::SECONDARY)
 			{
-				float remainingDistanceOnParentPath = segment->GetFarthestDistanceOnThisPath() - segment->GetDistanceFromRoot();
-				float remainingDistanceOnChildPath = (child->GetFarthestDistanceOnThisPath() - child->GetDistanceFromRoot()) + child->GetLength();
-				
-				float nextVelocity = velocity * (remainingDistanceOnChildPath / remainingDistanceOnParentPath);
-
-				nextVelocity = std::max(0.f, nextVelocity);
-
 				BranchifyRecurs(
 					child,
 					(diameter * diameterScaledown),
-					nextVelocity,
+					velocity * CalculateVelocityScaledown(segment, child),
 					(branchLevel + 1)
 				);
 			}
@@ -79,4 +72,14 @@ void Branchifier::BranchifyRecurs(Segment* segment, float diameter, float veloci
 	{
 		segment->SetToBeCulled();
 	}
+}
+
+float Branchifier::CalculateVelocityScaledown(Segment* segment, Segment* child)
+{
+	float remainingDistanceOnThisPath = segment->GetFarthestDistanceOnThisPath() - segment->GetDistanceFromRoot();
+	float remainingDistanceOnChildPath = child->GetFarthestDistanceOnThisPath() - child->GetDistanceFromRoot();
+
+	float velocityScaledown = remainingDistanceOnChildPath / remainingDistanceOnThisPath;
+
+	return std::max(0.f, velocityScaledown);
 }

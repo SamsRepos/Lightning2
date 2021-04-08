@@ -8,7 +8,7 @@ void PathIdentifier::Run()
 {
 	Segment* root = segments->front();
 	
-	RunRecurs(root, root);
+	RunRecurs(root, root, 0.f);
 
 	root->SetStatus(SegmentStatuses::PRIMARY);
 }
@@ -17,17 +17,18 @@ void PathIdentifier::Run()
 // PRIVATE:
 ////
 
-void PathIdentifier::RunRecurs(Segment* root, Segment* currentSegment)
+void PathIdentifier::RunRecurs(Segment* root, Segment* currentSegment, float distFromRoot)
 {	
 	// 1. Set each segement's euclidian distance from the root
-	currentSegment->SetDistanceFromRoot(root);
+	distFromRoot += currentSegment->GetLength();
+	currentSegment->SetDistanceFromRoot(distFromRoot);
 
 	if (currentSegment->GetChildren()->size() > 0)
 	{
 		// Depth-first traversal, so getting the recursive call in first
 		for (Segment* child : *(currentSegment->GetChildren()))
 		{
-			RunRecurs(root, child);
+			RunRecurs(root, child, distFromRoot);
 		}
 
 		float greatestDistToRootOnThisPath = -1.f;

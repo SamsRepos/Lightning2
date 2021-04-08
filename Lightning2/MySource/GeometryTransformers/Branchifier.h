@@ -26,6 +26,8 @@ public:
 private:
 	void BranchifyRecurs(Segment* segment, float diameter, float velocity, size_t branchLevel);
 	
+	float CalculateVelocityScaledown(Segment* segment, Segment* child);
+
 	std::vector<Segment*>* segments;
 
 	float initialDiameter;

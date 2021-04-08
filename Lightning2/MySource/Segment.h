@@ -48,7 +48,7 @@ public:
 	//inline void SetNumDescendants(size_t num) { numDescendants = num; };
 	//inline size_t GetNumDescendants() { return numDescendants; };
 
-	inline void SetDistanceFromRoot(Segment* root) { distanceFromRoot = (endPoint - root->GetStartPoint()).Magnitude() ; };
+	inline void SetDistanceFromRoot(float dist) { distanceFromRoot = dist; };
 	inline float GetDistanceFromRoot() { return distanceFromRoot; };
 
 	inline void SetFarthestDistanceOnThisPath(float dist) { farthestDistOnThisPath = dist; };
