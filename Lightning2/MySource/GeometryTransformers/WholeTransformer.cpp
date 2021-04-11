@@ -29,12 +29,9 @@ void WholeTransformer::Run()
 
 	// 2. align along start->end vector	
 	AlignSegments(desiredDirection, currentDirection);
-
-	// updating current direction, which fixes scaling:
-	// TODO: find out why. This shouldn't be necessary. Something must be wrong with rotation.
-	currentDirection = GetFarthestEndPointRecurs(root) - root->GetStartPoint();
-
+	
 	// 3. scale to start->end magnitude
+	currentDirection = GetFarthestEndPointRecurs(root) - root->GetStartPoint();
 	ScaleSegments(desiredDirection.Magnitude(), currentDirection.Magnitude());
 
 	// 4. transform to start point

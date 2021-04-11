@@ -103,7 +103,7 @@ void CapsuleObject::UpdateFromAnimation()
 		animSeg->GetDiameter()
 	);
 	
-	BuildAllTransforms();		
+	BuildAllTransforms();
 }
 
 void CapsuleObject::Render(

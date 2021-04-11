@@ -8,6 +8,8 @@
 #include "Maths/MyLerp.h"
 #include "Maths/MyClamp.h"
 
+//NB. These classes were built on code provided in CMP305
+
 ////
 // Line
 ////

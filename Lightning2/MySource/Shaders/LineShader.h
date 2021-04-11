@@ -2,6 +2,8 @@
 
 #include "MyBaseShader.h"
 
+//NB. This class was built on code provided in CMP305
+
 class LineShader : public MyBaseShader
 {
 private:
