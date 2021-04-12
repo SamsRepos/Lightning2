@@ -11,19 +11,19 @@ float BoxMullerGen::GetSample()
 {	
 	if (!hasStoredValue)
 	{
-		float v1, v2, rsq, fac;
+		float u, v, rSquared, fac;
 
 		do
 		{
-			v1 = randFloatGen.GetRandFloat(-1.f, 1.f);
-			v2 = randFloatGen.GetRandFloat(-1.f, 1.f);
-			rsq = v1 * v1 + v2 * v2;
-		} while (rsq == 0.f || rsq >= 1.f);
+			u = randFloatGen.GetRandFloat(-1.f, 1.f);
+			v = randFloatGen.GetRandFloat(-1.f, 1.f);
+			rSquared = (u * u) + (v * v);
+		} while (rSquared == 0.f || rSquared >= 1.f);
 		
-		fac = sqrt((-2.f * log(rsq)) / rsq);		
-		storedValue = v1 * fac;
+		fac = sqrt((-2.f * log(rSquared)) / rSquared);		
+		storedValue = u * fac;
 		hasStoredValue = true;
-		return mean + (stdDev * v2 * fac);
+		return mean + (stdDev * (v * fac));
 	}
 	else
 	{
