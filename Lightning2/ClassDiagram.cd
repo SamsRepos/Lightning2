@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
+  <Class Name="BaseState">
+    <Position X="1.75" Y="2" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Protected" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AEQAAAAABABAAAAAAAAAAAAAAAAAABAAABQCQAgAgAA=</HashCode>
+      <FileName>MySource\AppStates\BaseState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayState" Collapsed="true">
+    <Position X="4" Y="2.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AEQQIAGACgoAAEAAAAAAABAAAAIAAAAAABICAAAgAAA=</HashCode>
+      <FileName>MySource\AppStates\PlayState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TestState" Collapsed="true">
+    <Position X="4" Y="3.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>EEQRAUAAACAQABCKQAAAAAAAAAAAAAgEARIKAgAgAgA=</HashCode>
+      <FileName>MySource\AppStates\TestState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -311,18 +311,20 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 	std::ofstream meansOutFile(meansFilePath);
 	InitOfsream(&meansOutFile);
 
+	int branchCullingAmt = 4;
+
 	// Gen type row:
 	meansOutFile << " , , ";
-	meansOutFile << "GEN: JITTER + FORK, , , ";
-	meansOutFile << "GEN: STREAMER, , , ";
-	meansOutFile << "GEN: STREAMER, , , ";
+	meansOutFile << "GEN: JITTER + FORK, , , , ";
+	meansOutFile << "GEN: STREAMER, , , , ";
+	meansOutFile << "GEN: STREAMER, , , , ";
 	meansOutFile << '\n';
 
 	// Branch culling row:
 	meansOutFile << " , , ";
-	meansOutFile << "BRANCH CULLING: OFF, , , ";
-	meansOutFile << "BRANCH CULLING: OFF, , , ";
-	meansOutFile << "BRANCH CULLING: 3, , , ";
+	meansOutFile << "BRANCH CULLING: OFF, , , , ";
+	meansOutFile << "BRANCH CULLING: OFF, , , , ";
+	meansOutFile << "BRANCH CULLING: " << branchCullingAmt << ", , , , ";
 	meansOutFile << "\n";
 
 	// Output row:
@@ -338,7 +340,7 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 		DEFAULT_B_INITIAL_DIAMETER,
 		DEFAULT_B_DIAMETER_SCALEDOWN,
 		DEFUALT_B_ANIMATION_TIME,
-		4
+		branchCullingAmt
 	);
 
 	int numSamples = 20;
@@ -378,9 +380,11 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 		float jitterForkTimeRunningTotal       = 0.f;
 		int jitterForkSegmentsRunningTotal     = 0;
 		size_t jitterForkKbRunningTotal        = 0;
+
 		float streamerNoCullTimeRunningTotal   = 0.f;
 		int streamerNoCullSegmentsRunningTotal = 0;
 		size_t streamerNoCullKbRunningTotal    = 0;
+
 		float streamerCullTimeRunningTotal     = 0.f;
 		int streamerCullSegmentsRunningTotal   = 0;
 		size_t streamerCullKbRunningTotal      = 0;
