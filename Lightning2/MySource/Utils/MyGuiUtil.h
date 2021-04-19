@@ -51,4 +51,4 @@ bool GuiListBox(bool changeFlag, std::map<std::string, T> map, std::string heade
 	return changed || changeFlag;
 }
 
-bool GuiMyFloat3(bool changeFlag, const char* msg, MyFloat3* float3);
+bool GuiMyFloat3(bool changeFlag, const char* msg, MyFloat3* float3, float min = GUI_MY_FLOAT_3_MIN, float max = GUI_MY_FLOAT_3_MAX);

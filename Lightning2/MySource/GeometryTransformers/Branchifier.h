@@ -23,8 +23,10 @@ public:
 	inline void SetSegments(std::vector<Segment*>* _segments) { segments = _segments; };
 	void Run();
 
+	inline bool WasRecursCapHit() { return recursCapHit; };
+
 private:
-	void BranchifyRecurs(Segment* segment, float diameter, float velocity, size_t branchLevel);
+	void BranchifyRecurs(Segment* segment, float diameter, float velocity, size_t branchLevel, size_t recursCount);
 	
 	float CalculateVelocityScaledown(Segment* segment, Segment* child);
 
@@ -34,4 +36,6 @@ private:
 	float diameterScaledown;
 	float animationTime;
 	size_t maxNumBranchLevels;	
+
+	bool recursCapHit;
 };

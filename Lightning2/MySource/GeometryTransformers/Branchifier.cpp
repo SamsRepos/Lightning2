@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include "Utils/SegmentRemoval.h"
+#include "DefaultParameters.h"
 
 ////
 // PUBLIC:
@@ -23,12 +24,15 @@ void Branchifier::InitParameters(
 
 void Branchifier::Run()
 {
+	recursCapHit = false;
+
 	Segment* root = segments->front();
 
 	BranchifyRecurs(
 		root,
 		initialDiameter,
 		root->GetFarthestDistanceOnThisPath() / animationTime,
+		0,
 		0
 	);
 
@@ -39,33 +43,41 @@ void Branchifier::Run()
 // PRIVATE
 ////
 
-void Branchifier::BranchifyRecurs(Segment* segment, float diameter, float velocity, size_t branchLevel)
+void Branchifier::BranchifyRecurs(Segment* segment, float diameter, float velocity, size_t branchLevel, size_t recursCount)
 {
 	if (branchLevel < maxNumBranchLevels)
 	{
 		segment->SetDiameter(diameter);
 		segment->SetVelocity(velocity);
 		
-		for (Segment* child : *(segment->GetChildren()))
+		if (recursCount < RECURSIVE_CAP)
 		{
-			if (child->GetStatus() == SegmentStatuses::PRIMARY)
+			for (Segment* child : *(segment->GetChildren()))
 			{
-				BranchifyRecurs(child, diameter, velocity, branchLevel);
+				if (child->GetStatus() == SegmentStatuses::PRIMARY)
+				{
+					BranchifyRecurs(child, diameter, velocity, branchLevel, recursCount+1);
+				}
+				else if (child->GetStatus() == SegmentStatuses::SECONDARY)
+				{
+					BranchifyRecurs(
+						child,
+						(diameter * diameterScaledown),
+						velocity * CalculateVelocityScaledown(segment, child),
+						(branchLevel + 1),
+						recursCount+1
+					);
+				}
+				else
+				{
+					//invalid status
+					return;
+				}
 			}
-			else if (child->GetStatus() == SegmentStatuses::SECONDARY)
-			{
-				BranchifyRecurs(
-					child,
-					(diameter * diameterScaledown),
-					velocity * CalculateVelocityScaledown(segment, child),
-					(branchLevel + 1)
-				);
-			}
-			else
-			{
-				//invalid status
-				return;
-			}
+		}
+		else
+		{
+			recursCapHit = true;
 		}
 	}
 	else
@@ -81,5 +93,5 @@ float Branchifier::CalculateVelocityScaledown(Segment* segment, Segment* child)
 
 	float velocityScaledown = remainingDistanceOnChildPath / remainingDistanceOnThisPath;
 
-	return std::max(0.f, velocityScaledown);
+	return max(0.f, velocityScaledown);
 }

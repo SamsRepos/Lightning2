@@ -1,6 +1,7 @@
 #include "WholeTransformer.h"
 
 #include "Maths/MyMatrix44.h"
+#include "DefaultParameters.h"
 
 void WholeTransformer::InitParameters(
 	MyFloat3 _startPoint,
@@ -13,6 +14,8 @@ void WholeTransformer::InitParameters(
 
 void WholeTransformer::Run()
 {
+	recursCapHit = false;
+
 	// PLAN:
 	// 1. transform to origin	
 	// 2. align along start->end vector	
@@ -22,42 +25,56 @@ void WholeTransformer::Run()
 	Segment* root = segments->front();
 
 	MyFloat3 desiredDirection = endPoint - startPoint;
-	MyFloat3 currentDirection = GetFarthestEndPointRecurs(root) - root->GetStartPoint();
+	MyFloat3 currentDirection = GetFarthestEndPointRecurs(root, 0) - root->GetStartPoint();
 
 	// 1. transform to origin
-	TranslateRecurs(root, MyFloat3(0.f, 0.f, 0.f));
+	TranslateRecurs(root, MyFloat3(0.f, 0.f, 0.f), 0);
 
 	// 2. align along start->end vector	
 	AlignSegments(desiredDirection, currentDirection);
 	
 	// 3. scale to start->end magnitude
-	currentDirection = GetFarthestEndPointRecurs(root) - root->GetStartPoint();
+	currentDirection = GetFarthestEndPointRecurs(root, 0) - root->GetStartPoint();
 	ScaleSegments(desiredDirection.Magnitude(), currentDirection.Magnitude());
 
 	// 4. transform to start point
-	TranslateRecurs(root, startPoint);
+	TranslateRecurs(root, startPoint, 0);
 }
 
-void WholeTransformer::TranslateRecurs(Segment* currentSegment, MyFloat3 currentStartPoint)
+void WholeTransformer::TranslateRecurs(Segment* currentSegment, MyFloat3 currentStartPoint, size_t recursCount)
 {
 	MyFloat3 direction = currentSegment->GetDirection();
 	currentSegment->SetStartPoint(currentStartPoint);
 	currentSegment->SetEndPoint(currentStartPoint + direction);
 
-	for (Segment* child : *(currentSegment->GetChildren()))
+	if (recursCount < RECURSIVE_CAP)
 	{
-		TranslateRecurs(child, currentSegment->GetEndPoint());
+		for (Segment* child : *(currentSegment->GetChildren()))
+		{
+			TranslateRecurs(child, currentSegment->GetEndPoint(), recursCount+1);
+		}
+	}
+	else
+	{
+		recursCapHit = true;
 	}
 }
 
-MyFloat3 WholeTransformer::GetFarthestEndPointRecurs(Segment* currentSegment)
+MyFloat3 WholeTransformer::GetFarthestEndPointRecurs(Segment* currentSegment, size_t recursCount)
 {
-	for (Segment* child : *(currentSegment->GetChildren()))
+	if (recursCount < RECURSIVE_CAP)
 	{
-		if (child->GetStatus() == SegmentStatuses::PRIMARY)
+		for (Segment* child : *(currentSegment->GetChildren()))
 		{
-			return GetFarthestEndPointRecurs(child);
+			if (child->GetStatus() == SegmentStatuses::PRIMARY)
+			{
+				return GetFarthestEndPointRecurs(child, recursCount+1);
+			}
 		}
+	}
+	else
+	{
+		recursCapHit = true;
 	}
 	
 	return currentSegment->GetEndPoint();	

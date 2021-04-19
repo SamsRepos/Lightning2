@@ -9,6 +9,12 @@
 #include "ColourValues.h"
 
 ////
+// GENERAL:
+////
+
+const size_t RECURSIVE_CAP = 5000; // Avoiding stack overflows
+
+////
 // DEFAULT VALUES:
 ////
 
@@ -26,8 +32,8 @@ const float    DEFAULT_JFG_FORK_PROB_SCALEDOWN = .6f;
 const MyFloat3    DEFAULT_SG_START_PT          = MyFloat3(0.f, 100.f, 0.f);
 const MyFloat3    DEFAULT_SG_INITIAL_DIRECTION = MyFloat3(0.f, -1.f, 0.f);
 const float       DEFAULT_SG_VOLTAGE           = 42.f;
-const float       DEFAULT_SG_INITIAL_PRESSURE  = 65.f;
-const float       DEFAULT_SG_PRESSURE_GRADIENT = -.5f;
+const float       DEFAULT_SG_INITIAL_PRESSURE  = 5.f;
+const float       DEFAULT_SG_PRESSURE_GRADIENT = 0.f;
 const size_t      DEFAULT_SG_MAX_NUM_LAYERS    = 10;
 const std::string DEFAULT_SG_ANGLE_FIX         = "parent_dist";
 const std::string DEFAULT_SG_GAS_COMPOSITION   = "air";
@@ -74,7 +80,7 @@ const float DEFAULT_ANIM_SPEED = 400.f;
 
 // Jitter+Fork Generator
 const size_t JFG_MIN_ITERATIONS = 1;
-const size_t JFG_MAX_ITERATIONS = 20;
+const size_t JFG_MAX_ITERATIONS = 10;
 
 const float JFG_MIN_CHAOS_MEAN = 0.f;
 const float JFG_MAX_CHAOS_MEAN = .2f;
@@ -96,13 +102,13 @@ const float SG_MIN_VOLTAGE = 5.f;
 const float SG_MAX_VOLTAGE = 100.f;
 
 const float SG_MIN_INITIAL_PRESSURE = 0.f;
-const float SG_MAX_INITIAL_PRESSURE = 100.f;
+const float SG_MAX_INITIAL_PRESSURE = 50.f;
 
-const float SG_MIN_PRESSURE_GRADIENT = -1.5f;
-const float SG_MAX_PRESSURE_GRADIENT = 1.5f;
+const float SG_MIN_PRESSURE_GRADIENT = -1.f;
+const float SG_MAX_PRESSURE_GRADIENT = 1.f;
 
 const size_t SG_MIN_MAX_NUM_LAYERS = 1;
-const size_t SG_MAX_MAX_NUM_LAYERS = 20;
+const size_t SG_MAX_MAX_NUM_LAYERS = 10;
 
 // Diameter Thinner
 const float DT_MIN_SCALEDOWN = 0.f;

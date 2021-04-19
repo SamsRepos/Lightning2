@@ -1,5 +1,7 @@
 #include "PipelineMgr.h"
 
+#include <sstream>
+
 #include "Utils/MyVectorUtil.h"
 #include "Maths/MyClamp.h"
 
@@ -212,6 +214,54 @@ void PipelineMgr::Clear()
 	}
 
 	lightningRenderer->Clear();
+}
+
+bool PipelineMgr::WasRecursCapHit()
+{
+	return (
+		((settings->GetGeometryGeneratorType() == GeometryGeneratorTypes::JITTER_FORK) && jitForkGen.WasRecursCapHit()) ||
+		((settings->GetGeometryGeneratorType() == GeometryGeneratorTypes::STREAMER) && streamGen.WasRecursCapHit()) ||
+		(settings->IsPathIdentifierActive() && pathIdentifier.WasRecursCapHit()) ||
+		(settings->IsWholeTransformerActive() && wholeTransformer.WasRecursCapHit()) ||
+		(settings->IsBranchifierActive() && branchifier.WasRecursCapHit()) ||
+		(settings->IsElectrifierActive() && electrifier.WasRecursCapHit()) ||
+		lightningRenderer->WasRecursCapHit() //n.b. lightning renderer always builds animation segments regardless of settings
+	);
+}
+
+std::string PipelineMgr::WhichStagesHitRecursCap()
+{
+	std::stringstream ss;
+	if ((settings->GetGeometryGeneratorType() == GeometryGeneratorTypes::JITTER_FORK) && jitForkGen.WasRecursCapHit())
+	{
+		ss << "Jitter+Fork Generator, ";
+	}
+	if ((settings->GetGeometryGeneratorType() == GeometryGeneratorTypes::STREAMER) && streamGen.WasRecursCapHit())
+	{
+		ss << "Streamer Generator, ";
+	}
+	if (settings->IsPathIdentifierActive() && pathIdentifier.WasRecursCapHit())
+	{
+		ss << "Path Identifier, ";
+	}
+	if (settings->IsWholeTransformerActive() && wholeTransformer.WasRecursCapHit())
+	{
+		ss << "Whole Transformer, ";
+	}
+	if (settings->IsBranchifierActive() && branchifier.WasRecursCapHit())
+	{
+		ss << "Branchifier, ";
+	}
+	if (settings->IsElectrifierActive() && electrifier.WasRecursCapHit())
+	{
+		ss << "Electrifier, ";
+	}
+	if (lightningRenderer->WasRecursCapHit())
+	{
+		ss << "Lightning Renderer, ";
+	}
+
+	return ss.str();
 }
 
 ////

@@ -296,6 +296,15 @@ void PlayState::Gui()
 		}
 		ImGui::Unindent();
 
+		//Warning that recursive cap has been hit:
+		if (pipelineMgr->WasRecursCapHit())
+		{
+			ImGui::Text("**************************");
+			ImGui::Text("WARNING: Recursive cap hit by the following stages:");
+			ImGui::Text(pipelineMgr->WhichStagesHitRecursCap().c_str());
+			ImGui::Text("**************************");
+		}
+
 		//Geometry Generator:
 		static std::map<std::string, GeometryGeneratorTypes> genTypesMap = {
 				{"Jitter + Fork", GeometryGeneratorTypes::JITTER_FORK},
@@ -428,7 +437,7 @@ void PlayState::Gui()
 			bool changeNow = false;
 
 			changeNow = GuiMyFloat3(changeNow, "SG start pt", &startPt);
-			changeNow = GuiMyFloat3(changeNow, "SG initial direction", &initialDirection);
+			changeNow = GuiMyFloat3(changeNow, "SG initial direction", &initialDirection, -1.f, 1.f);
 			changeNow = GuiSliderFloat(changeNow, "SG initial voltage", &voltage, SG_MIN_VOLTAGE, SG_MAX_VOLTAGE);
 			changeNow = GuiSliderFloat(changeNow, "SG initial pressure", &initialPressure, SG_MIN_INITIAL_PRESSURE, SG_MAX_INITIAL_PRESSURE);
 			changeNow = GuiSliderFloat(changeNow, "SG pressure gradient", &pressureGradient, SG_MIN_PRESSURE_GRADIENT, SG_MAX_PRESSURE_GRADIENT);

@@ -70,10 +70,12 @@ public:
 	void Run();
 	inline std::vector<Segment*>* GetOutput() { return output; };
 	
+	inline bool WasRecursCapHit() { return recursCapHit; };
+
 private:
 	void SetGasComposition(GasCompositions gasCompoisition);
 	void InitAlgorithm();
-	void CreateChildrenRecurs(Segment* parent, size_t parentLayer);
+	void CreateChildrenRecurs(Segment* parent, size_t parentLayer, size_t recursCount);
 	Segment* CreateSegment(Segment* parent); // Creates a new segment, which is parallel to its parent
 
 	// DIAMETER => LENGTH
@@ -139,5 +141,7 @@ private:
 	BoxMullerGen innerAngleGen;
 
 	std::vector<Segment*>* output;
+
+	bool recursCapHit;
 };
 

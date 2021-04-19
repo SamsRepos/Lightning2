@@ -105,6 +105,10 @@ public:
 
 	void Clear();
 
+	bool WasRecursCapHit();
+
+	std::string WhichStagesHitRecursCap();
+
 private:
 	void InitProcess();
 

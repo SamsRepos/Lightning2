@@ -4,9 +4,6 @@
 
 #include "Maths/MyFloat3.h"
 
-// Since some operations work recursively from root-to-end, a cap is required to avoid a stack overflow:
-const size_t MAX_NUM_SEGMENTS = 7500;
-
 enum SegmentStatuses
 {
 	PRIMARY,

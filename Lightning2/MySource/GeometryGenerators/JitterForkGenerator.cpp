@@ -43,6 +43,8 @@ void JitterForkGenerator::InitParameters(
 
 void JitterForkGenerator::Run()
 {
+	recursCapHit = false;
+
 	previousSegments = new std::vector<Segment*>;
 	previousSegments->push_back(new Segment(originalSeed));
 
@@ -54,7 +56,7 @@ void JitterForkGenerator::Run()
 		
 		Segment* root = previousSegments->front();
 		
-		RunIterationRecursive(root, forkProb, NULL);
+		RunIterationRecurs(root, forkProb, NULL, 0);
 		
 		//Prep for the next iteration:
 		DeleteAllVectorData(previousSegments);
@@ -62,6 +64,11 @@ void JitterForkGenerator::Run()
 		previousSegments = currentSegments;
 		
 		forkProb *= forkProbScaleDown;
+
+		if (recursCapHit)
+		{
+			break;
+		}
 	}
 
 	//setting output:
@@ -85,16 +92,23 @@ void JitterForkGenerator::Run()
 // PRIVATE:
 ////
 
-void JitterForkGenerator::RunIterationRecursive(Segment* seed, float forkProb, Segment* parentSegment)
+void JitterForkGenerator::RunIterationRecurs(Segment* seed, float forkProb, Segment* parentSegment, size_t recursCount)
 {
 	std::vector<Segment*> res = JitterAndFork(seed, forkProb, parentSegment);
 	currentSegments->insert(currentSegments->end(), res.begin(), res.end());
 
 	Segment* nextParent = res[1]; //bottomSeg
 
-	for (Segment* seedChild : *(seed->GetChildren()))
+	if (recursCount < RECURSIVE_CAP)
 	{
-		RunIterationRecursive(seedChild, forkProb, nextParent);
+		for (Segment* seedChild : *(seed->GetChildren()))
+		{
+			RunIterationRecurs(seedChild, forkProb, nextParent, recursCount+1);
+		}
+	}
+	else
+	{
+		recursCapHit = true;
 	}
 }
 

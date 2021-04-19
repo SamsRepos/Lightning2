@@ -16,8 +16,10 @@ public:
 	inline void SetSegments(std::vector<Segment*>* _segments) { segments = _segments; };
 	void Run();
 	
+	inline bool WasRecursCapHit() { return recursCapHit; };
+
 private:
-	bool RunIterationRecurs(Segment* seed, Segment* parentSegment);
+	bool RunIterationRecurs(Segment* seed, Segment* parentSegment, size_t recursCount);
 	std::vector<Segment*> Jitter(Segment* segment, Segment* parent);
 	
 	std::vector<Segment*>* segments;
@@ -28,4 +30,6 @@ private:
 	std::vector<Segment*>* currentSegments;
 
 	BoxMullerGen chaosGaussianGen;
+
+	bool recursCapHit;
 };

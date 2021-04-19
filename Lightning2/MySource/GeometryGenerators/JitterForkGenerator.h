@@ -24,9 +24,11 @@ public:
 	void Run();
 	inline std::vector<Segment*>* GetOutput() { return output; };
 
+	inline bool WasRecursCapHit() { return recursCapHit; };
+
 private:
 
-	void RunIterationRecursive(Segment* seed, float forkProb, Segment* parentSegment);
+	void RunIterationRecurs(Segment* seed, float forkProb, Segment* parentSegment, size_t recursCount);
 
 	std::vector<Segment*> JitterAndFork(Segment* seed, float forkProbNow, Segment* parent);
 
@@ -44,4 +46,6 @@ private:
 
 	BoxMullerGen chaosGaussianGen;
 	BoxMullerGen midpointGaussianGen;
+
+	bool recursCapHit;
 };

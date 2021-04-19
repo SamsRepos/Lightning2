@@ -2,6 +2,7 @@
 
 #include "Maths/MyMath.h"
 #include "Maths/MyMatrix44.h"
+#include "DefaultParameters.h"
 
 //#include <algorithm>
 
@@ -60,7 +61,7 @@ void StreamerGenerator::Run()
 
 	output->push_back(rootSegment);
 
-	CreateChildrenRecurs(rootSegment, 0);
+	CreateChildrenRecurs(rootSegment, 0, 0);
 }
 
 
@@ -92,10 +93,11 @@ void StreamerGenerator::SetGasComposition(GasCompositions gasComposition)
 void StreamerGenerator::InitAlgorithm()
 {
 	output = new std::vector<Segment*>;
-	numLayers = 0;	
+	numLayers = 0;
+	recursCapHit = false;
 }
 
-void StreamerGenerator::CreateChildrenRecurs(Segment* parent, size_t parentLayerNum)
+void StreamerGenerator::CreateChildrenRecurs(Segment* parent, size_t parentLayerNum, size_t recursCount)
 {
 	size_t thisLayerNum = parentLayerNum + 1;
 
@@ -108,9 +110,16 @@ void StreamerGenerator::CreateChildrenRecurs(Segment* parent, size_t parentLayer
 		Segment* childB = CreateSegment(parent);
 		
 		FixEndPoints(childA, childB);
-				
-		CreateChildrenRecurs(childA, thisLayerNum);
-		CreateChildrenRecurs(childB, thisLayerNum);
+		
+		if (recursCount < RECURSIVE_CAP)
+		{
+			CreateChildrenRecurs(childA, thisLayerNum, recursCount+1);
+			CreateChildrenRecurs(childB, thisLayerNum, recursCount+1);
+		}
+		else
+		{
+			recursCapHit = true;
+		}
 	}
 }
 

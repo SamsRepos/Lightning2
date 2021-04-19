@@ -23,6 +23,8 @@ void Electrifier::InitParameters(float maxSegLength, float chaosMean, float chao
 
 void Electrifier::Run()
 {
+	recursCapHit = false;
+
 	previousSegments = new std::vector<Segment*>;
 	
 	for (Segment* segment : *segments)
@@ -38,14 +40,14 @@ void Electrifier::Run()
 
 		Segment* rootSeed = previousSegments->front();
 
-		anySegmentTooLong = RunIterationRecurs(rootSeed, NULL);
+		anySegmentTooLong = RunIterationRecurs(rootSeed, NULL, 0);
 						
 		//prep for the next iteration:
 		DeleteAllVectorData(previousSegments);
 		delete previousSegments;
 		previousSegments = currentSegments;
 
-	} while(anySegmentTooLong && (previousSegments->size() < MAX_NUM_SEGMENTS));
+	} while(anySegmentTooLong && !recursCapHit);
 
 	//output vector:
 	if (segments)
@@ -72,8 +74,8 @@ void Electrifier::Run()
 
 // root-to-end-effectors recursive
 // returns true if any segment was too long
-// TODO. this will inefficiently loop an extra time for the check. Could improve..
-bool Electrifier::RunIterationRecurs(Segment* seed, Segment* parentSegment)
+// sets recursCapHit flag, if recursCount reaches RECURSIVE_CAP
+bool Electrifier::RunIterationRecurs(Segment* seed, Segment* parentSegment, size_t recursCount)
 {
 	Segment* nextParent;
 	bool anySegTooLong;
@@ -84,7 +86,7 @@ bool Electrifier::RunIterationRecurs(Segment* seed, Segment* parentSegment)
 		
 		currentSegments->insert(currentSegments->end(), res.begin(), res.end());
 
-		nextParent = res[1]; // bottomSeg
+		nextParent = res[1]; // this is bottomSeg
 
 		anySegTooLong = true;
 	}
@@ -113,9 +115,16 @@ bool Electrifier::RunIterationRecurs(Segment* seed, Segment* parentSegment)
 		anySegTooLong = false;
 	}
 
-	for (Segment* seedChild : *(seed->GetChildren()))
+	if (recursCount < RECURSIVE_CAP)
 	{
-		anySegTooLong = RunIterationRecurs(seedChild, nextParent) || anySegTooLong;
+		for (Segment* seedChild : *(seed->GetChildren()))
+		{
+			anySegTooLong = RunIterationRecurs(seedChild, nextParent, recursCount+1) || anySegTooLong;
+		}
+	}
+	else
+	{
+		recursCapHit = true;
 	}
 	
 	return anySegTooLong;

@@ -157,8 +157,7 @@ void CapsuleObject::Render(
 		domeMesh->getIndexCount()
 	);
 
-	// SECOND DOME:
-	
+	// SECOND DOME:	
 	shader->SetShaderParameters(
 		renderer->getDeviceContext(),
 		domeTransform2,

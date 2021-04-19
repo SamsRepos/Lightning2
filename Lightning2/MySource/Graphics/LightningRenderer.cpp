@@ -1,5 +1,6 @@
 #include "LightningRenderer.h"
 
+#include "DefaultParameters.h"
 #include "Utils/MyVectorUtil.h"
 
 ////
@@ -90,11 +91,13 @@ void LightningRenderer::SetAnimationParams(
 
 void LightningRenderer::Build(std::vector<Segment*>* segs)
 {
+	recursCapHit = false;
+
 	Clear();
 
 	Segment* rootSeg = segs->front();
 
-	CreateAnimSegmentsRecurs(rootSeg, NULL);
+	CreateAnimSegmentsRecurs(rootSeg, NULL, 0);
 
 	/*float maxEnergy = 0.f;
 	for (Segment* seg : *segs)
@@ -176,7 +179,7 @@ void LightningRenderer::Clear()
 // PRIVATE:
 ////
 
-void LightningRenderer::CreateAnimSegmentsRecurs(Segment* seg, AnimSegment* parent)
+void LightningRenderer::CreateAnimSegmentsRecurs(Segment* seg, AnimSegment* parent, size_t recursCount)
 {
 	AnimSegment* newAnimSeg = new AnimSegment(seg);
 
@@ -188,8 +191,15 @@ void LightningRenderer::CreateAnimSegmentsRecurs(Segment* seg, AnimSegment* pare
 
 	animSegments.push_back(newAnimSeg);
 
-	for (Segment* s : *(seg->GetChildren()))
+	if (recursCount < RECURSIVE_CAP)
 	{
-		CreateAnimSegmentsRecurs(s, newAnimSeg);
+		for (Segment* s : *(seg->GetChildren()))
+		{
+			CreateAnimSegmentsRecurs(s, newAnimSeg, recursCount+1);
+		}
+	}
+	else
+	{
+		recursCapHit = true;
 	}
 }

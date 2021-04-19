@@ -1,14 +1,18 @@
 #include "PathIdentifier.h"
 
+#include "DefaultParameters.h"
+
 ////
 // PUBLIC:
 ////
 
 void PathIdentifier::Run()
 {
+	recursCapHit = false;
+
 	Segment* root = segments->front();
 	
-	RunRecurs(root, root, 0.f);
+	RunRecurs(root, root, 0.f, 0);
 
 	root->SetStatus(SegmentStatuses::PRIMARY);
 }
@@ -17,7 +21,7 @@ void PathIdentifier::Run()
 // PRIVATE:
 ////
 
-void PathIdentifier::RunRecurs(Segment* root, Segment* currentSegment, float distFromRoot)
+void PathIdentifier::RunRecurs(Segment* root, Segment* currentSegment, float distFromRoot, size_t recursCount)
 {	
 	// 1. Set each segement's euclidian distance from the root
 	distFromRoot += currentSegment->GetLength();
@@ -25,10 +29,18 @@ void PathIdentifier::RunRecurs(Segment* root, Segment* currentSegment, float dis
 
 	if (currentSegment->GetChildren()->size() > 0)
 	{
-		// Depth-first traversal, so getting the recursive call in first
-		for (Segment* child : *(currentSegment->GetChildren()))
+		// Breadth-first traversal precedes this recursive call
+		// Depth-first traversal follows this recursive call
+		if (recursCount < RECURSIVE_CAP)
 		{
-			RunRecurs(root, child, distFromRoot);
+			for (Segment* child : *(currentSegment->GetChildren()))
+			{
+				RunRecurs(root, child, distFromRoot, recursCount+1);
+			}
+		}
+		else
+		{
+			recursCapHit = true;
 		}
 
 		float greatestDistToRootOnThisPath = -1.f;

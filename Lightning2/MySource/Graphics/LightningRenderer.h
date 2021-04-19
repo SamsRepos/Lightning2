@@ -59,8 +59,10 @@ public:
 	inline bool IsLineRenderingActive() { return lineRenderingActive; };
 	inline bool IsCapsuleRenderingActive() { return capsuleRenderingActive; };
 
+	inline bool WasRecursCapHit() { return recursCapHit; };
+
 private:
-	void CreateAnimSegmentsRecurs(Segment* seg, AnimSegment* parent);
+	void CreateAnimSegmentsRecurs(Segment* seg, AnimSegment* parent, size_t recursCount);
 	
 	std::vector<AnimSegment*> animSegments;
 
@@ -75,4 +77,6 @@ private:
 	
 	bool animatingNow;
 	float animationSpeed;
+
+	bool recursCapHit;
 };
