@@ -173,6 +173,12 @@ void TestState::InitPipelineMgr()
 	lightningRenderer->SetAnimationParams(
 		DEFAULT_ANIM_SPEED
 	);
+
+	lightningRenderer->SetEnergyParams(
+		ENERGY_SCALE_OPTIONS.at(DEFAULT_ENERGY_SCALE),
+		DEFAULT_ENERGY_FOR_BLUR,
+		DEFAULT_ENERGY_FOR_BRIGHTNESS
+	);
 }
 
 void TestState::TestBegin()

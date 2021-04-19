@@ -28,6 +28,12 @@ public:
 		float _blurFinalAdjustment
 	);
 
+	void SetEnergyParams(
+		EnergyScales _energyScale,
+		bool _useForBlur,
+		bool _useForBrightness
+	);
+
 	void Build(std::vector<AnimSegment*>* animSegs);
 
 	// Updates transforms to full size, for static rendering
@@ -77,6 +83,10 @@ private:
 	float blurQuality;
 	float blurSize;
 	float blurFinalAdjustment;
+
+	EnergyScales energyScale;
+	bool energyForBlur;
+	bool energyForBrightness;
 	
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;

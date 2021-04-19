@@ -89,6 +89,19 @@ void LightningRenderer::SetAnimationParams(
 	animationSpeed = speed;
 }
 
+void LightningRenderer::SetEnergyParams(
+	EnergyScales scale,
+	bool usedForBlur,
+	bool usedForBrightness
+)
+{
+	capRenderer->SetEnergyParams(
+		scale, 
+		usedForBlur,
+		usedForBrightness
+	);
+}
+
 void LightningRenderer::Build(std::vector<Segment*>* segs)
 {
 	recursCapHit = false;
@@ -98,14 +111,7 @@ void LightningRenderer::Build(std::vector<Segment*>* segs)
 	Segment* rootSeg = segs->front();
 
 	CreateAnimSegmentsRecurs(rootSeg, NULL, 0);
-
-	/*float maxEnergy = 0.f;
-	for (Segment* seg : *segs)
-	{
-		if (seg->GetEnergy() > maxEnergy);
-		maxEnergy = seg->GetEnergy();
-	}*/
-
+		
 	lineRenderer->Build(&animSegments);
 	capRenderer->Build(&animSegments);
 }

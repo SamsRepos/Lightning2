@@ -164,33 +164,63 @@ void CapsuleRenderer::SetBlurParams(
 	blurFinalAdjustment = _blurFinalAdjustment;
 }
 
+void CapsuleRenderer::SetEnergyParams(
+	EnergyScales _energyScale,
+	bool _useForBlur,
+	bool _useForBrightness
+)
+{
+	energyScale = _energyScale;
+	energyForBlur = _useForBlur;
+	energyForBrightness = _useForBrightness;
+}
+
 void CapsuleRenderer::Build(std::vector<AnimSegment*>* animSegs)
 {
 	ClearCapsules();
 	
 	for (AnimSegment* animSeg : *animSegs)
 	{
-		CapsuleObject* newCylinder = new CapsuleObject(*baseCapsule);
-		newCylinder->Init(animSeg);
+		CapsuleObject* newCapsule = new CapsuleObject(*baseCapsule);
+		newCapsule->Init(animSeg);
 
 		float maxEnergy = MaxEnergy(animSegs);
-		float maxEnergyLogE = log(maxEnergy);
-		float maxEnergyLog10 = log10(maxEnergy);
+		
+		float capsuleBrightness;
 
-		newCylinder->SetBrightness(
-			MyClamp(
-				//(log(animSeg->GetEnergy()) / maxEnergyLogE),
-				(log10(animSeg->GetEnergy()) / maxEnergyLog10),
-				//(animSeg->GetEnergy() / maxEnergy),
-				0.f,
-				1.f
-			)
+		switch (energyScale)
+		{
+		case(EnergyScales::LINEAR):
+			capsuleBrightness = (animSeg->GetEnergy() / maxEnergy);
+			break;
+		case(EnergyScales::LN):
+		{
+			float maxEnergyLogE = log(maxEnergy);
+			capsuleBrightness = log(animSeg->GetEnergy()) / maxEnergyLogE;
+		}
+			break;
+		case(EnergyScales::LOG_10):
+		{
+			float maxEnergyLog10 = log10(maxEnergy);
+			capsuleBrightness = log10(animSeg->GetEnergy()) / maxEnergyLog10;
+		}
+			break;
+		default:
+			capsuleBrightness = 1.f;
+			break;
+		}
+
+		capsuleBrightness = MyClamp(
+			capsuleBrightness,
+			0.f,
+			1.f
 		);
+		
+		newCapsule->SetBrightness(capsuleBrightness);
 
-		capsuleObjects.push_back(newCylinder);
+		capsuleObjects.push_back(newCapsule);
 	}	
 }
-
 
 void CapsuleRenderer::InitStatic()
 {
@@ -341,17 +371,20 @@ void CapsuleRenderer::RenderCapsules(D3D* renderer, LightningRenderModes renderM
 	{
 		if (ShouldBeRendered(renderMode, c))
 		{
-#if 1
-			XMFLOAT4 colour = cylinderColour;
-#else
-			XMFLOAT4 colour = DxColourLerp(
-				backgroundColour,
-				cylinderColour,
-				c->GetBrightness()
-			);
-#endif
-			
-			
+			XMFLOAT4 colour;
+
+			if (energyForBrightness)
+			{
+				colour = DxColourLerp(
+					backgroundColour,
+					cylinderColour,
+					c->GetBrightness()
+				);
+			}
+			else
+			{
+				colour = cylinderColour;
+			}
 
 			mainShader->SetColour(renderer->getDeviceContext(), colour);
 			c->Render(

@@ -143,6 +143,12 @@ void PlayState::Init()
 		DEFAULT_ANIM_SPEED
 	);
 
+	lightningRenderer->SetEnergyParams(
+		ENERGY_SCALE_OPTIONS.at(DEFAULT_ENERGY_SCALE),
+		DEFAULT_ENERGY_FOR_BLUR,
+		DEFAULT_ENERGY_FOR_BRIGHTNESS
+	);
+
 	// Running the process at init
 	// This helps with profiling
 	pipelineMgr->RunProcess();
@@ -646,6 +652,28 @@ void PlayState::Gui()
 				);
 			}
 		}
+	}
+
+	//Adjust energy parameters:
+	{
+		static std::string scale = DEFAULT_ENERGY_SCALE;
+		static bool forBlur = DEFAULT_ENERGY_FOR_BLUR;
+		static bool forBrightness = DEFAULT_ENERGY_FOR_BRIGHTNESS;
+
+		if (ImGui::CollapsingHeader("Set Energy Parameters"))
+		{
+			bool changeNow = false;
+
+			changeNow = GuiListBox(changeNow, ENERGY_SCALE_OPTIONS, "Energy Scale", &scale);
+			changeNow = GuiCheckBox(changeNow, "Use for blur", &forBlur);
+			changeNow = GuiCheckBox(changeNow, "Use for brightness", &forBrightness);
+		}
+
+		lightningRenderer->SetEnergyParams(
+			ENERGY_SCALE_OPTIONS.at(scale),
+			forBlur,
+			forBrightness
+		);
 	}
 }
 

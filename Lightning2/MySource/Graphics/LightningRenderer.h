@@ -37,6 +37,12 @@ public:
 		float speed
 	);
 
+	void SetEnergyParams(
+		EnergyScales scale,
+		bool usedForBlur,
+		bool usedForBrightness
+	);
+
 	void Build(std::vector<Segment*>* segs);
 
 	void InitAnimation();

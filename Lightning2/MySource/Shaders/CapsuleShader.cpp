@@ -4,7 +4,7 @@ CapsuleShader::CapsuleShader(ID3D11Device* device, HWND hwnd)
 	: 
 	MyBaseShader(device, hwnd)
 {
-	initShader(L"cyl_vs.cso", L"cyl_ps.cso");
+	initShader(L"cap_vs.cso", L"cap_ps.cso");
 }
 
 CapsuleShader::~CapsuleShader()
