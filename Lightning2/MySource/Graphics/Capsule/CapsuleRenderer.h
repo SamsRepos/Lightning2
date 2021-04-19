@@ -30,6 +30,10 @@ public:
 
 	void Build(std::vector<AnimSegment*>* animSegs);
 
+	// Updates transforms to full size, for static rendering
+	void InitStatic();
+
+	// Uses associated AnimSegment data to update transforms
 	void UpdateFromAnimation();
 
 	void SetShaderParams(const XMMATRIX& _viewMatrix, const XMMATRIX& _projectionMatrix);

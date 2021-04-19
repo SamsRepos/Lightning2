@@ -58,7 +58,7 @@ float4 main(InputType input) : SV_TARGET
 					input.tex + deltaTex
 				);
 
-				colour += colourAtSample; // *energyAtSample;
+				colour += colourAtSample * energyAtSample;
 			}
 		}
 	}

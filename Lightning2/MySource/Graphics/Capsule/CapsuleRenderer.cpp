@@ -191,6 +191,15 @@ void CapsuleRenderer::Build(std::vector<AnimSegment*>* animSegs)
 	}	
 }
 
+
+void CapsuleRenderer::InitStatic()
+{
+	for (CapsuleObject* c : capsuleObjects)
+	{
+		c->InitStatic();
+	}
+}
+
 void CapsuleRenderer::UpdateFromAnimation()
 {
 	for (CapsuleObject* c : capsuleObjects)

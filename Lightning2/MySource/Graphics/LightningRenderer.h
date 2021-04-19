@@ -16,7 +16,7 @@ public:
 	);
 	~LightningRenderer();
 
-	inline void SetRenderMode(LightningRenderModes mode) { renderMode = mode; };
+	void SetRenderMode(LightningRenderModes mode);
 	inline LightningRenderModes GetRenderMode() { return renderMode; };
 
 	void SetColours(

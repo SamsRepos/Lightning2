@@ -21,6 +21,10 @@ public:
 
 	inline bool IsVisible() { return animSeg->IsVisible(); };
 
+	// Updates transforms to full size, for static rendering
+	void InitStatic();
+
+	// Uses associated AnimSegment data to update transforms
 	void UpdateFromAnimation();
 
 	void Render(

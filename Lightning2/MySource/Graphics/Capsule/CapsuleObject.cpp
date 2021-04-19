@@ -95,6 +95,17 @@ void CapsuleObject::Init(AnimSegment* _animSeg)
 	BuildAllTransforms();
 }
 
+void CapsuleObject::InitStatic()
+{
+	SetScale(
+		animSeg->GetDiameter(),
+		animSeg->GetFixedLength(),
+		animSeg->GetDiameter()
+	);
+
+	BuildAllTransforms();
+}
+
 void CapsuleObject::UpdateFromAnimation()
 {
 	SetScale(

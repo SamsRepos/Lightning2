@@ -41,6 +41,15 @@ LightningRenderer::~LightningRenderer()
 	}
 }
 
+void LightningRenderer::SetRenderMode(LightningRenderModes mode)
+{
+	renderMode = mode; 
+	if (renderMode == LightningRenderModes::STATIC)
+	{
+		capRenderer->InitStatic();
+	}
+};
+
 void LightningRenderer::SetColours(
 	const XMFLOAT4& backgroundColour,
 	const XMFLOAT4& blurColour,

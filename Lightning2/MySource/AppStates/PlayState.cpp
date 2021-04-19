@@ -142,6 +142,10 @@ void PlayState::Init()
 	lightningRenderer->SetAnimationParams(
 		DEFAULT_ANIM_SPEED
 	);
+
+	// Running the process at init
+	// This helps with profiling
+	pipelineMgr->RunProcess();
 }
 
 void PlayState::Update(float _dt)
