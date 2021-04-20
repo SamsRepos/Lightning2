@@ -12,5 +12,5 @@ void PipelineMgrSettings::Init(const PipelineMgrDefaultSettings& defaultSettings
 	branchifierActive         = defaultSettings.branchifierActive;
 	diameterThinnerActive     = defaultSettings.diameterThinnerActive;
 	electrifierActive         = defaultSettings.electrifierActive;
-	renderingActive           = defaultSettings.renderingActive;
+	rendererBuildingActive    = defaultSettings.rendererBuildingActive;
 }

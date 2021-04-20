@@ -83,8 +83,8 @@ private:
 		return samples.back();
 	}
 
-	PipelineMgrDefaultSettings defaultSettings;
 	PipelineMgr* pipelineMgr;
+	PipelineMgrDefaultSettings defaultSettings;
 
 	MyTimer timer;
 	MyMemoryMeasurer segmentMeasurer;

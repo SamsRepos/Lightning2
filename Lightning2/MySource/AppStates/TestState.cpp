@@ -19,7 +19,7 @@ TestState::TestState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHe
 	defaultSettings.wholeTransformerActive = false;
 	defaultSettings.branchifierActive      = false;
 	defaultSettings.electrifierActive      = false;
-	defaultSettings.renderingActive        = false;
+	defaultSettings.rendererBuildingActive = false;
 
 	pipelineMgr = new PipelineMgr(
 		defaultSettings,
@@ -66,8 +66,8 @@ void TestState::Render()
 
 void TestState::Gui()
 {
-	ImGui::Text("TEST STATE");
-	
+	ImGui::Begin("TEST STATE");
+		
 	if (testRunning)
 	{
 		UL lock(infoMutex);
@@ -97,7 +97,9 @@ void TestState::Gui()
 			testCv.notify_all();
 		}
 
-	}	
+	}
+
+	ImGui::End();
 }
 
 ////

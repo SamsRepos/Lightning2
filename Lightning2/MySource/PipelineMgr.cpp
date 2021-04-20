@@ -176,8 +176,11 @@ void PipelineMgr::RunProcess()
 	}
 
 	// Building Meshes:
-	lightningRenderer->Build(segments);
-	lightningRenderer->InitAnimation();	
+	if (settings->IsRendererBuildingActive())
+	{
+		lightningRenderer->Build(segments);
+		lightningRenderer->InitAnimation();
+	}
 }
 
 void PipelineMgr::UpdateAnimation(float dt)
@@ -192,15 +195,12 @@ void PipelineMgr::RenderOutput(
 	const XMMATRIX& projMatrix	
 )
 {
-	if (settings->IsRenderingActive())
-	{
-		lightningRenderer->Render(
-			camera,
-			worldMatrix,
-			viewMatrix,
-			projMatrix
-		);
-	}
+	lightningRenderer->Render(
+		camera,
+		worldMatrix,
+		viewMatrix,
+		projMatrix
+	);
 }
 
 void PipelineMgr::Clear()
@@ -225,7 +225,7 @@ bool PipelineMgr::WasRecursCapHit()
 		(settings->IsWholeTransformerActive() && wholeTransformer.WasRecursCapHit()) ||
 		(settings->IsBranchifierActive() && branchifier.WasRecursCapHit()) ||
 		(settings->IsElectrifierActive() && electrifier.WasRecursCapHit()) ||
-		lightningRenderer->WasRecursCapHit() //n.b. lightning renderer always builds animation segments regardless of settings
+		lightningRenderer->WasRecursCapHit()
 	);
 }
 

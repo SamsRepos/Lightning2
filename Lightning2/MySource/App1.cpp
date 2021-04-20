@@ -130,13 +130,6 @@ void App1::Gui()
 		currentState = testState;
 	}
 
-	/*if (ImGui::Button("Reset Current State"))
-	{
-		currentState->Init();
-	}*/
-
-	ImGui::Text("*************************************");
-
 	currentState->Gui();
 
 

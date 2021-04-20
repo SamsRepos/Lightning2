@@ -12,7 +12,7 @@ struct PipelineMgrDefaultSettings {
 	bool branchifierActive;
 	bool diameterThinnerActive;
 	bool electrifierActive;
-	bool renderingActive;	
+	bool rendererBuildingActive;	
 };
 
 class PipelineMgrSettings
@@ -29,14 +29,14 @@ public:
 	inline void SetWholeTransformerActive(bool active) { wholeTransformerActive = active; };
 	inline void SetBranchifierActive(bool active) { branchifierActive = active; };
 	inline void SetElectifierActive(bool active) { electrifierActive = active; };
-	inline void SetRenderingActive(bool active) { renderingActive = active; };
+	inline void SetRendererBuildingActive(bool active) { rendererBuildingActive = active; };
 
 	inline bool IsPathIdentifierActive() { return ( branchifierActive || wholeTransformerActive); };
 	inline bool IsWholeTransformerActive() { return wholeTransformerActive; };
 	inline bool IsBranchifierActive() { return branchifierActive; };
 	inline bool IsDiameterThinnerActive() { return diameterThinnerActive; };
 	inline bool IsElectrifierActive() { return electrifierActive; };
-	inline bool IsRenderingActive() { return renderingActive; };
+	inline bool IsRendererBuildingActive() { return rendererBuildingActive; };
 
 private:
 	GeometryGeneratorTypes currentGeometryGenerator;
@@ -44,5 +44,5 @@ private:
 	bool branchifierActive;
 	bool diameterThinnerActive;
 	bool electrifierActive;
-	bool renderingActive;
+	bool rendererBuildingActive;
 };

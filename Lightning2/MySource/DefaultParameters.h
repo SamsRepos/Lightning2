@@ -12,7 +12,7 @@
 // GENERAL:
 ////
 
-const size_t RECURSIVE_CAP = 2000; // Avoiding stack overflows
+const size_t RECURSIVE_CAP = 500; // Avoiding stack overflows
 
 ////
 // DEFAULT VALUES:

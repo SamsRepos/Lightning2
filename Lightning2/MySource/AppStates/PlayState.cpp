@@ -25,7 +25,7 @@ PlayState::PlayState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHe
 	defaultSettings.wholeTransformerActive = false;
 	defaultSettings.branchifierActive      = false;
 	defaultSettings.electrifierActive      = false;
-	defaultSettings.renderingActive        = true;	
+	defaultSettings.rendererBuildingActive = true;	
 
 	pipelineMgr = new PipelineMgr(
 		defaultSettings,
@@ -191,7 +191,87 @@ void PlayState::Render()
 
 void PlayState::Gui()
 {
-	ImGui::Text("PLAY STATE");
+	GuiSettings();
+	GuiInfo();
+}
+
+////
+// PRIVATE:
+////
+
+void PlayState::HandleInput()
+{
+	static MyInputUtil inputUtil(input);
+
+	if (inputUtil.IsKeyPressedNow('R'))
+	{
+		pipelineMgr->RunProcess();
+		if (debugCsv)
+		{
+			DebugWriteCsv(pipelineMgr->GetSegments());
+		}
+	}
+	if (inputUtil.IsKeyPressedNow('C'))
+	{
+		pipelineMgr->Clear();
+	}
+	if (inputUtil.IsKeyPressedNow('N'))
+	{
+		animatingNow = !animatingNow;
+	}
+
+	if (inputUtil.IsKeyPressedNow('M'))
+	{
+		renderMode = renderMode == "animated" ? "static" : "animated";
+		LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
+		lightningRenderer->SetRenderMode(RENDER_MODE_OPTIONS.at(renderMode));
+	}
+
+	if (inputUtil.IsKeyPressedNow('I'))
+	{
+		LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
+		lightningRenderer->InitAnimation();
+	}
+
+	if (inputUtil.IsKeyPressedNow('Z'))
+	{
+		zappy = !zappy;
+	}
+
+	// Abandoning these for now, they conflict with camera controls
+	/*PipelineMgrSettings* settings = pipelineMgr->GetSettings();
+
+	if (inputUtil.IsKeyPressedNow('T'))
+	{
+		pipelineMgr->SetDiameterThinnerActive(
+			!(settings->IsDiameterThinnerActive())
+		);
+	}
+	if (inputUtil.IsKeyPressedNow('W'))
+	{
+		pipelineMgr->SetWholeTransformerActive(
+			!(settings->IsWholeTransformerActive())
+		);
+	}
+	if (inputUtil.IsKeyPressedNow('B'))
+	{
+		pipelineMgr->SetBranchifierActive(
+			!(settings->IsBranchifierActive())
+		);
+	}
+	if (inputUtil.IsKeyPressedNow('E'))
+	{
+		pipelineMgr->SetElectifierActive(
+			!(settings->IsElectrifierActive())
+		);
+	}*/
+
+	inputUtil.EndFrame();
+}
+
+void PlayState::GuiSettings()
+{
+	ImGui::Begin("PLAY STATE SETTINGS");
 
 	ImGui::Checkbox("Write debug CSV", &debugCsv);
 
@@ -210,9 +290,9 @@ void PlayState::Gui()
 	}
 
 	ImGui::Checkbox("A[N]imating now", &animatingNow);
-	
+
 	ImGui::Checkbox("[Z]APPY", &zappy);
-	
+
 	if (zappy)
 	{
 		static float currentTime = 0.f;
@@ -253,63 +333,7 @@ void PlayState::Gui()
 		case(GeometryGeneratorTypes::STREAMER):
 			currentGenerator = "Streamer";
 			break;
-		}
-
-		ImGui::Text("Current Generator: ");
-		ImGui::Indent();
-		ImGui::Text(("- " + currentGenerator).c_str());
-		ImGui::Unindent();
-
-		//Transform stages:
-		ImGui::Text("Active Transformers: ");
-		ImGui::Indent();		
-		if (settings->IsPathIdentifierActive())
-		{
-			ImGui::Text("- Path Identifier (auto)");
-		}
-		if (settings->IsWholeTransformerActive())
-		{
-			ImGui::Text("- Whole Transformer");
-		}
-		if (settings->IsBranchifierActive())
-		{
-			ImGui::Text("- Branchifier");
-		}
-		if (settings->IsDiameterThinnerActive())
-		{
-			ImGui::Text("- Diameter Thinner");
-		}
-		if (settings->IsElectrifierActive())
-		{
-			ImGui::Text("- Electrifier");
-		}
-		ImGui::Unindent();
-
-		//Renderers:
-		ImGui::Text("Active Rendering Stages: ");
-		ImGui::Indent();
-		if (lightningRenderer->IsBlurRenderingActive())
-		{
-			ImGui::Text("- Blur Rendering");
-		}
-		if (lightningRenderer->IsLineRenderingActive())
-		{
-			ImGui::Text("- Line Rendering");
-		}
-		if (lightningRenderer->IsCapsuleRenderingActive())
-		{
-			ImGui::Text("- Capsule Rendering");
-		}
-		ImGui::Unindent();
-
-		//Warning that recursive cap has been hit:
-		if (pipelineMgr->WasRecursCapHit())
-		{
-			ImGui::Text("**************************");
-			ImGui::Text("WARNING: Recursive cap hit by the following stages:");
-			ImGui::Text(pipelineMgr->WhichStagesHitRecursCap().c_str());
-			ImGui::Text("**************************");
-		}
+		}		
 
 		//Geometry Generator:
 		static std::map<std::string, GeometryGeneratorTypes> genTypesMap = {
@@ -328,7 +352,7 @@ void PlayState::Gui()
 			}
 		}
 
-		// Toggle pipeline stages
+		// Toggle transformer stages
 		if (ImGui::CollapsingHeader("Toggle Transformer Stages"))
 		{
 			if (GuiToggleBox("Whole Transformer", settings->IsWholeTransformerActive()))
@@ -363,6 +387,13 @@ void PlayState::Gui()
 		//Toggle renderers:
 		if (ImGui::CollapsingHeader("Toggle Rendering Stages"))
 		{
+			if (GuiToggleBox("Renderer building", settings->IsRendererBuildingActive()))
+			{
+				pipelineMgr->SetRendererBuildingActive(
+					!(settings->IsRendererBuildingActive())
+				);
+			}
+
 			if (GuiToggleBox("Blur Rendering", lightningRenderer->IsBlurRenderingActive()))
 			{
 				pipelineMgr->SetBlurRenderingActive(
@@ -400,7 +431,7 @@ void PlayState::Gui()
 		if (ImGui::CollapsingHeader("Set Jitter+Fork Parameters"))
 		{
 			bool changeNow = false;
-			
+
 			changeNow = GuiMyFloat3(changeNow, "JFG start pt", &startPt);
 			changeNow = GuiMyFloat3(changeNow, "JFG end pt", &endPt);
 			changeNow = GuiSliderInt(changeNow, "JFG iterations", &iterations, JFG_MIN_ITERATIONS, JFG_MAX_ITERATIONS);
@@ -475,7 +506,7 @@ void PlayState::Gui()
 		if (ImGui::CollapsingHeader("Set Whole Transformer Parameters"))
 		{
 			bool changeNow = false;
-			
+
 			changeNow = GuiMyFloat3(changeNow, "WT start pt", &startPoint);
 			changeNow = GuiMyFloat3(changeNow, "WT end pt", &endPoint);
 
@@ -504,7 +535,7 @@ void PlayState::Gui()
 			changeNow = GuiSliderFloat(changeNow, "B diameter scaledown", &diameterScaledown, B_MIN_DIAMETER_SCALEDOWN, B_MAX_DIAMETER_SCALEDOWN);
 			changeNow = GuiSliderFloat(changeNow, "B animation time", &animationTime, B_MIN_ANIMATION_TIME, B_MAX_ANIMATION_TIME);
 			changeNow = GuiSliderInt(changeNow, "B max num branch levels", &maxNumBranchLevels, B_MIN_MAX_NUM_BRANCH_LEVELS, B_MAX_MAX_NUM_BRANCH_LEVELS);
-			
+
 
 			if (changeNow)
 			{
@@ -606,13 +637,13 @@ void PlayState::Gui()
 			}
 		}
 	}
-	
+
 	//Adjust Blur Parameters:
 	{
 		static float blurDirections = DEFAULT_BLUR_DIRECTIONS;
 		static float blurQuality = DEFAULT_BLUR_QUALITY;
 		static float blurSize = DEFAULT_BLUR_SIZE;
-		static float blurAdjustment= DEFAULT_BLUR_ADJUSTMENT;
+		static float blurAdjustment = DEFAULT_BLUR_ADJUSTMENT;
 
 		if (ImGui::CollapsingHeader("Set Blur Parameters"))
 		{
@@ -625,7 +656,7 @@ void PlayState::Gui()
 
 			if (changeNow)
 			{
-				lightningRenderer->SetBlurParams(					
+				lightningRenderer->SetBlurParams(
 					blurDirections,
 					blurQuality,
 					blurSize,
@@ -675,78 +706,88 @@ void PlayState::Gui()
 			forBlur
 		);
 	}
+
+	ImGui::End();
 }
 
-////
-// PRIVATE:
-////
-
-void PlayState::HandleInput()
+void PlayState::GuiInfo()
 {
-	static MyInputUtil inputUtil(input);
+	ImGui::Begin("PLAY STATE INFO");
 
-	if (inputUtil.IsKeyPressedNow('R'))
+	PipelineMgrSettings* settings = pipelineMgr->GetSettings();
+	LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
+
+	GeometryGeneratorTypes genType = settings->GetGeometryGeneratorType();
+	static std::string currentGenerator = "";
+	switch (genType)
 	{
-		pipelineMgr->RunProcess();
-		if (debugCsv)
+	case(GeometryGeneratorTypes::JITTER_FORK):
+		currentGenerator = "Jitter + Fork";
+		break;
+	case(GeometryGeneratorTypes::STREAMER):
+		currentGenerator = "Streamer";
+		break;
+	}
+
+	ImGui::Text("Current Generator: ");
+	ImGui::Indent();
+		ImGui::Text(("- " + currentGenerator).c_str());
+	ImGui::Unindent();
+
+	//Transform stages:
+	ImGui::Text("Active Transformers: ");
+	ImGui::Indent();
+		if (settings->IsPathIdentifierActive())
 		{
-			DebugWriteCsv(pipelineMgr->GetSegments());
+			ImGui::Text("- Path Identifier (auto)");
 		}
-	}
-	if (inputUtil.IsKeyPressedNow('C'))
+		if (settings->IsWholeTransformerActive())
+		{
+			ImGui::Text("- Whole Transformer");
+		}
+		if (settings->IsBranchifierActive())
+		{
+			ImGui::Text("- Branchifier");
+		}
+		if (settings->IsDiameterThinnerActive())
+		{
+			ImGui::Text("- Diameter Thinner");
+		}
+		if (settings->IsElectrifierActive())
+		{
+			ImGui::Text("- Electrifier");
+		}
+	ImGui::Unindent();
+
+	//Renderers:
+	ImGui::Text("Active Rendering Stages: ");
+	ImGui::Indent();
+	if (settings->IsRendererBuildingActive())
 	{
-		pipelineMgr->Clear();
+		ImGui::Text("- Renderer Building");
 	}
-	if (inputUtil.IsKeyPressedNow('N'))
+	if (lightningRenderer->IsBlurRenderingActive())
 	{
-		animatingNow = !animatingNow;
+		ImGui::Text("- Blur Rendering");
+	}
+	if (lightningRenderer->IsLineRenderingActive())
+	{
+		ImGui::Text("- Line Rendering");
+	}
+	if (lightningRenderer->IsCapsuleRenderingActive())
+	{
+		ImGui::Text("- Capsule Rendering");
+	}
+	ImGui::Unindent();
+
+	//Warning that recursive cap has been hit:
+	if (pipelineMgr->WasRecursCapHit())
+	{
+		ImGui::Text("**************************");
+		ImGui::Text("WARNING: Recursive cap hit by the following stages:");
+		ImGui::Text(pipelineMgr->WhichStagesHitRecursCap().c_str());
+		ImGui::Text("**************************");
 	}
 
-	if (inputUtil.IsKeyPressedNow('M'))
-	{
-		renderMode = renderMode == "animated" ? "static" : "animated";
-		LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
-		lightningRenderer->SetRenderMode(RENDER_MODE_OPTIONS.at(renderMode));
-	}
-
-	if (inputUtil.IsKeyPressedNow('I'))
-	{
-		LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
-		lightningRenderer->InitAnimation();
-	}
-
-	if (inputUtil.IsKeyPressedNow('Z'))
-	{
-		zappy = !zappy;
-	}
-
-	// Abandoning these for now, they conflict with camera controls
-	/*PipelineMgrSettings* settings = pipelineMgr->GetSettings();
-
-	if (inputUtil.IsKeyPressedNow('T'))
-	{
-		pipelineMgr->SetDiameterThinnerActive(
-			!(settings->IsDiameterThinnerActive())
-		);
-	}
-	if (inputUtil.IsKeyPressedNow('W'))
-	{
-		pipelineMgr->SetWholeTransformerActive(
-			!(settings->IsWholeTransformerActive())
-		);
-	}
-	if (inputUtil.IsKeyPressedNow('B'))
-	{
-		pipelineMgr->SetBranchifierActive(
-			!(settings->IsBranchifierActive())
-		);
-	}
-	if (inputUtil.IsKeyPressedNow('E'))
-	{
-		pipelineMgr->SetElectifierActive(
-			!(settings->IsElectrifierActive())
-		);
-	}*/
-
-	inputUtil.EndFrame();
+	ImGui::End();
 }

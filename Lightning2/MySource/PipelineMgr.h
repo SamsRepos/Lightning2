@@ -28,16 +28,19 @@ public:
 	
 	inline PipelineMgrSettings* GetSettings() { return settings; };
 
-	//set current geometry generator
+	// set current geometry generator
 	inline void SetGeometryGeneratorType(GeometryGeneratorTypes type) { settings->SetGeometryGeneratorType(type); };
 
-	//toggle post-generation transform stages
+	// toggle post-generation transform stages
 	inline void SetWholeTransformerActive(bool active) { settings->SetWholeTransformerActive(active); };
 	inline void SetBranchifierActive(bool active) { settings->SetBranchifierActive(active); };
 	inline void SetDiameterThinnerActive(bool active) { settings->SetDiameterThinnerActive(active); };
 	inline void SetElectifierActive(bool active) { settings->SetElectifierActive(active); };
 
-	//setters for all parameters
+	// renderer building
+	inline void SetRendererBuildingActive(bool active) { settings->SetRendererBuildingActive(active); };
+
+	// setters for all parameters
 	void InitJitterForkGenerator(
 		MyFloat3 startPoint,
 		MyFloat3 endPoint,

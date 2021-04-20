@@ -21,13 +21,16 @@ public:
 
 private:
 	void HandleInput();
+
+	void GuiSettings();
+	void GuiInfo();
 	
 	FPCamera* camera;
 	TextureManager* textureMgr;
 
 	// Pipeline Manager:
-	PipelineMgrDefaultSettings defaultSettings;
 	PipelineMgr* pipelineMgr;
+	PipelineMgrDefaultSettings defaultSettings;
 
 	// Plane Mesh:
 	LightShader* lightShader;
