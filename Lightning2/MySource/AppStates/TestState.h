@@ -21,7 +21,7 @@ enum TestTypes
 class TestState : public BaseState
 {
 public:
-	TestState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHeight, Input* _input);
+	TestState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHeight, Input* _input, std::string _directoryPath = "../csv/");
 	~TestState();
 
 	void Init();
@@ -37,17 +37,57 @@ private:
 
 	void ThreadFunction();
 
-	void InitOfsream(std::ofstream* stream);
+	std::string FilePath(std::string fileName) { return (directoryPath + fileName); };
 
-	void TestStreamerLayers(const char* rawFilePath = "../csv/testResStreamerLayers.csv", const char* meansFilePath = "../csv/testMeansStreamerLayers.csv");
-	void TestElectrifierByGenType(const char* rawFilePath = "../csv/testResElecByGenType.csv", const char* meansFilePath = "../csv/testMeansElecByGenType.csv");
+	void InitOfstream(std::ofstream* stream);
+
+	void TestStreamerVsJitterfork(std::string fileName = "streamerVsJitter.csv");
+
+	void TestStreamerLayers(std::string fileName = "streamerLayers.csv");
+
+	void TestElectrifierByGenType(std::string fileName = "electrifier.csv");
+
+	template<class T>
+	inline constexpr void SortVector(std::vector<T>* samples)
+	{
+		std::sort(samples->begin(), samples->end());
+	}
+
+	template<class T>
+	inline constexpr const T& Min(std::vector<T>& samples)
+	{
+		return samples.front();
+	}
 	
+	template<class T>
+	inline constexpr const T& Q1(std::vector<T>& samples)
+	{
+		return samples[samples.size() / 4];
+	}
+
+	template<class T>
+	inline constexpr const T& Median(std::vector<T>& samples)
+	{
+		return samples[samples.size() / 2];
+	}
+
+	template<class T>
+	inline constexpr const T& Q3(std::vector<T>& samples)
+	{
+		return samples[(samples.size() / 4) * 3];
+	}
+
+	template<class T>
+	inline constexpr const T& Max(std::vector<T>& samples)
+	{
+		return samples.back();
+	}
+
 	PipelineMgrDefaultSettings defaultSettings;
 	PipelineMgr* pipelineMgr;
 
 	MyTimer timer;
-	MyMemoryMeasurer segMeasuerer;
-	MyMemoryMeasurer capMeasurer;
+	MyMemoryMeasurer segmentMeasurer;
 
 	int iterationsPerTest;
 	int iterationsDone;
@@ -58,6 +98,8 @@ private:
 	std::mutex infoMutex;
 	std::condition_variable testCv;
 
-	std::vector<std::string> currentTestInfo;	
+	std::vector<std::string> currentTestInfo;
+
+	std::string directoryPath;
 };
 

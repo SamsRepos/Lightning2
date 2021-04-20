@@ -8,10 +8,11 @@
 // PUBLIC:
 ////
 
-TestState::TestState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHeight, Input* _input)
+TestState::TestState(D3D* _renderer, HWND _hwnd, int _screenWidth, int _screenHeight, Input* _input, std::string _directoryPath)
 	:
 	BaseState::BaseState(_renderer, _hwnd, _screenWidth, _screenHeight, _input),
-	pipelineMgr(NULL)
+	pipelineMgr(NULL),
+	directoryPath(_directoryPath)
 {
 	defaultSettings.geometryGenerator      = GeometryGeneratorTypes::STREAMER;
 	defaultSettings.diameterThinnerActive  = false;
@@ -50,8 +51,7 @@ void TestState::Init()
 	iterationsDone    = 0;
 	testRunning       = false;
 
-	segMeasuerer.SetObjectSize(sizeof(Segment));
-	capMeasurer.SetObjectSize(sizeof(CapsuleObject));
+	segmentMeasurer.SetObjectSize(sizeof(Segment));
 }
 
 void TestState::Update(float _dt)
@@ -221,7 +221,7 @@ void TestState::ThreadFunction()
 	} while(true);
 }
 
-void TestState::InitOfsream(std::ofstream* stream)
+void TestState::InitOfstream(std::ofstream* stream)
 {
 	assert(stream->is_open());
 
@@ -232,15 +232,21 @@ void TestState::InitOfsream(std::ofstream* stream)
 	(*stream) << "ITS PER TEST: " << iterationsPerTest << '\n' << '\n';
 }
 
-void TestState::TestStreamerLayers(const char* rawFilePath, const char* meansFilePath)
+void TestState::TestStreamerVsJitterfork(std::string fileName)
 {
-	std::ofstream rawOutFile(rawFilePath);
-	InitOfsream(&rawOutFile);
 
-	std::ofstream meansOutFile(meansFilePath);
-	InitOfsream(&meansOutFile);	
-	
-	meansOutFile << "NUM LAYERS, TIME (MS), NUM SEGMENTS, \n";
+}
+
+void TestState::TestStreamerLayers(std::string fileName)
+{
+	std::ofstream outFile(FilePath(fileName).c_str());
+	InitOfstream(&outFile);
+
+	outFile << "          , , TIME (MS),   ,       ,   ,    , , NUM SEGMENTS, \n";
+	outFile << "NUM LAYERS, , MIN      , Q1, MEDIAN, Q3, MAX, , MIN, Q1, MEDIAN, Q3, MAX, \n";
+
+	std::vector<float> timeSamples;
+	std::vector<size_t>numSegmentsSamples;
 
 	for (size_t numLayers = SG_MIN_MAX_NUM_LAYERS; numLayers < SG_MAX_MAX_NUM_LAYERS; numLayers++)
 	{
@@ -254,13 +260,7 @@ void TestState::TestStreamerLayers(const char* rawFilePath, const char* meansFil
 			ANGLE_FIX_OPTIONS.at(DEFAULT_SG_ANGLE_FIX),
 			GAS_COMPOSITION_OPTIONS.at(DEFAULT_SG_GAS_COMPOSITION)
 		);
-
-		rawOutFile << "LAYERS:, " << numLayers << '\n';
-
-		rawOutFile << "TIME (MS), NUM SEGMENTS, \n";
-
-		float timeRunningTotal      = 0.f;
-		int numSegmentsRunningTotal = 0;
+		
 		for (size_t i = 0; i < iterationsPerTest; i++)
 		{
 			//updating info for gui about where we're at, before testing:
@@ -289,57 +289,46 @@ void TestState::TestStreamerLayers(const char* rawFilePath, const char* meansFil
 				pipelineMgr->RunProcess();
 			timer.Stop();
 
-			//Raw data output:
-			rawOutFile << timer.GetDurationMs() << ", ";
-			rawOutFile << pipelineMgr->GetSegments()->size() << ", ";
-			rawOutFile << '\n';
-
-			//For means output:
-			timeRunningTotal += timer.GetDurationMs();
-			numSegmentsRunningTotal += pipelineMgr->GetSegments()->size();
+			timeSamples.push_back(timer.GetDurationMs());
+			numSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
 		}
-		rawOutFile << '\n';
+		
+		SortVector(&timeSamples);
+		SortVector(&numSegmentsSamples);
 
-		float meanTime        = timeRunningTotal / float(iterationsPerTest);
-		float meanNumSegments = numSegmentsRunningTotal / float(iterationsPerTest);
-		meansOutFile << numLayers << ", ";
-		meansOutFile << meanTime << ", ";
-		meansOutFile << meanNumSegments << ", ";
-		meansOutFile << '\n';
+		outFile << numLayers << ", ";
+		outFile << ", ";
+		outFile << Min(timeSamples) << ", " << Q1(timeSamples) << ", " << Median(timeSamples) << ", " << Q3(timeSamples) << ", " << Max(timeSamples) << ", ";
+		outFile << ", ";
+		outFile << Min(numSegmentsSamples) << ", " << Q1(numSegmentsSamples) << ", " << Median(numSegmentsSamples) << ", " << Q3(numSegmentsSamples) << ", " << Max(numSegmentsSamples) << ", ";
+		outFile << '\n';
+
+		timeSamples.clear();
+		numSegmentsSamples.clear();
 	}
 }
 
-void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* meansFilePath)
+void TestState::TestElectrifierByGenType(std::string fileName)
 {
-	std::ofstream rawOutFile(rawFilePath);
-	InitOfsream(&rawOutFile);
-
-	std::ofstream meansOutFile(meansFilePath);
-	InitOfsream(&meansOutFile);
-
+	std::ofstream outFile(FilePath(fileName).c_str());
+	InitOfstream(&outFile);
+	
 	int branchCullingAmt = 4;
 
-	// Gen type row:
-	meansOutFile << " , , ";
-	meansOutFile << "GEN: JITTER + FORK, , , , ";
-	meansOutFile << "GEN: STREAMER, , , , ";
-	meansOutFile << "GEN: STREAMER, , , , ";
-	meansOutFile << '\n';
-
-	// Branch culling row:
-	meansOutFile << " , , ";
-	meansOutFile << "BRANCH CULLING: OFF, , , , ";
-	meansOutFile << "BRANCH CULLING: OFF, , , , ";
-	meansOutFile << "BRANCH CULLING: " << branchCullingAmt << ", , , , ";
-	meansOutFile << "\n";
-
-	// Output row:
-	meansOutFile << "MAX SEG LEN, , ";
-	meansOutFile << "TIME(MS), NUM SEGMENTS, Seg KB, , ";
-	meansOutFile << "TIME(MS), NUM SEGMENTS, Seg KB, , ";
-	meansOutFile << "TIME(MS), NUM SEGMENTS, Seg KB, , ";
-	meansOutFile << '\n';
+	outFile << "           , , , GEN: JITTER + FORK ,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER      ,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER                             , \n";
+	outFile << "           , , , BRANCH CULLING: OFF,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , BRANCH CULLING: OFF,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , BRANCH CULLING: " << branchCullingAmt << ", \n";
+	outFile << "MAX SEG LEN, , , TIME(MS)           ,   ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(MS)           ,   ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(MS)                                  ,   ,       ,   ,    , , NUM SEGMENTS, \n";
+	outFile << "           , , , MIN                , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN                , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN                                       , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , \n";
 	
+	std::vector<float> jitterforkTimeSamples;
+	std::vector<size_t>jitterforkNumSegmentsSamples;
+
+	std::vector<float> streanerWithoutCullTimeSamples;
+	std::vector<size_t>streamerWithoutCullNumSegmentsSamples;
+
+	std::vector<float> streanerWithCullTimeSamples;
+	std::vector<size_t>streamerWithCullNumSegmentsSamples;
+
 	pipelineMgr->SetElectifierActive(true);
 
 	pipelineMgr->InitBranchifier(
@@ -364,37 +353,7 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 			DEFAULT_E_CHAOS_MEAN,
 			DEFAULT_E_CHAOS_STDDEV
 		);
-
-		rawOutFile << "MAX SEG LEN: " << maxSegLength << '\n';
-		rawOutFile << "GEN: JITTER + FORK, , , ";
-		rawOutFile << "GEN: STREAMER, , , ";
-		rawOutFile << "GEN: STREAMER, , , ";
-		rawOutFile << '\n';
-
-		// Branch culling row:
-		rawOutFile << "BRANCH CULLING: OFF, , , ";
-		rawOutFile << "BRANCH CULLING: OFF, , , ";
-		rawOutFile << "BRANCH CULLING: 3, , , ";
-		rawOutFile << "\n";
-
-		// Output row:
-		rawOutFile << "TIME(MS), NUM SEGMENTS, Seg KB, , ";
-		rawOutFile << "TIME(MS), NUM SEGMENTS, Seg KB, , ";
-		rawOutFile << "TIME(MS), NUM SEGMENTS, Seg KB, , ";
-		rawOutFile << '\n';
-
-		float jitterForkTimeRunningTotal       = 0.f;
-		int jitterForkSegmentsRunningTotal     = 0;
-		size_t jitterForkKbRunningTotal        = 0;
-
-		float streamerNoCullTimeRunningTotal   = 0.f;
-		int streamerNoCullSegmentsRunningTotal = 0;
-		size_t streamerNoCullKbRunningTotal    = 0;
-
-		float streamerCullTimeRunningTotal     = 0.f;
-		int streamerCullSegmentsRunningTotal   = 0;
-		size_t streamerCullKbRunningTotal      = 0;
-
+		
 		for (size_t i = 0; i < iterationsPerTest; i++)
 		{
 
@@ -412,9 +371,14 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 					ss << "ITERATION: " << (i + 1) << " of " << iterationsPerTest;
 					currentTestInfo.push_back(ss.str());
 				}
+
+				// Test may have been cancelled in GUI
+				if (!testRunning)
+				{
+					return;
+				}
 			}
 			
-
 			pipelineMgr->SetBranchifierActive(false);
 
 			// JITTER-FORK:
@@ -422,64 +386,52 @@ void TestState::TestElectrifierByGenType(const char* rawFilePath, const char* me
 			timer.Start();
 				pipelineMgr->RunProcess();
 			timer.Stop();
-			segMeasuerer.CalculateMemoryUsed(pipelineMgr->GetSegments()->size());
-			//Raw data output:
-			rawOutFile << timer.GetDurationMs() << ", ";
-			rawOutFile << pipelineMgr->GetSegments()->size() << ", ";
-			rawOutFile << segMeasuerer.GetKbUsed() << ", ";
-			rawOutFile << ", ";
-			//For means output:
-			jitterForkTimeRunningTotal     += timer.GetDurationMs();
-			jitterForkSegmentsRunningTotal += pipelineMgr->GetSegments()->size();
-			jitterForkKbRunningTotal       += segMeasuerer.GetKbUsed();
 
-			// STREAMER:
+			jitterforkTimeSamples.push_back(timer.GetDurationMs());
+			jitterforkNumSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
+
+			// STREAMER (BRANCHIFIER OFF):
 			pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::STREAMER);
 			timer.Start();
 				pipelineMgr->RunProcess();
 			timer.Stop();
-			segMeasuerer.CalculateMemoryUsed(pipelineMgr->GetSegments()->size());
-			//Raw data output:
-			rawOutFile << timer.GetDurationMs() << ", ";
-			rawOutFile << pipelineMgr->GetSegments()->size() << ", ";
-			rawOutFile << segMeasuerer.GetKbUsed() << ", ";
-			rawOutFile << ", ";
-			//For means output:
-			streamerNoCullTimeRunningTotal     += timer.GetDurationMs();
-			streamerNoCullSegmentsRunningTotal += pipelineMgr->GetSegments()->size();
-			streamerNoCullKbRunningTotal       += segMeasuerer.GetKbUsed();
 
+			streanerWithoutCullTimeSamples.push_back(timer.GetDurationMs());
+			streamerWithoutCullNumSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
+			
+			// STREAMER (BRANCHIFIER ON):
 			pipelineMgr->SetBranchifierActive(true);
 
 			timer.Start();
 				pipelineMgr->RunProcess();
 			timer.Stop();
-			segMeasuerer.CalculateMemoryUsed(pipelineMgr->GetSegments()->size());
-			//Raw data output:
-			rawOutFile << timer.GetDurationMs() << ", ";
-			rawOutFile << pipelineMgr->GetSegments()->size() << ", ";
-			rawOutFile << segMeasuerer.GetKbUsed() << ", ";
-			rawOutFile << '\n';
-			//For means output:
-			streamerCullTimeRunningTotal     += timer.GetDurationMs();
-			streamerCullSegmentsRunningTotal += pipelineMgr->GetSegments()->size();
-			streamerCullKbRunningTotal       += segMeasuerer.GetKbUsed();
+			
+			streanerWithCullTimeSamples.push_back(timer.GetDurationMs());
+			streamerWithCullNumSegmentsSamples.push_back(timer.GetDurationMs());
 		}
-		rawOutFile << '\n';
+
+		SortVector(&jitterforkTimeSamples);
+		SortVector(&jitterforkNumSegmentsSamples);
+
+		SortVector(&streanerWithoutCullTimeSamples);
+		SortVector(&streamerWithoutCullNumSegmentsSamples);
+
+		SortVector(&streanerWithCullTimeSamples);
+		SortVector(&streamerWithCullNumSegmentsSamples);
 		
-		meansOutFile << maxSegLength << ", ";
-		meansOutFile << " , ";
-		meansOutFile << jitterForkTimeRunningTotal / float(iterationsPerTest) << ", ";
-		meansOutFile << jitterForkSegmentsRunningTotal / float(iterationsPerTest) << ", ";
-		meansOutFile << jitterForkKbRunningTotal / float(iterationsPerTest) << ", ";
-		meansOutFile << " , ";
-		meansOutFile << streamerNoCullTimeRunningTotal / float(iterationsPerTest) << ", ";
-		meansOutFile << streamerNoCullSegmentsRunningTotal / float(iterationsPerTest) << ", ";
-		meansOutFile << streamerNoCullKbRunningTotal / float(iterationsPerTest) << ", ";
-		meansOutFile << " , ";
-		meansOutFile << streamerCullTimeRunningTotal / float(iterationsPerTest) << ", ";
-		meansOutFile << streamerCullSegmentsRunningTotal / float(iterationsPerTest) << ", ";
-		meansOutFile << streamerCullKbRunningTotal / float(iterationsPerTest) << ", ";
-		meansOutFile << '\n';
+		outFile << maxSegLength << ", ";
+		outFile << ", , ";
+			outFile << Min(jitterforkTimeSamples) << ", " << Q1(jitterforkTimeSamples) << ", " << Median(jitterforkTimeSamples) << ", " << Q3(jitterforkTimeSamples) << ", " << Max(jitterforkTimeSamples) << ", ";
+			outFile << ", ";
+			outFile << Min(jitterforkNumSegmentsSamples) << ", " << Q1(jitterforkNumSegmentsSamples) << ", " << Median(jitterforkNumSegmentsSamples) << ", " << Q3(jitterforkNumSegmentsSamples) << ", " << Max(jitterforkNumSegmentsSamples) << ", ";
+		outFile << ", , ";
+			outFile << Min(streanerWithoutCullTimeSamples) << ", " << Q1(streanerWithoutCullTimeSamples) << ", " << Median(streanerWithoutCullTimeSamples) << ", " << Q3(streanerWithoutCullTimeSamples) << ", " << Max(streanerWithoutCullTimeSamples) << ", ";
+			outFile << ", ";
+			outFile << Min(streamerWithoutCullNumSegmentsSamples) << ", " << Q1(streamerWithoutCullNumSegmentsSamples) << ", " << Median(streamerWithoutCullNumSegmentsSamples) << ", " << Q3(streamerWithoutCullNumSegmentsSamples) << ", " << Max(streamerWithoutCullNumSegmentsSamples) << ", ";
+		outFile << ", , ";
+			outFile << Min(streanerWithCullTimeSamples) << ", " << Q1(streanerWithCullTimeSamples) << ", " << Median(streanerWithCullTimeSamples) << ", " << Q3(streanerWithCullTimeSamples) << ", " << Max(streanerWithCullTimeSamples) << ", ";
+			outFile << ", ";
+			outFile << Min(streamerWithCullNumSegmentsSamples) << ", " << Q1(streamerWithCullNumSegmentsSamples) << ", " << Median(streamerWithCullNumSegmentsSamples) << ", " << Q3(streamerWithCullNumSegmentsSamples) << ", " << Max(streamerWithCullNumSegmentsSamples) << ", ";
+		outFile << '\n';
 	}
 }
