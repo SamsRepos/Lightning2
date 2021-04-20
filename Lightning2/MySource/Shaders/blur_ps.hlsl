@@ -1,9 +1,6 @@
 Texture2D texture0 : register(t0);
 SamplerState Sampler0 : register(s0);
 
-Texture2D energyMap0 : register(t1);
-SamplerState energySampler0 : register(s1);
-
 #define TWO_PI 6.28318530718f
 
 #define DEBUGOUTWHITE return float4(1.f, 1.f, 1.f, 1.f)
@@ -45,21 +42,13 @@ float4 main(InputType input) : SV_TARGET
 		for (float i = deltaI; i < 1.f; i += deltaI)
 		{
 			float2 deltaTex = float2(cos(theta), sin(theta)) * radius * i;
-
-			float energyAtSample = energyMap0.Sample(
-				energySampler0,
+		
+			float4 colourAtSample = texture0.Sample(
+				Sampler0,
 				input.tex + deltaTex
-			).x;
+			);
 
-			if (energyAtSample > i)
-			{
-				float4 colourAtSample = texture0.Sample(
-					Sampler0,
-					input.tex + deltaTex
-				);
-
-				colour += colourAtSample * energyAtSample;
-			}
+			colour += colourAtSample;
 		}
 	}
 

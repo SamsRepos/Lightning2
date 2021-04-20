@@ -27,11 +27,7 @@ public:
 		float _blurSize,
 		float _blurFinalAdjustment
 	);
-
-	void SetEnergyParams(
-		bool _useForBlur
-	);
-
+	
 	void Build(std::vector<AnimSegment*>* animSegs, EnergyScales energyScale);
 
 	// Updates transforms to full size, for static rendering
@@ -41,7 +37,7 @@ public:
 	void UpdateFromAnimation();
 
 	void SetShaderParams(const XMMATRIX& _viewMatrix, const XMMATRIX& _projectionMatrix);
-	void RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode, bool energyForBrightness);
+	void RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode, bool energyForBlur);
 	void RenderCapsules(D3D* renderer, LightningRenderModes renderMode, bool energyForBrightness);
 	
 	void ClearCapsules();
@@ -65,8 +61,6 @@ private:
 	RenderTexture* blurRenderTexture1;
 	RenderTexture* blurRenderTexture2;
 	
-	RenderTexture* energyTexture;
-
 	OrthoMesh* fullScreenMesh;
 
 	int screenWidth;
@@ -81,8 +75,6 @@ private:
 	float blurSize;
 	float blurFinalAdjustment;
 
-	bool energyForBlur;
-	
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;
 	

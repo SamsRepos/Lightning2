@@ -94,16 +94,13 @@ void LightningRenderer::SetAnimationParams(
 
 void LightningRenderer::SetEnergyParams(
 	EnergyScales scale,
-	bool usedForBlur,
-	bool usedForBrightness
+	bool usedForBrightness,
+	bool usedForBlur
 )
 {
 	energyScale = scale;
 	energyForBrightness = usedForBrightness;
-
-	capRenderer->SetEnergyParams(
-		usedForBlur
-	);
+	energyForBlur = usedForBlur;
 }
 
 void LightningRenderer::Build(std::vector<Segment*>* segs)
@@ -162,7 +159,7 @@ void LightningRenderer::Render(
 
 	if (blurRenderingActive)
 	{
-		capRenderer->RenderBlur(renderer, camera, renderMode, energyForBrightness);
+		capRenderer->RenderBlur(renderer, camera, renderMode, energyForBlur);
 	}
 
 	if (lineRenderingActive)

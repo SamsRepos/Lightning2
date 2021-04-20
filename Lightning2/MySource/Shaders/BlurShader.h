@@ -24,8 +24,7 @@ public:
 	void SetScreenSize(ID3D11DeviceContext* deviceContext, XMINT2 size);
 	
 	void SetBlurParameters(
-		ID3D11DeviceContext* deviceContext, 
-		RenderTexture* energyTexture,
+		ID3D11DeviceContext* deviceContext,
 		float _directions = 16.f, 
 		float _quality = 30.f, 
 		float _size = 9.f, 
@@ -47,7 +46,4 @@ private:
 	
 	ID3D11Buffer* screenSizeBuffer;	
 	ID3D11Buffer* blurBuffer;
-
-	ID3D11SamplerState* energySampleState;
 };
-

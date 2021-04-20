@@ -657,22 +657,22 @@ void PlayState::Gui()
 	//Adjust energy parameters:
 	{
 		static std::string scale = DEFAULT_ENERGY_SCALE;
-		static bool forBlur = DEFAULT_ENERGY_FOR_BLUR;
 		static bool forBrightness = DEFAULT_ENERGY_FOR_BRIGHTNESS;
+		static bool forBlur = DEFAULT_ENERGY_FOR_BLUR;
 
 		if (ImGui::CollapsingHeader("Set Energy Parameters"))
 		{
 			bool changeNow = false;
 
 			changeNow = GuiListBox(changeNow, ENERGY_SCALE_OPTIONS, "Energy Scale", &scale);
-			changeNow = GuiCheckBox(changeNow, "Use for blur", &forBlur);
 			changeNow = GuiCheckBox(changeNow, "Use for brightness", &forBrightness);
+			changeNow = GuiCheckBox(changeNow, "Use for blur", &forBlur);
 		}
 
 		lightningRenderer->SetEnergyParams(
 			ENERGY_SCALE_OPTIONS.at(scale),
-			forBlur,
-			forBrightness
+			forBrightness,
+			forBlur
 		);
 	}
 }

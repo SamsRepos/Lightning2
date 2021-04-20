@@ -73,8 +73,8 @@ const float DEFAULT_BLUR_ADJUSTMENT = 15.f;
 
 // Renderer Energy Parameters
 const std::string DEFAULT_ENERGY_SCALE          = "linear";
-const bool        DEFAULT_ENERGY_FOR_BLUR       = true;
-const bool        DEFAULT_ENERGY_FOR_BRIGHTNESS = true;
+const bool        DEFAULT_ENERGY_FOR_BRIGHTNESS = false;
+const bool        DEFAULT_ENERGY_FOR_BLUR       = false;
 
 // Animation parameters:
 const float DEFAULT_ANIM_SPEED = 400.f;

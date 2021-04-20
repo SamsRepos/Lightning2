@@ -77,22 +77,7 @@ void BlurShader::initShader(const wchar_t* vsFilename, const wchar_t* psFilename
 		d.StructureByteStride = 0;
 		renderer->CreateBuffer(&d, NULL, &blurBuffer);
 	}
-
-	// energy map sampler:
-	{
-		D3D11_SAMPLER_DESC d;
-		d.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-		d.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-		d.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-		d.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-		d.BorderColor[0] = 1.0f;
-		d.BorderColor[1] = 1.0f;
-		d.BorderColor[2] = 1.0f;
-		d.BorderColor[3] = 1.0f;
-
-		renderer->CreateSamplerState(&d, &energySampleState);
-	}
-
+	
 }
 
 void BlurShader::SetScreenSize(ID3D11DeviceContext* deviceContext, XMINT2 size) {
@@ -113,7 +98,6 @@ void BlurShader::SetScreenSize(ID3D11DeviceContext* deviceContext, XMINT2 size) 
 
 void BlurShader::SetBlurParameters(
 	ID3D11DeviceContext* deviceContext,
-	RenderTexture* energyTexture,
 	float _directions,
 	float _quality,
 	float _size,
@@ -132,12 +116,7 @@ void BlurShader::SetBlurParameters(
 	blurPtr->finalAdjustment = _finalAdjustment;
 
 	deviceContext->Unmap(blurBuffer, 0);
-	deviceContext->PSSetConstantBuffers(1, 1, &blurBuffer);
-
-	ID3D11ShaderResourceView* energyMap = energyTexture->getShaderResourceView();
-	deviceContext->PSSetShaderResources(1, 1, &energyMap);
-	deviceContext->PSSetSamplers(1, 1, &energySampleState);
-
+	deviceContext->PSSetConstantBuffers(1, 1, &blurBuffer);	
 }
 
 void BlurShader::SetShaderParameters(

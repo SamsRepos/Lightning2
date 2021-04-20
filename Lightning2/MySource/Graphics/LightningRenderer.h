@@ -39,8 +39,8 @@ public:
 
 	void SetEnergyParams(
 		EnergyScales scale,
-		bool usedForBlur,
-		bool usedForBrightness
+		bool usedForBrightness,
+		bool usedForBlur
 	);
 
 	void Build(std::vector<Segment*>* segs);
@@ -83,6 +83,7 @@ private:
 	
 	EnergyScales energyScale;
 	bool energyForBrightness;
+	bool energyForBlur;
 
 	bool animatingNow;
 	float animationSpeed;

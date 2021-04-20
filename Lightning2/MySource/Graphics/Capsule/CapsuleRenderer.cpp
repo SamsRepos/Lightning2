@@ -57,16 +57,6 @@ CapsuleRenderer::CapsuleRenderer(D3D* renderer, HWND hwnd, int _screenWidth, int
 		SCREEN_DEPTH
 	);
 
-	energyTexture = new RenderTexture(
-		renderer->getDevice(),
-		screenWidth,
-		screenHeight,
-		SCREEN_NEAR,
-		SCREEN_DEPTH
-	);
-
-	//
-
 	fullScreenMesh = new OrthoMesh(
 		renderer->getDevice(),
 		renderer->getDeviceContext(),
@@ -124,13 +114,7 @@ CapsuleRenderer::~CapsuleRenderer()
 		delete blurRenderTexture2;
 		blurRenderTexture2 = NULL;
 	}
-
-	if (energyTexture)
-	{
-		delete energyTexture;
-		energyTexture = NULL;
-	}
-
+	
 	if (fullScreenMesh)
 	{
 		delete fullScreenMesh;
@@ -163,13 +147,6 @@ void CapsuleRenderer::SetBlurParams(
 	blurQuality         = _blurQuality;
 	blurSize            = _blurSize;
 	blurFinalAdjustment = _blurFinalAdjustment;
-}
-
-void CapsuleRenderer::SetEnergyParams(
-	bool _useForBlur
-)
-{
-	energyForBlur = _useForBlur;
 }
 
 void CapsuleRenderer::Build(std::vector<AnimSegment*>* animSegs, EnergyScales energyScale)
@@ -211,45 +188,13 @@ void CapsuleRenderer::SetShaderParams(const XMMATRIX& _viewMatrix,	const XMMATRI
 	projectionMatrix = _projectionMatrix;
 }
 
-void CapsuleRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode, bool energyForBrightness)
+void CapsuleRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode, bool energyForBlur)
 {
 	XMMATRIX worldMatrix     = renderer->getWorldMatrix();
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix(); // Default camera position for orthographic rendering
 	XMMATRIX orthoMatrix     = renderer->getOrthoMatrix();   // ortho matrix for 2D rendering
 	
-	//1. Energy pass:
-	energyTexture->setRenderTarget(renderer->getDeviceContext());
-	energyTexture->clearRenderTarget(
-		renderer->getDeviceContext(),
-		1.f, 1.f, 1.f, 1.f
-	);
-
-	for (CapsuleObject* c : capsuleObjects)
-	{
-		if(ShouldBeRendered(renderMode, c))
-		{
-			// Colour is brightness, IE relative energy (0 <= e <= 1)
-			XMFLOAT4 colour = XMFLOAT4(
-				c->GetBrightness(),
-				c->GetBrightness(),
-				c->GetBrightness(),
-				1.f
-			);
-
-			mainShader->SetColour(renderer->getDeviceContext(), colour);
-			c->Render(
-				mainShader,
-				renderer,
-				viewMatrix,
-				projectionMatrix,
-				colour
-			);
-		}
-	}
-
-
-
-	//2. Render cylinders to the blur texture:
+	//1. Initial pass (capsules -> texture):
 	blurRenderTexture1->setRenderTarget(renderer->getDeviceContext());
 	blurRenderTexture1->clearRenderTarget(
 		renderer->getDeviceContext(),
@@ -263,13 +208,23 @@ void CapsuleRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRenderM
 	{
 		if (ShouldBeRendered(renderMode, c))
 		{
-			XMFLOAT4 colour = blurColour; /* DxColourLerp(
-				backgroundColour,
-				blurColour,
-				c->GetBrightness()
-			);*/
+			XMFLOAT4 colour;
+
+			if (energyForBlur)
+			{
+				colour = DxColourLerp(
+					backgroundColour,
+					blurColour,
+					c->GetBrightness()
+				);
+			}
+			else
+			{
+				colour = blurColour;
+			}
 
 			mainShader->SetColour(renderer->getDeviceContext(), colour);
+						
 			c->Render(
 				mainShader,
 				renderer,
@@ -280,7 +235,7 @@ void CapsuleRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRenderM
 		}
 	}
 
-	//3. Render blur texture for blur pass:
+	//2. Blur pass (texture -> texture):
 	blurRenderTexture2->setRenderTarget(renderer->getDeviceContext());
 	blurRenderTexture2->clearRenderTarget(
 		renderer->getDeviceContext(),
@@ -304,7 +259,6 @@ void CapsuleRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRenderM
 
 	blurShader->SetBlurParameters(
 		renderer->getDeviceContext(),
-		energyTexture,
 		blurDirections,
 		blurQuality,
 		blurSize,
@@ -316,7 +270,7 @@ void CapsuleRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRenderM
 		fullScreenMesh->getIndexCount()
 	);
 
-	//4. Render blur texture:
+	//3. Final pass (texture -> backbuffer):
 	renderer->setBackBufferRenderTarget();
 
 	fullScreenMesh->sendData(renderer->getDeviceContext());
