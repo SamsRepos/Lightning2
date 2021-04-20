@@ -3,7 +3,6 @@
 #include "Utils/MyVectorUtil.h"
 #include "Utils/DxColourLerp.h"
 #include "Maths/MyClamp.h"
-#include "Utils/EnergyToBrightness.h"
 
 ////
 // PUBLIC:
@@ -38,18 +37,13 @@ void LineRenderer::SetColours(
 	lineColour = _lineColour;
 };
 
-void LineRenderer::Build(std::vector<AnimSegment*>* animSegs, EnergyScales energyScale)
+void LineRenderer::Build(std::vector<AnimSegment*>* animSegs)
 {
 	ClearLines();
 
 	for (AnimSegment* animSeg : *animSegs)
 	{
 		LineMesh* newLine = new LineMesh(renderer->getDevice(), renderer->getDeviceContext(), animSeg);
-
-		float maxEnergy = MaxEnergy(animSegs);
-		float capsuleBrightness = EnergyToBrightness(animSeg->GetEnergy(), maxEnergy, energyScale);
-		newLine->SetBrightness(capsuleBrightness);
-
 		lines.push_back(newLine);
 	}
 }

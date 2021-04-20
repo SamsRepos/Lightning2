@@ -28,7 +28,7 @@ public:
 		float _blurFinalAdjustment
 	);
 	
-	void Build(std::vector<AnimSegment*>* animSegs, EnergyScales energyScale);
+	void Build(std::vector<AnimSegment*>* animSegs);
 
 	// Updates transforms to full size, for static rendering
 	void InitStatic();

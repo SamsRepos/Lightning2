@@ -7,8 +7,7 @@
 
 LineMesh::LineMesh(ID3D11Device* device, ID3D11DeviceContext* deviceContext, AnimSegment* _animSeg)
 	:
-	animSeg(_animSeg),
-	brightness(1.f)
+	animSeg(_animSeg)
 {
 	vertexCount = 2;
 	indexCount = 2;

@@ -2,6 +2,7 @@
 
 #include "DefaultParameters.h"
 #include "Utils/MyVectorUtil.h"
+#include "Utils/EnergyToBrightness.h"
 
 ////
 // PUBLIC:
@@ -112,9 +113,20 @@ void LightningRenderer::Build(std::vector<Segment*>* segs)
 	Segment* rootSeg = segs->front();
 
 	CreateAnimSegmentsRecurs(rootSeg, NULL, 0);
-		
-	lineRenderer->Build(&animSegments, energyScale);
-	capRenderer->Build(&animSegments, energyScale);
+	
+	float maxEnergy = MaxEnergy(&animSegments);
+
+	for (AnimSegment* animSeg : animSegments)
+	{
+		float brightness = EnergyToBrightness(animSeg->GetEnergy(), maxEnergy, energyScale);
+		animSeg->SetBrightness(brightness);
+	}
+
+	
+
+
+	lineRenderer->Build(&animSegments);
+	capRenderer->Build(&animSegments);
 }
 
 void LightningRenderer::InitAnimation()

@@ -16,8 +16,7 @@ public:
 		
 	void Init(AnimSegment* _animSeg);
 	
-	inline void SetBrightness(float _brightness) { brightness = _brightness; };
-	inline float GetBrightness() { return brightness; };
+	inline float GetBrightness() { return animSeg->GetBrightness(); };
 
 	inline bool IsVisible() { return animSeg->IsVisible(); };
 
@@ -44,9 +43,7 @@ private:
 	void BuildDomeTransforms();
 	
 	AnimSegment* animSeg;
-
-	float brightness;
-
+	
 	BaseMesh* cylinderMesh;
 	BaseMesh* domeMesh;
 	

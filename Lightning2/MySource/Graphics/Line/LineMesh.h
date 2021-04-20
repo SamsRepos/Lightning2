@@ -18,8 +18,7 @@ public:
 	LineMesh(ID3D11Device* device, ID3D11DeviceContext* deviceContext, AnimSegment* _animSeg);
 	~LineMesh();
 
-	inline void SetBrightness(float _brightness) { brightness = _brightness; };
-	inline float GetBrightness() { return brightness; };
+	inline float GetBrightness() { return animSeg->GetBrightness(); };
 
 	void sendData(LightningRenderModes renderMode, ID3D11DeviceContext* deviceContext, int line, D3D_PRIMITIVE_TOPOLOGY top = D3D_PRIMITIVE_TOPOLOGY_LINELIST);
 		
@@ -34,7 +33,5 @@ private:
 	unsigned long*		indices;
 		
 	AnimSegment* animSeg;
-
-	float brightness;
 };
 

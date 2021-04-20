@@ -28,8 +28,11 @@ public:
 	inline AnimSegment* GetChild(size_t index) { return children[index]; };
 
 	inline SegmentStatuses GetStatus() { return status; };
-	inline float GetEnergy() { return energy; };
 	inline float GetVelocity() { return velocity; };
+	inline float GetEnergy() { return energy; };
+
+	inline void SetBrightness(float _brightness) { brightness = _brightness; };
+	inline float GetBrightness() { return brightness; };
 
 	void InitAnimation();
 
@@ -38,6 +41,8 @@ public:
 private:
 	bool visible;
 	bool animatingNow;
+	
+	float diameter;
 
 	MyFloat3 startPoint;
 	MyFloat3 currentEndPoint;
@@ -46,10 +51,11 @@ private:
 	float fixedLength;
 	MyFloat3 direction;
 
-	float diameter;
+	SegmentStatuses status;
 	float velocity;
 	float energy;
-	SegmentStatuses status;
+
+	float brightness;
 
 	AnimSegment* parent;
 	std::vector<AnimSegment*> children;

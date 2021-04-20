@@ -4,7 +4,6 @@
 #include "Maths/MyMath.h"
 #include "Utils/DxColourLerp.h"
 #include "Maths/MyClamp.h"
-#include "Utils/EnergyToBrightness.h"
 
 ////
 // PUBLIC:
@@ -149,7 +148,7 @@ void CapsuleRenderer::SetBlurParams(
 	blurFinalAdjustment = _blurFinalAdjustment;
 }
 
-void CapsuleRenderer::Build(std::vector<AnimSegment*>* animSegs, EnergyScales energyScale)
+void CapsuleRenderer::Build(std::vector<AnimSegment*>* animSegs)
 {
 	ClearCapsules();
 	
@@ -157,10 +156,6 @@ void CapsuleRenderer::Build(std::vector<AnimSegment*>* animSegs, EnergyScales en
 	{
 		CapsuleObject* newCapsule = new CapsuleObject(*baseCapsule);
 		newCapsule->Init(animSeg);
-
-		float maxEnergy = MaxEnergy(animSegs);
-		float capsuleBrightness = EnergyToBrightness(animSeg->GetEnergy(), maxEnergy, energyScale);
-		newCapsule->SetBrightness(capsuleBrightness);
 
 		capsuleObjects.push_back(newCapsule);
 	}	
