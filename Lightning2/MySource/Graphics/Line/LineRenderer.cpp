@@ -1,7 +1,9 @@
 #include "LineRenderer.h"
 
 #include "Utils/MyVectorUtil.h"
+#include "Utils/DxColourLerp.h"
 #include "Maths/MyClamp.h"
+#include "Utils/EnergyToBrightness.h"
 
 ////
 // PUBLIC:
@@ -10,19 +12,13 @@
 LineRenderer::LineRenderer(D3D* renderer, HWND hwnd)
 	:
 	shader(NULL),
-	mesh(NULL)	
+	renderer(renderer)
 {
 	if (shader)
 	{
 		delete shader;
 	}
-	shader = new LineShader(renderer->getDevice(), hwnd);
-
-	if (mesh)
-	{
-		delete mesh;
-	}
-	mesh = new LineMesh(renderer->getDevice(), renderer->getDeviceContext());
+	shader = new LineShader(renderer->getDevice(), hwnd);		
 }
 
 LineRenderer::~LineRenderer()
@@ -32,24 +28,29 @@ LineRenderer::~LineRenderer()
 		delete shader;
 	}
 
-	if (mesh)
-	{
-		delete mesh;
-	}
+	ClearLines();
 }
+void LineRenderer::SetColours(
+	const XMFLOAT4& _backgroundColour,
+	const XMFLOAT4& _lineColour
+) {
+	backgroundColour = _backgroundColour;
+	lineColour = _lineColour;
+};
 
-void LineRenderer::Build(std::vector<AnimSegment*>* animSegs)
+void LineRenderer::Build(std::vector<AnimSegment*>* animSegs, EnergyScales energyScale)
 {
 	ClearLines();
 
 	for (AnimSegment* animSeg : *animSegs)
 	{
-		lines.push_back(new Line(animSeg));
-	}
-	
-	if (mesh)
-	{
-		mesh->SetLines(&lines);
+		LineMesh* newLine = new LineMesh(renderer->getDevice(), renderer->getDeviceContext(), animSeg);
+
+		float maxEnergy = MaxEnergy(animSegs);
+		float capsuleBrightness = EnergyToBrightness(animSeg->GetEnergy(), maxEnergy, energyScale);
+		newLine->SetBrightness(capsuleBrightness);
+
+		lines.push_back(newLine);
 	}
 }
 
@@ -64,13 +65,11 @@ void LineRenderer::SetShaderParams(
 	projectionMatrix = _projectionMatrix;
 }
 
-void LineRenderer::RenderLines(D3D* renderer, LightningRenderModes renderMode)
+void LineRenderer::RenderLines(D3D* renderer, LightningRenderModes renderMode, bool energyForBrightness)
 {
-	if (shader && mesh)
+	if (shader)
 	{
-		int linesToRender = int(mesh->GetLineCount());
-
-		for (int i = 0; i < linesToRender; i++)
+		for (LineMesh* line : lines)
 		{
 			shader->SetShaderParameters(
 				renderer->getDeviceContext(),
@@ -79,14 +78,27 @@ void LineRenderer::RenderLines(D3D* renderer, LightningRenderModes renderMode)
 				projectionMatrix,
 				NULL
 			);
+			if (energyForBrightness)
+			{
+				shader->SetColour(
+					renderer->getDeviceContext(),
+					DxColourLerp(
+						backgroundColour,
+						lineColour,
+						line->GetBrightness()
+					)
+				);
+			}
+			else
+			{
+				shader->SetColour(
+					renderer->getDeviceContext(),
+					lineColour
+				);
+			}
 
-			shader->SetColour(
-				renderer->getDeviceContext(),
-				lineColour
-			);
-
-			mesh->sendData(renderMode, renderer->getDeviceContext(), i);
-			shader->render(renderer->getDeviceContext(), mesh->getIndexCount());
+			line->sendData(renderMode, renderer->getDeviceContext(), 0);
+			shader->render(renderer->getDeviceContext(), line->getIndexCount());
 		}
 	}
 }

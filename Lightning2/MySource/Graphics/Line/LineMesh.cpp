@@ -1,60 +1,14 @@
 #include "LineMesh.h"
 
-//------------------------------------------------------
-// Line
-//
-// These objects are part of the LineMesh
-//------------------------------------------------------
-
-
-Line::Line(AnimSegment* _animSeg)
-	:
-	animSeg(_animSeg)
-{
-}
-
-
-XMFLOAT3 Line::GetStart()
-{
-	return XMFLOAT3(
-		animSeg->GetStartPoint().x,
-		animSeg->GetStartPoint().y,
-		animSeg->GetStartPoint().z
-	);
-}
-
-XMFLOAT3 Line::GetCurrentEnd()
-{
-	return XMFLOAT3(
-		animSeg->GetCurrentEndPoint().x,
-		animSeg->GetCurrentEndPoint().y,
-		animSeg->GetCurrentEndPoint().z
-	);
-}
-
-XMFLOAT3 Line::GetFixedEnd()
-{
-	return XMFLOAT3(
-		animSeg->GetFixedEndPoint().x,
-		animSeg->GetFixedEndPoint().y,
-		animSeg->GetFixedEndPoint().z
-	);
-}
-
-
-//------------------------------------------------------
-// LineMesh
-//
-// The mesh itself
-//------------------------------------------------------
 
 ////
 // PUBLIC:
 ////
 
-LineMesh::LineMesh(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
+LineMesh::LineMesh(ID3D11Device* device, ID3D11DeviceContext* deviceContext, AnimSegment* _animSeg)
 	:
-	lines(NULL)
+	animSeg(_animSeg),
+	brightness(1.f)
 {
 	vertexCount = 2;
 	indexCount = 2;
@@ -98,32 +52,48 @@ void LineMesh::sendData(LightningRenderModes renderMode, ID3D11DeviceContext* de
 	deviceContext->IASetPrimitiveTopology(top);
 }
 
-int LineMesh::GetLineCount() 
-{ 
-	if (lines)
-	{
-		return lines->size();
-	}
-	else
-	{
-		return 0;
-	}
-}
 
 ////
 // PRIVATE:
 ////
 
+XMFLOAT3 LineMesh::GetStart()
+{
+	return XMFLOAT3(
+		animSeg->GetStartPoint().x,
+		animSeg->GetStartPoint().y,
+		animSeg->GetStartPoint().z
+	);
+}
+
+XMFLOAT3 LineMesh::GetEnd(LightningRenderModes renderMode)
+{
+	if (renderMode == LightningRenderModes::ANIMATED)
+	{
+		return XMFLOAT3(
+			animSeg->GetCurrentEndPoint().x,
+			animSeg->GetCurrentEndPoint().y,
+			animSeg->GetCurrentEndPoint().z
+		);
+	}
+	else
+	{
+		return XMFLOAT3(
+			animSeg->GetFixedEndPoint().x,
+			animSeg->GetFixedEndPoint().y,
+			animSeg->GetFixedEndPoint().z
+		);
+	}
+	
+}
+
 // Set up the heightmap and create or update the appropriate buffers
 void LineMesh::LoadLine( ID3D11DeviceContext* deviceContext, int lineNo, LightningRenderModes renderMode) {
 	//Load the line segment into the buffer
-	Line* line = (*lines)[lineNo];
-
-	vertices[0].position = line->GetStart();
+	
+	vertices[0].position = GetStart();
 	vertices[0].texture = XMFLOAT2(0, 0);
-	vertices[1].position = renderMode == LightningRenderModes::ANIMATED ?
-		line->GetCurrentEnd() :
-		line->GetFixedEnd();
+	vertices[1].position = GetEnd(renderMode);
 	vertices[1].texture = XMFLOAT2(1, 1);
 
 	//Set up index list
@@ -177,5 +147,4 @@ void LineMesh::initBuffers(ID3D11Device* device)
 	// Create the index buffer.
 	device->CreateBuffer(&indexBufferDesc, &indexData, &indexBuffer);
 }
-
 

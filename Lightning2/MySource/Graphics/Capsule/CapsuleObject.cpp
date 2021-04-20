@@ -15,7 +15,8 @@ CapsuleObject::CapsuleObject(
 	:
 	SceneObject::SceneObject(NULL, _texture, _worldOriginTransform),
 	cylinderMesh(_cylinderMesh),
-	domeMesh(_domeMesh)
+	domeMesh(_domeMesh),
+	brightness(1.f)
 {	
 }
 

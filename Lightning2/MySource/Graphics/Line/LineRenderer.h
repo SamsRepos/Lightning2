@@ -11,24 +11,29 @@ public:
 	LineRenderer(D3D* renderer, HWND hwnd);
 	~LineRenderer();
 	
-	inline void SetColour(const XMFLOAT4& _lineColour) { lineColour = _lineColour; };
+	void SetColours(
+		const XMFLOAT4& _backgroundColour,
+		const XMFLOAT4& _lineColour
+	);
 
-	void Build(std::vector<AnimSegment*>* animSegs);
-	
+	void Build(std::vector<AnimSegment*>* animSegs, EnergyScales energyScale);
+			
 	void SetShaderParams(const XMMATRIX& _worldMatrix, const XMMATRIX& _viewMatrix, const XMMATRIX& _projectionMatrix);
-	void RenderLines(D3D* renderer, LightningRenderModes renderMode);
+	void RenderLines(D3D* renderer, LightningRenderModes renderMode, bool energyForBrightness);
 	
 	void ClearLines();
 
 private:
 	
-	std::vector<Line*> lines;
+	std::vector<LineMesh*> lines;
 
 	LineShader* shader;
-	LineMesh* mesh;
-	
-	XMFLOAT4 lineColour;
 
+	D3D* renderer;
+		
+	XMFLOAT4 backgroundColour;
+	XMFLOAT4 lineColour;
+	
 	XMMATRIX worldMatrix;
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;

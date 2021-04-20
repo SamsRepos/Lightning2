@@ -208,6 +208,7 @@
     <ClCompile Include="MySource\Shaders\TextureShader.cpp" />
     <ClCompile Include="MySource\Utils\DebugCsvWriter.cpp" />
     <ClCompile Include="MySource\Utils\DxColourLerp.cpp" />
+    <ClCompile Include="MySource\Utils\EnergyToBrightness.cpp" />
     <ClCompile Include="MySource\Utils\MyGuiUtil.cpp" />
     <ClCompile Include="MySource\Utils\MyInputUtil.cpp" />
     <ClCompile Include="MySource\Utils\SegmentRemoval.cpp" />
@@ -258,6 +259,7 @@
     <ClInclude Include="MySource\Shaders\TextureShader.h" />
     <ClInclude Include="MySource\Utils\DebugCsvWriter.h" />
     <ClInclude Include="MySource\Utils\DxColourLerp.h" />
+    <ClInclude Include="MySource\Utils\EnergyToBrightness.h" />
     <ClInclude Include="MySource\Utils\MyGuiUtil.h" />
     <ClInclude Include="MySource\Utils\MyInputUtil.h" />
     <ClInclude Include="MySource\Utils\MyVectorUtil.h" />

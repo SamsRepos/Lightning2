@@ -4,6 +4,7 @@
 #include "Maths/MyMath.h"
 #include "Utils/DxColourLerp.h"
 #include "Maths/MyClamp.h"
+#include "Utils/EnergyToBrightness.h"
 
 ////
 // PUBLIC:
@@ -165,17 +166,13 @@ void CapsuleRenderer::SetBlurParams(
 }
 
 void CapsuleRenderer::SetEnergyParams(
-	EnergyScales _energyScale,
-	bool _useForBlur,
-	bool _useForBrightness
+	bool _useForBlur
 )
 {
-	energyScale = _energyScale;
 	energyForBlur = _useForBlur;
-	energyForBrightness = _useForBrightness;
 }
 
-void CapsuleRenderer::Build(std::vector<AnimSegment*>* animSegs)
+void CapsuleRenderer::Build(std::vector<AnimSegment*>* animSegs, EnergyScales energyScale)
 {
 	ClearCapsules();
 	
@@ -185,37 +182,7 @@ void CapsuleRenderer::Build(std::vector<AnimSegment*>* animSegs)
 		newCapsule->Init(animSeg);
 
 		float maxEnergy = MaxEnergy(animSegs);
-		
-		float capsuleBrightness;
-
-		switch (energyScale)
-		{
-		case(EnergyScales::LINEAR):
-			capsuleBrightness = (animSeg->GetEnergy() / maxEnergy);
-			break;
-		case(EnergyScales::LN):
-		{
-			float maxEnergyLogE = log(maxEnergy);
-			capsuleBrightness = log(animSeg->GetEnergy()) / maxEnergyLogE;
-		}
-			break;
-		case(EnergyScales::LOG_10):
-		{
-			float maxEnergyLog10 = log10(maxEnergy);
-			capsuleBrightness = log10(animSeg->GetEnergy()) / maxEnergyLog10;
-		}
-			break;
-		default:
-			capsuleBrightness = 1.f;
-			break;
-		}
-
-		capsuleBrightness = MyClamp(
-			capsuleBrightness,
-			0.f,
-			1.f
-		);
-		
+		float capsuleBrightness = EnergyToBrightness(animSeg->GetEnergy(), maxEnergy, energyScale);
 		newCapsule->SetBrightness(capsuleBrightness);
 
 		capsuleObjects.push_back(newCapsule);
@@ -244,7 +211,7 @@ void CapsuleRenderer::SetShaderParams(const XMMATRIX& _viewMatrix,	const XMMATRI
 	projectionMatrix = _projectionMatrix;
 }
 
-void CapsuleRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode)
+void CapsuleRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode, bool energyForBrightness)
 {
 	XMMATRIX worldMatrix     = renderer->getWorldMatrix();
 	XMMATRIX orthoViewMatrix = camera->getOrthoViewMatrix(); // Default camera position for orthographic rendering
@@ -365,7 +332,7 @@ void CapsuleRenderer::RenderBlur(D3D* renderer, Camera* camera, LightningRenderM
 	renderer->setZBuffer(true);
 }
 
-void CapsuleRenderer::RenderCapsules(D3D* renderer, LightningRenderModes renderMode)
+void CapsuleRenderer::RenderCapsules(D3D* renderer, LightningRenderModes renderMode, bool energyForBrightness)
 {
 	for (CapsuleObject* c : capsuleObjects)
 	{
@@ -402,21 +369,4 @@ void CapsuleRenderer::RenderCapsules(D3D* renderer, LightningRenderModes renderM
 void CapsuleRenderer::ClearCapsules()
 {
 	DeleteAllVectorData(&capsuleObjects);
-}
-
-////
-// PRIVATE:
-////
-
-float CapsuleRenderer::MaxEnergy(std::vector<AnimSegment*>* animSegs)
-{
-	float maxEnergy = 0.f;
-	for (AnimSegment* animSeg : *animSegs)
-	{
-		if (animSeg->GetEnergy() > maxEnergy)
-		{
-			maxEnergy = animSeg->GetEnergy();
-		}
-	}
-	return maxEnergy;
 }

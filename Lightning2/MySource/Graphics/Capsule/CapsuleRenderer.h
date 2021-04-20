@@ -7,8 +7,8 @@
 #include "Shaders/BlurShader.h"
 #include "Shaders/TextureShader.h"
 #include "../AnimSegment.h"
-#include "../RenderSettings.h"
 
+#include "../RenderSettings.h"
 class CapsuleRenderer
 {
 public:
@@ -29,12 +29,10 @@ public:
 	);
 
 	void SetEnergyParams(
-		EnergyScales _energyScale,
-		bool _useForBlur,
-		bool _useForBrightness
+		bool _useForBlur
 	);
 
-	void Build(std::vector<AnimSegment*>* animSegs);
+	void Build(std::vector<AnimSegment*>* animSegs, EnergyScales energyScale);
 
 	// Updates transforms to full size, for static rendering
 	void InitStatic();
@@ -43,13 +41,12 @@ public:
 	void UpdateFromAnimation();
 
 	void SetShaderParams(const XMMATRIX& _viewMatrix, const XMMATRIX& _projectionMatrix);
-	void RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode);
-	void RenderCapsules(D3D* renderer, LightningRenderModes renderMode);
+	void RenderBlur(D3D* renderer, Camera* camera, LightningRenderModes renderMode, bool energyForBrightness);
+	void RenderCapsules(D3D* renderer, LightningRenderModes renderMode, bool energyForBrightness);
 	
 	void ClearCapsules();
 
 private:
-	float MaxEnergy(std::vector<AnimSegment*>* animSegs);
 	
 	inline bool ShouldBeRendered(LightningRenderModes renderMode, CapsuleObject* c) {
 		return ((renderMode == LightningRenderModes::ANIMATED) && c->IsVisible()) ||
@@ -84,9 +81,7 @@ private:
 	float blurSize;
 	float blurFinalAdjustment;
 
-	EnergyScales energyScale;
 	bool energyForBlur;
-	bool energyForBrightness;
 	
 	XMMATRIX viewMatrix;
 	XMMATRIX projectionMatrix;

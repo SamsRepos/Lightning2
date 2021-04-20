@@ -81,6 +81,9 @@ private:
 	bool lineRenderingActive;
 	bool capsuleRenderingActive;
 	
+	EnergyScales energyScale;
+	bool energyForBrightness;
+
 	bool animatingNow;
 	float animationSpeed;
 

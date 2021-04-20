@@ -8,48 +8,33 @@
 #include "Maths/MyLerp.h"
 #include "Maths/MyClamp.h"
 
-//NB. These classes were built on code provided in CMP305
-
-////
-// Line
-////
-
-class Line {
-public:
-	Line(AnimSegment* _animSeg);
-	
-	XMFLOAT3 GetStart();
-	XMFLOAT3 GetCurrentEnd();
-	XMFLOAT3 GetFixedEnd();
-	
-private:
-	AnimSegment* animSeg;
-};
-
-////
-// LineMesh
-////
+//NB. This class was built on code provided in CMP305
 
 class LineMesh :
 	public BaseMesh
 {
 public:
 	
-	LineMesh(ID3D11Device* device, ID3D11DeviceContext* deviceContext);
+	LineMesh(ID3D11Device* device, ID3D11DeviceContext* deviceContext, AnimSegment* _animSeg);
 	~LineMesh();
 
+	inline void SetBrightness(float _brightness) { brightness = _brightness; };
+	inline float GetBrightness() { return brightness; };
+
 	void sendData(LightningRenderModes renderMode, ID3D11DeviceContext* deviceContext, int line, D3D_PRIMITIVE_TOPOLOGY top = D3D_PRIMITIVE_TOPOLOGY_LINELIST);
-					
-	//Line manipulation
-	inline void SetLines(std::vector<Line*>* _lines) { lines = _lines; };
-	int GetLineCount();
-	
-private:
-	VertexType*			vertices;
-	unsigned long*		indices;
-	std::vector<Line*>*	lines;
 		
+private:
+	XMFLOAT3 GetStart();
+	XMFLOAT3 GetEnd(LightningRenderModes renderMode);
+
 	void	initBuffers(ID3D11Device* device);
 	void	LoadLine(ID3D11DeviceContext* deviceContext, int lineNo, LightningRenderModes renderMode);
+
+	VertexType*			vertices;
+	unsigned long*		indices;
+		
+	AnimSegment* animSeg;
+
+	float brightness;
 };
 

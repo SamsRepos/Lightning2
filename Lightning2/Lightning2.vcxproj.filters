@@ -213,6 +213,9 @@
     <ClCompile Include="MySource\Shaders\MyBaseShader.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="MySource\Utils\EnergyToBrightness.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MySource\App1.h">
@@ -361,6 +364,9 @@
     </ClInclude>
     <ClInclude Include="MySource\Shaders\MyBaseShader.h">
       <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="MySource\Utils\EnergyToBrightness.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -58,7 +58,10 @@ void LightningRenderer::SetColours(
 	const XMFLOAT4& cylinderColour
 )
 {
-	lineRenderer->SetColour(lineColour);
+	lineRenderer->SetColours(
+		backgroundColour,
+		lineColour
+	);
 
 	capRenderer->SetColours(
 		backgroundColour,
@@ -95,10 +98,11 @@ void LightningRenderer::SetEnergyParams(
 	bool usedForBrightness
 )
 {
+	energyScale = scale;
+	energyForBrightness = usedForBrightness;
+
 	capRenderer->SetEnergyParams(
-		scale, 
-		usedForBlur,
-		usedForBrightness
+		usedForBlur
 	);
 }
 
@@ -112,8 +116,8 @@ void LightningRenderer::Build(std::vector<Segment*>* segs)
 
 	CreateAnimSegmentsRecurs(rootSeg, NULL, 0);
 		
-	lineRenderer->Build(&animSegments);
-	capRenderer->Build(&animSegments);
+	lineRenderer->Build(&animSegments, energyScale);
+	capRenderer->Build(&animSegments, energyScale);
 }
 
 void LightningRenderer::InitAnimation()
@@ -158,18 +162,18 @@ void LightningRenderer::Render(
 
 	if (blurRenderingActive)
 	{
-		capRenderer->RenderBlur(renderer, camera, renderMode);
+		capRenderer->RenderBlur(renderer, camera, renderMode, energyForBrightness);
 	}
 
 	if (lineRenderingActive)
 	{
 		lineRenderer->SetShaderParams(worldMatrix, viewMatrix, projMatrix);
-		lineRenderer->RenderLines(renderer, renderMode);
+		lineRenderer->RenderLines(renderer, renderMode, energyForBrightness);
 	}
 
 	if (capsuleRenderingActive)
 	{
-		capRenderer->RenderCapsules(renderer, renderMode);
+		capRenderer->RenderCapsules(renderer, renderMode, energyForBrightness);
 	}
 }
 
