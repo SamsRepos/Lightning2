@@ -7,13 +7,13 @@
 
 #include "PipelineMgr.h"
 #include "PerformanceTools/MyTimer.h"
-#include "PerformanceTools/MyMemoryMeasurer.h"
 
 typedef std::unique_lock<std::mutex> UL;
 typedef std::stringstream SS;
 
 enum TestTypes
 {
+	STREAMER_VS_JITTERFORK,
 	STREAMER_LAYERS,
 	ELECTRIFIER_BY_GEN_TYPE
 };
@@ -41,7 +41,9 @@ private:
 
 	void InitOfstream(std::ofstream* stream);
 
-	void TestStreamerVsJitterfork(std::string fileName = "streamerVsJitter.csv");
+	void TestObjectSizes(std::string fileName = "objectSizes.csv");
+
+	void TestStreamerVsJitterfork(std::string fileName = "streamerVsJitterFork.csv");
 
 	void TestStreamerLayers(std::string fileName = "streamerLayers.csv");
 
@@ -87,7 +89,6 @@ private:
 	PipelineMgrDefaultSettings defaultSettings;
 
 	MyTimer timer;
-	MyMemoryMeasurer segmentMeasurer;
 
 	int iterationsPerTest;
 	int iterationsDone;

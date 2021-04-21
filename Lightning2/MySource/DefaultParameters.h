@@ -49,7 +49,7 @@ const MyFloat3 DEFAULT_WT_END_POINT   = MyFloat3(0.f, 0.f, 0.f);
 const float  DEFAULT_B_INITIAL_DIAMETER      = .2f;
 const float  DEFAULT_B_DIAMETER_SCALEDOWN    = .5f;
 const float  DEFUALT_B_ANIMATION_TIME        = .5f;
-const size_t DEFAULT_B_MAX_NUM_BRANCH_LEVELS = 4;
+const size_t DEFAULT_B_MAX_NUM_BRANCH_LEVELS = 3;
 
 // Electrifier
 const float DEFAULT_E_MAX_SEG_LENGTH = 1.f;

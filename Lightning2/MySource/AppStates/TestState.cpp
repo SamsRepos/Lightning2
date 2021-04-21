@@ -51,7 +51,8 @@ void TestState::Init()
 	iterationsDone    = 0;
 	testRunning       = false;
 
-	segmentMeasurer.SetObjectSize(sizeof(Segment));
+	// Quickly saves all object sizes:
+	TestObjectSizes();
 }
 
 void TestState::Update(float _dt)
@@ -86,17 +87,23 @@ void TestState::Gui()
 	{
 		ImGui::InputInt("Iterations Per Test", &iterationsPerTest);
 
-		if (ImGui::Button("Run Streamer Layers Test"))
+		ImGui::Text("RUN A TEST:");
+
+		if (ImGui::Button("Streamer Vs Jitter+Fork"))
+		{
+			currentTest = TestTypes::STREAMER_VS_JITTERFORK;
+			testCv.notify_all();
+		}
+		if (ImGui::Button("Streamer Layers"))
 		{
 			currentTest = TestTypes::STREAMER_LAYERS;
 			testCv.notify_all();
 		}
-		if (ImGui::Button("Run Electrifier Test"))
+		if (ImGui::Button("Electrifier"))
 		{
 			currentTest = TestTypes::ELECTRIFIER_BY_GEN_TYPE;
 			testCv.notify_all();
 		}
-
 	}
 
 	ImGui::End();
@@ -210,6 +217,9 @@ void TestState::ThreadFunction()
 		//RUNNING TESTS:
 		switch (currentTest)
 		{
+		case(TestTypes::STREAMER_VS_JITTERFORK):
+			TestStreamerVsJitterfork();
+			break;
 		case(TestTypes::STREAMER_LAYERS):
 			TestStreamerLayers();
 			break;
@@ -234,8 +244,198 @@ void TestState::InitOfstream(std::ofstream* stream)
 	(*stream) << "ITS PER TEST: " << iterationsPerTest << '\n' << '\n';
 }
 
+void TestState::TestObjectSizes(std::string fileName)
+{
+	std::ofstream outFile(FilePath(fileName).c_str());
+	InitOfstream(&outFile);
+		
+	outFile << "(Bytes), \n";
+	
+	size_t segmentSize = sizeof(Segment);
+	outFile << "Segment:, " << segmentSize << ", \n";
+
+	size_t capsuleSize = sizeof(CapsuleObject);
+	outFile << "CapsuleObject:, " << capsuleSize << ", \n";
+	
+	size_t lineMeshSize = sizeof(LineMesh);
+	outFile << "LineMesh:, " << lineMeshSize << ", \n";
+
+	size_t animSegSize = sizeof(AnimSegment);
+	outFile << "AnimSegment:, " << animSegSize << ", \n";
+
+	outFile << "\n";
+
+	size_t totalRenderSize = capsuleSize + lineMeshSize + animSegSize;
+	outFile << "Rendering Total:, " << totalRenderSize << ", \n";
+
+	outFile << "\n";
+
+	size_t totalSize = totalRenderSize + segmentSize;
+	outFile << "Total:, " << totalSize << ", \n";	
+}
+
 void TestState::TestStreamerVsJitterfork(std::string fileName)
 {
+	std::ofstream outFile(FilePath(fileName).c_str());
+	InitOfstream(&outFile);
+
+	int streamerMaxLayers = 8;
+
+	outFile << "Streamer max layers:, " << streamerMaxLayers << "\n";
+	outFile << "\n";
+
+	//outFile << "GEN: JITTER + FORK,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER  ,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER,      ,            ,   ,    , , \n";
+	//outFile << "NO TRANSFORMERS   ,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , NO TRANSFORMERS,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , TRANSFORMERS:, WHOLE, BRANCHIFIER,   ,    , , \n";
+	//outFile << "TIME(MS)          ,   ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(MS)       ,   ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(MS)     ,      ,            ,   ,    , , NUM SEGMENTS, \n";
+	//outFile << "MIN               , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN            , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN          , Q1   , MEDIAN     , Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, \n";
+	
+	// Jitter + Fork
+	{
+		std::vector<float> timeSamples;
+		std::vector<size_t> numSegmentsSamples;
+
+		pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::JITTER_FORK);
+
+		for (size_t i = 0; i < iterationsPerTest; i++)
+		{
+			//updating info for the gui:
+			{
+				UL lock(infoMutex);
+				currentTestInfo.clear();
+				{
+					SS ss;
+					ss << "JITTER+FORK: " << i+1 << " of " << iterationsPerTest;
+					currentTestInfo.push_back(ss.str());
+				}
+
+				// Test may have been cancelled in GUI
+				if (!testRunning)
+				{
+					return;
+				}
+			}
+
+			timer.Start();
+				pipelineMgr->RunProcess();
+			timer.Stop();
+
+			timeSamples.push_back(timer.GetDurationMs());
+			numSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
+		}
+
+		SortVector(&timeSamples);
+		SortVector(&numSegmentsSamples);
+
+		outFile << "GEN: JITTER+FORK, \n";
+		outFile << "TRANSFORMS:, NONE, \n";
+		outFile << "         , MIN , Q1, MEDIAN, Q3, MAX, \n";
+		outFile << "TIME(MS):, " << Min(timeSamples) << ", " << Q1(timeSamples) << ", " << Median(timeSamples) << ", " << Q3(timeSamples) << ", " << Max(timeSamples) << ", \n";
+		outFile << "NUM SEGMENTS:, " << Min(numSegmentsSamples) << ", " << Q1(numSegmentsSamples) << ", " << Median(numSegmentsSamples) << ", " << Q3(numSegmentsSamples) << ", " << Max(numSegmentsSamples) << ", \n";		
+
+	}
+
+	// Streamer - no transforms
+	{
+		std::vector<float> timeSamples;
+		std::vector<size_t> numSegmentsSamples;
+
+		pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::STREAMER);
+		pipelineMgr->InitStreamerGenerator(
+			DEFAULT_SG_START_PT,
+			DEFAULT_SG_INITIAL_DIRECTION,
+			DEFAULT_SG_VOLTAGE,
+			DEFAULT_SG_INITIAL_PRESSURE,
+			DEFAULT_SG_PRESSURE_GRADIENT,
+			streamerMaxLayers,
+			ANGLE_FIX_OPTIONS.at(DEFAULT_SG_ANGLE_FIX),
+			GAS_COMPOSITION_OPTIONS.at(DEFAULT_SG_GAS_COMPOSITION)
+		);
+
+		for (size_t i = 0; i < iterationsPerTest; i++)
+		{
+			//updating info for the gui:
+			{
+				UL lock(infoMutex);
+				currentTestInfo.clear();
+				{
+					SS ss;
+					ss << "STREAMER (NO TRANSFORMS): " << i + 1 << " of " << iterationsPerTest;
+					currentTestInfo.push_back(ss.str());
+				}
+
+				// Test may have been cancelled in GUI
+				if (!testRunning)
+				{
+					return;
+				}
+			}
+
+			timer.Start();
+				pipelineMgr->RunProcess();
+			timer.Stop();
+
+			timeSamples.push_back(timer.GetDurationMs());
+			numSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
+		}
+
+		SortVector(&timeSamples);
+		SortVector(&numSegmentsSamples);
+
+		outFile << "GEN: STREAMER, \n";
+		outFile << "TRANSFORMS:, NONE, \n";
+		outFile << "         , MIN , Q1, MEDIAN, Q3, MAX, \n";
+		outFile << "TIME(MS):, " << Min(timeSamples) << ", " << Q1(timeSamples) << ", " << Median(timeSamples) << ", " << Q3(timeSamples) << ", " << Max(timeSamples) << ", \n";
+		outFile << "NUM SEGMENTS:, " << Min(numSegmentsSamples) << ", " << Q1(numSegmentsSamples) << ", " << Median(numSegmentsSamples) << ", " << Q3(numSegmentsSamples) << ", " << Max(numSegmentsSamples) << ", \n";
+
+	}
+	
+	// Streamer - with transforms
+	{
+		std::vector<float> timeSamples;
+		std::vector<size_t> numSegmentsSamples;
+
+		pipelineMgr->SetWholeTransformerActive(true);
+		pipelineMgr->SetBranchifierActive(true);
+
+		for (size_t i = 0; i < iterationsPerTest; i++)
+		{
+			//updating info for the gui:
+			{
+				UL lock(infoMutex);
+				currentTestInfo.clear();
+				{
+					SS ss;
+					ss << "STREAMER (NO TRANSFORMS): " << i + 1 << " of " << iterationsPerTest;
+					currentTestInfo.push_back(ss.str());
+				}
+
+				// Test may have been cancelled in GUI
+				if (!testRunning)
+				{
+					return;
+				}
+			}
+
+			timer.Start();
+			pipelineMgr->RunProcess();
+			timer.Stop();
+
+			timeSamples.push_back(timer.GetDurationMs());
+			numSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
+		}
+
+		SortVector(&timeSamples);
+		SortVector(&numSegmentsSamples);
+
+		outFile << "GEN: STREAMER, \n";
+		outFile << "TRANSFORMS:, WHOLE, BRANCHIFIER, \n";
+		outFile << "         , MIN , Q1, MEDIAN, Q3, MAX, \n";
+		outFile << "TIME(MS):, " << Min(timeSamples) << ", " << Q1(timeSamples) << ", " << Median(timeSamples) << ", " << Q3(timeSamples) << ", " << Max(timeSamples) << ", \n";
+		outFile << "NUM SEGMENTS:, " << Min(numSegmentsSamples) << ", " << Q1(numSegmentsSamples) << ", " << Median(numSegmentsSamples) << ", " << Q3(numSegmentsSamples) << ", " << Max(numSegmentsSamples) << ", \n";
+		outFile << "\n";
+
+	}
+
 
 }
 
@@ -323,13 +523,13 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 	outFile << "           , , , MIN                , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN                , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN                                       , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , \n";
 	
 	std::vector<float> jitterforkTimeSamples;
-	std::vector<size_t>jitterforkNumSegmentsSamples;
+	std::vector<size_t> jitterforkNumSegmentsSamples;
 
-	std::vector<float> streanerWithoutCullTimeSamples;
-	std::vector<size_t>streamerWithoutCullNumSegmentsSamples;
+	std::vector<float> streamerWithoutCullTimeSamples;
+	std::vector<size_t> streamerWithoutCullNumSegmentsSamples;
 
-	std::vector<float> streanerWithCullTimeSamples;
-	std::vector<size_t>streamerWithCullNumSegmentsSamples;
+	std::vector<float> streamerWithCullTimeSamples;
+	std::vector<size_t> streamerWithCullNumSegmentsSamples;
 
 	pipelineMgr->SetElectifierActive(true);
 
@@ -398,7 +598,7 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 				pipelineMgr->RunProcess();
 			timer.Stop();
 
-			streanerWithoutCullTimeSamples.push_back(timer.GetDurationMs());
+			streamerWithoutCullTimeSamples.push_back(timer.GetDurationMs());
 			streamerWithoutCullNumSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
 			
 			// STREAMER (BRANCHIFIER ON):
@@ -408,17 +608,17 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 				pipelineMgr->RunProcess();
 			timer.Stop();
 			
-			streanerWithCullTimeSamples.push_back(timer.GetDurationMs());
+			streamerWithCullTimeSamples.push_back(timer.GetDurationMs());
 			streamerWithCullNumSegmentsSamples.push_back(timer.GetDurationMs());
 		}
 
 		SortVector(&jitterforkTimeSamples);
 		SortVector(&jitterforkNumSegmentsSamples);
 
-		SortVector(&streanerWithoutCullTimeSamples);
+		SortVector(&streamerWithoutCullTimeSamples);
 		SortVector(&streamerWithoutCullNumSegmentsSamples);
 
-		SortVector(&streanerWithCullTimeSamples);
+		SortVector(&streamerWithCullTimeSamples);
 		SortVector(&streamerWithCullNumSegmentsSamples);
 		
 		outFile << maxSegLength << ", ";
@@ -427,11 +627,11 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 			outFile << ", ";
 			outFile << Min(jitterforkNumSegmentsSamples) << ", " << Q1(jitterforkNumSegmentsSamples) << ", " << Median(jitterforkNumSegmentsSamples) << ", " << Q3(jitterforkNumSegmentsSamples) << ", " << Max(jitterforkNumSegmentsSamples) << ", ";
 		outFile << ", , ";
-			outFile << Min(streanerWithoutCullTimeSamples) << ", " << Q1(streanerWithoutCullTimeSamples) << ", " << Median(streanerWithoutCullTimeSamples) << ", " << Q3(streanerWithoutCullTimeSamples) << ", " << Max(streanerWithoutCullTimeSamples) << ", ";
+			outFile << Min(streamerWithoutCullTimeSamples) << ", " << Q1(streamerWithoutCullTimeSamples) << ", " << Median(streamerWithoutCullTimeSamples) << ", " << Q3(streamerWithoutCullTimeSamples) << ", " << Max(streamerWithoutCullTimeSamples) << ", ";
 			outFile << ", ";
 			outFile << Min(streamerWithoutCullNumSegmentsSamples) << ", " << Q1(streamerWithoutCullNumSegmentsSamples) << ", " << Median(streamerWithoutCullNumSegmentsSamples) << ", " << Q3(streamerWithoutCullNumSegmentsSamples) << ", " << Max(streamerWithoutCullNumSegmentsSamples) << ", ";
 		outFile << ", , ";
-			outFile << Min(streanerWithCullTimeSamples) << ", " << Q1(streanerWithCullTimeSamples) << ", " << Median(streanerWithCullTimeSamples) << ", " << Q3(streanerWithCullTimeSamples) << ", " << Max(streanerWithCullTimeSamples) << ", ";
+			outFile << Min(streamerWithCullTimeSamples) << ", " << Q1(streamerWithCullTimeSamples) << ", " << Median(streamerWithCullTimeSamples) << ", " << Q3(streamerWithCullTimeSamples) << ", " << Max(streamerWithCullTimeSamples) << ", ";
 			outFile << ", ";
 			outFile << Min(streamerWithCullNumSegmentsSamples) << ", " << Q1(streamerWithCullNumSegmentsSamples) << ", " << Median(streamerWithCullNumSegmentsSamples) << ", " << Q3(streamerWithCullNumSegmentsSamples) << ", " << Max(streamerWithCullNumSegmentsSamples) << ", ";
 		outFile << '\n';
