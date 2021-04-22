@@ -546,12 +546,26 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 	std::ofstream outFile(FilePath(fileName).c_str());
 	InitOfstream(&outFile);
 	
-	int branchCullingAmt = 4;
+	int jfgIterations = 6;
+	int streamerNoTransMaxLayers = 7;
+	int streamerTransMaxLayers = 8;
 
-	outFile << "           , , , GEN: JITTER + FORK ,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER      ,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER                             , \n";
-	outFile << "           , , , BRANCH CULLING: OFF,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , BRANCH CULLING: OFF,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , BRANCH CULLING: " << branchCullingAmt << ", \n";
-	outFile << "MAX SEG LEN, , , TIME(microsecs)    ,   ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(microsecs)    ,   ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(microsecs)                           ,   ,       ,   ,    , , NUM SEGMENTS, \n";
-	outFile << "           , , , MIN                , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN                , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN                                       , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , \n";
+	pipelineMgr->InitJitterForkGenerator(
+		DEFAULT_JFG_START_PT,
+		DEFAULT_JFG_END_PT,
+		jfgIterations,
+		DEFAULT_JFG_CHAOS_MEAN,
+		DEFAULT_JFG_CHAOS_STDDEV,
+		DEFAULT_JFG_MIDPOINT_STDDEV,
+		DEFAULT_JFG_BASELINE_FORK_PROB,
+		DEFAULT_JFG_FORK_PROB_SCALEDOWN
+	);
+
+	outFile << "           , , , GEN: JITTER + FORK ,                       ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER    ,                                  ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER    , \n";
+	outFile << "           , , , OTHER TRANSFORMS:  , NONE                  ,       ,   ,    , ,             ,   ,       ,   ,    , , , OTHER TRANSFORMS:, NONE                             ,       ,   ,    , ,             ,   ,       ,   ,    , , , OTHER TRANSFORMS:, WHOLE                          , BRANCHIFIER, \n";
+	outFile << "           , , , ITERATIONS:        ," << jfgIterations << ",       ,   ,    , ,             ,   ,       ,   ,    , , , MAX LAYERS:      ," << streamerNoTransMaxLayers << ",       ,   ,    , ,             ,   ,       ,   ,    , , , MAX LAYERS:      ," << streamerTransMaxLayers << ", WHOLE, BRANCHIFIER, \n";
+	outFile << "MAX SEG LEN, , , TIME(microsecs)    ,                       ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(microsecs)  ,                                  ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(microsecs)  ,                                ,            ,   ,    , , NUM SEGMENTS, \n";
+	outFile << "           , , , MIN                , Q1                    , MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN              , Q1                               , MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN              , Q1                             , MEDIAN     , Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, \n";
 	
 	std::vector<float> jitterforkTimeSamples;
 	std::vector<size_t> jitterforkNumSegmentsSamples;
@@ -563,14 +577,7 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 	std::vector<size_t> streamerWithCullNumSegmentsSamples;
 
 	pipelineMgr->SetElectifierActive(true);
-
-	pipelineMgr->InitBranchifier(
-		DEFAULT_B_INITIAL_DIAMETER,
-		DEFAULT_B_DIAMETER_SCALEDOWN,
-		DEFUALT_B_ANIMATION_TIME,
-		branchCullingAmt
-	);
-
+	
 	int numSamples = 20;
 	float delta = (E_MAX_MAX_SEG_LENGTH - E_MIN_MAX_SEG_LENGTH) / float(numSamples);	
 
@@ -612,6 +619,7 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 				}
 			}
 			
+			pipelineMgr->SetWholeTransformerActive(false);
 			pipelineMgr->SetBranchifierActive(false);
 
 			// JITTER-FORK:
@@ -623,7 +631,19 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 			jitterforkTimeSamples.push_back(timer.GetDurationMicroseconds());
 			jitterforkNumSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
 
-			// STREAMER (BRANCHIFIER OFF):
+			// STREAMER (FURTHER TRANSFORMS OFF):
+
+			pipelineMgr->InitStreamerGenerator(
+				DEFAULT_SG_START_PT,
+				DEFAULT_SG_INITIAL_DIRECTION,
+				DEFAULT_SG_VOLTAGE,
+				DEFAULT_SG_INITIAL_PRESSURE,
+				DEFAULT_SG_PRESSURE_GRADIENT,
+				streamerNoTransMaxLayers,
+				ANGLE_FIX_OPTIONS.at(DEFAULT_SG_ANGLE_FIX),
+				GAS_COMPOSITION_OPTIONS.at(DEFAULT_SG_GAS_COMPOSITION)
+			);
+
 			pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::STREAMER);
 			timer.Start();
 				pipelineMgr->RunProcess();
@@ -632,8 +652,20 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 			streamerWithoutCullTimeSamples.push_back(timer.GetDurationMicroseconds());
 			streamerWithoutCullNumSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
 			
-			// STREAMER (BRANCHIFIER ON):
+			// STREAMER (WHOLE TRANSFORMER AND BRANCHIFIER ON):
 			pipelineMgr->SetBranchifierActive(true);
+			pipelineMgr->SetWholeTransformerActive(true);
+
+			pipelineMgr->InitStreamerGenerator(
+				DEFAULT_SG_START_PT,
+				DEFAULT_SG_INITIAL_DIRECTION,
+				DEFAULT_SG_VOLTAGE,
+				DEFAULT_SG_INITIAL_PRESSURE,
+				DEFAULT_SG_PRESSURE_GRADIENT,
+				streamerTransMaxLayers,
+				ANGLE_FIX_OPTIONS.at(DEFAULT_SG_ANGLE_FIX),
+				GAS_COMPOSITION_OPTIONS.at(DEFAULT_SG_GAS_COMPOSITION)
+			);
 
 			timer.Start();
 				pipelineMgr->RunProcess();
