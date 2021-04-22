@@ -278,19 +278,29 @@ void TestState::TestStreamerVsJitterfork(std::string fileName)
 {
 	std::ofstream outFile(FilePath(fileName).c_str());
 	InitOfstream(&outFile);
+		
 
-	int streamerMaxLayers = 8;
-
-	outFile << "Streamer max layers:, " << streamerMaxLayers << "\n";
-	outFile << "\n";
-
-	//outFile << "GEN: JITTER + FORK,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER  ,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER,      ,            ,   ,    , , \n";
-	//outFile << "NO TRANSFORMERS   ,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , NO TRANSFORMERS,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , TRANSFORMERS:, WHOLE, BRANCHIFIER,   ,    , , \n";
-	//outFile << "TIME(MS)          ,   ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(MS)       ,   ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(MS)     ,      ,            ,   ,    , , NUM SEGMENTS, \n";
-	//outFile << "MIN               , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN            , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN          , Q1   , MEDIAN     , Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, \n";
-	
 	// Jitter + Fork
 	{
+		outFile << "GEN: JITTER+FORK, \n";
+		outFile << "TRANSFORMS:, NONE, \n";
+
+		int iterations = 6;
+
+		outFile << "ITERATIONS:, " << iterations << "\n";
+		outFile << "\n";
+
+		pipelineMgr->InitJitterForkGenerator(
+			DEFAULT_JFG_START_PT,
+			DEFAULT_JFG_END_PT,
+			iterations,
+			DEFAULT_JFG_CHAOS_MEAN,
+			DEFAULT_JFG_CHAOS_STDDEV,
+			DEFAULT_JFG_MIDPOINT_STDDEV,
+			DEFAULT_JFG_BASELINE_FORK_PROB,
+			DEFAULT_JFG_FORK_PROB_SCALEDOWN
+		);
+
 		std::vector<float> timeSamples;
 		std::vector<size_t> numSegmentsSamples;
 
@@ -319,38 +329,46 @@ void TestState::TestStreamerVsJitterfork(std::string fileName)
 				pipelineMgr->RunProcess();
 			timer.Stop();
 
-			timeSamples.push_back(timer.GetDurationMs());
+			timeSamples.push_back(timer.GetDurationMicroseconds());
 			numSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
 		}
 
 		SortVector(&timeSamples);
 		SortVector(&numSegmentsSamples);
-
-		outFile << "GEN: JITTER+FORK, \n";
-		outFile << "TRANSFORMS:, NONE, \n";
-		outFile << "         , MIN , Q1, MEDIAN, Q3, MAX, \n";
-		outFile << "TIME(MS):, " << Min(timeSamples) << ", " << Q1(timeSamples) << ", " << Median(timeSamples) << ", " << Q3(timeSamples) << ", " << Max(timeSamples) << ", \n";
+				
+		outFile << "                , MIN , Q1, MEDIAN, Q3, MAX, \n";
+		outFile << "TIME(microsecs):, " << Min(timeSamples) << ", " << Q1(timeSamples) << ", " << Median(timeSamples) << ", " << Q3(timeSamples) << ", " << Max(timeSamples) << ", \n";
 		outFile << "NUM SEGMENTS:, " << Min(numSegmentsSamples) << ", " << Q1(numSegmentsSamples) << ", " << Median(numSegmentsSamples) << ", " << Q3(numSegmentsSamples) << ", " << Max(numSegmentsSamples) << ", \n";		
-
+		outFile << "\n";
 	}
 
 	// Streamer - no transforms
 	{
-		std::vector<float> timeSamples;
-		std::vector<size_t> numSegmentsSamples;
+		outFile << "GEN: STREAMER, \n";
+		outFile << "TRANSFORMS:, NONE, \n";
 
-		pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::STREAMER);
+		int maxLayers = 7;
+
+		outFile << "MAX LAYERS:, " << maxLayers << "\n";
+		outFile << "\n";
+
 		pipelineMgr->InitStreamerGenerator(
 			DEFAULT_SG_START_PT,
 			DEFAULT_SG_INITIAL_DIRECTION,
 			DEFAULT_SG_VOLTAGE,
 			DEFAULT_SG_INITIAL_PRESSURE,
 			DEFAULT_SG_PRESSURE_GRADIENT,
-			streamerMaxLayers,
+			maxLayers,
 			ANGLE_FIX_OPTIONS.at(DEFAULT_SG_ANGLE_FIX),
 			GAS_COMPOSITION_OPTIONS.at(DEFAULT_SG_GAS_COMPOSITION)
 		);
 
+
+		std::vector<float> timeSamples;
+		std::vector<size_t> numSegmentsSamples;
+
+		pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::STREAMER);
+		
 		for (size_t i = 0; i < iterationsPerTest; i++)
 		{
 			//updating info for the gui:
@@ -374,23 +392,40 @@ void TestState::TestStreamerVsJitterfork(std::string fileName)
 				pipelineMgr->RunProcess();
 			timer.Stop();
 
-			timeSamples.push_back(timer.GetDurationMs());
+			timeSamples.push_back(timer.GetDurationMicroseconds());
 			numSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
 		}
 
 		SortVector(&timeSamples);
 		SortVector(&numSegmentsSamples);
-
-		outFile << "GEN: STREAMER, \n";
-		outFile << "TRANSFORMS:, NONE, \n";
-		outFile << "         , MIN , Q1, MEDIAN, Q3, MAX, \n";
-		outFile << "TIME(MS):, " << Min(timeSamples) << ", " << Q1(timeSamples) << ", " << Median(timeSamples) << ", " << Q3(timeSamples) << ", " << Max(timeSamples) << ", \n";
+				
+		outFile << "                , MIN , Q1, MEDIAN, Q3, MAX, \n";
+		outFile << "TIME(microsecs):, " << Min(timeSamples) << ", " << Q1(timeSamples) << ", " << Median(timeSamples) << ", " << Q3(timeSamples) << ", " << Max(timeSamples) << ", \n";
 		outFile << "NUM SEGMENTS:, " << Min(numSegmentsSamples) << ", " << Q1(numSegmentsSamples) << ", " << Median(numSegmentsSamples) << ", " << Q3(numSegmentsSamples) << ", " << Max(numSegmentsSamples) << ", \n";
-
+		outFile << "\n";
 	}
 	
 	// Streamer - with transforms
 	{
+		outFile << "GEN: STREAMER, \n";
+		outFile << "TRANSFORMS:, WHOLE, BRANCHIFIER, \n";
+
+		int maxLayers = 8;
+
+		outFile << "MAX LAYERS:, " << maxLayers << "\n";
+		outFile << "\n";
+
+		pipelineMgr->InitStreamerGenerator(
+			DEFAULT_SG_START_PT,
+			DEFAULT_SG_INITIAL_DIRECTION,
+			DEFAULT_SG_VOLTAGE,
+			DEFAULT_SG_INITIAL_PRESSURE,
+			DEFAULT_SG_PRESSURE_GRADIENT,
+			maxLayers,
+			ANGLE_FIX_OPTIONS.at(DEFAULT_SG_ANGLE_FIX),
+			GAS_COMPOSITION_OPTIONS.at(DEFAULT_SG_GAS_COMPOSITION)
+		);
+
 		std::vector<float> timeSamples;
 		std::vector<size_t> numSegmentsSamples;
 
@@ -420,22 +455,18 @@ void TestState::TestStreamerVsJitterfork(std::string fileName)
 			pipelineMgr->RunProcess();
 			timer.Stop();
 
-			timeSamples.push_back(timer.GetDurationMs());
+			timeSamples.push_back(timer.GetDurationMicroseconds());
 			numSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
 		}
 
 		SortVector(&timeSamples);
 		SortVector(&numSegmentsSamples);
-
-		outFile << "GEN: STREAMER, \n";
-		outFile << "TRANSFORMS:, WHOLE, BRANCHIFIER, \n";
-		outFile << "         , MIN , Q1, MEDIAN, Q3, MAX, \n";
-		outFile << "TIME(MS):, " << Min(timeSamples) << ", " << Q1(timeSamples) << ", " << Median(timeSamples) << ", " << Q3(timeSamples) << ", " << Max(timeSamples) << ", \n";
+				
+		outFile << "                , MIN , Q1, MEDIAN, Q3, MAX, \n";
+		outFile << "TIME(microsecs):, " << Min(timeSamples) << ", " << Q1(timeSamples) << ", " << Median(timeSamples) << ", " << Q3(timeSamples) << ", " << Max(timeSamples) << ", \n";
 		outFile << "NUM SEGMENTS:, " << Min(numSegmentsSamples) << ", " << Q1(numSegmentsSamples) << ", " << Median(numSegmentsSamples) << ", " << Q3(numSegmentsSamples) << ", " << Max(numSegmentsSamples) << ", \n";
-		outFile << "\n";
-
+		outFile << "\n";		
 	}
-
 
 }
 
@@ -444,13 +475,13 @@ void TestState::TestStreamerLayers(std::string fileName)
 	std::ofstream outFile(FilePath(fileName).c_str());
 	InitOfstream(&outFile);
 
-	outFile << "          , , TIME (MS),   ,       ,   ,    , , NUM SEGMENTS, \n";
-	outFile << "NUM LAYERS, , MIN      , Q1, MEDIAN, Q3, MAX, , MIN, Q1, MEDIAN, Q3, MAX, \n";
+	outFile << "          , , TIME (microsecs),   ,       ,   ,    , , NUM SEGMENTS, \n";
+	outFile << "NUM LAYERS, , MIN             , Q1, MEDIAN, Q3, MAX, , MIN, Q1, MEDIAN, Q3, MAX, \n";
 
 	std::vector<float> timeSamples;
 	std::vector<size_t>numSegmentsSamples;
 
-	for (size_t numLayers = SG_MIN_MAX_NUM_LAYERS; numLayers < SG_MAX_MAX_NUM_LAYERS; numLayers++)
+	for (size_t numLayers = SG_MIN_MAX_NUM_LAYERS; numLayers <= SG_MAX_MAX_NUM_LAYERS; numLayers++)
 	{
 		pipelineMgr->InitStreamerGenerator(
 			DEFAULT_SG_START_PT,
@@ -491,7 +522,7 @@ void TestState::TestStreamerLayers(std::string fileName)
 				pipelineMgr->RunProcess();
 			timer.Stop();
 
-			timeSamples.push_back(timer.GetDurationMs());
+			timeSamples.push_back(timer.GetDurationMicroseconds());
 			numSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
 		}
 		
@@ -519,7 +550,7 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 
 	outFile << "           , , , GEN: JITTER + FORK ,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER      ,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER                             , \n";
 	outFile << "           , , , BRANCH CULLING: OFF,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , BRANCH CULLING: OFF,   ,       ,   ,    , ,             ,   ,       ,   ,    , , , BRANCH CULLING: " << branchCullingAmt << ", \n";
-	outFile << "MAX SEG LEN, , , TIME(MS)           ,   ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(MS)           ,   ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(MS)                                  ,   ,       ,   ,    , , NUM SEGMENTS, \n";
+	outFile << "MAX SEG LEN, , , TIME(microsecs)    ,   ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(microsecs)    ,   ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(microsecs)                           ,   ,       ,   ,    , , NUM SEGMENTS, \n";
 	outFile << "           , , , MIN                , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN                , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN                                       , Q1, MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , \n";
 	
 	std::vector<float> jitterforkTimeSamples;
@@ -589,7 +620,7 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 				pipelineMgr->RunProcess();
 			timer.Stop();
 
-			jitterforkTimeSamples.push_back(timer.GetDurationMs());
+			jitterforkTimeSamples.push_back(timer.GetDurationMicroseconds());
 			jitterforkNumSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
 
 			// STREAMER (BRANCHIFIER OFF):
@@ -598,7 +629,7 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 				pipelineMgr->RunProcess();
 			timer.Stop();
 
-			streamerWithoutCullTimeSamples.push_back(timer.GetDurationMs());
+			streamerWithoutCullTimeSamples.push_back(timer.GetDurationMicroseconds());
 			streamerWithoutCullNumSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
 			
 			// STREAMER (BRANCHIFIER ON):
@@ -608,8 +639,8 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 				pipelineMgr->RunProcess();
 			timer.Stop();
 			
-			streamerWithCullTimeSamples.push_back(timer.GetDurationMs());
-			streamerWithCullNumSegmentsSamples.push_back(timer.GetDurationMs());
+			streamerWithCullTimeSamples.push_back(timer.GetDurationMicroseconds());
+			streamerWithCullNumSegmentsSamples.push_back(timer.GetDurationMicroseconds());
 		}
 
 		SortVector(&jitterforkTimeSamples);
