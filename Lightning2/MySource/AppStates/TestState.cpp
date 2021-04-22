@@ -47,7 +47,7 @@ void TestState::Init()
 {
 	InitPipelineMgr();
 
-	iterationsPerTest = 10;
+	iterationsPerTest = 1000;
 	iterationsDone    = 0;
 	testRunning       = false;
 
@@ -563,7 +563,7 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 
 	outFile << "           , , , GEN: JITTER + FORK ,                       ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER    ,                                  ,       ,   ,    , ,             ,   ,       ,   ,    , , , GEN: STREAMER    , \n";
 	outFile << "           , , , OTHER TRANSFORMS:  , NONE                  ,       ,   ,    , ,             ,   ,       ,   ,    , , , OTHER TRANSFORMS:, NONE                             ,       ,   ,    , ,             ,   ,       ,   ,    , , , OTHER TRANSFORMS:, WHOLE                          , BRANCHIFIER, \n";
-	outFile << "           , , , ITERATIONS:        ," << jfgIterations << ",       ,   ,    , ,             ,   ,       ,   ,    , , , MAX LAYERS:      ," << streamerNoTransMaxLayers << ",       ,   ,    , ,             ,   ,       ,   ,    , , , MAX LAYERS:      ," << streamerTransMaxLayers << ", WHOLE, BRANCHIFIER, \n";
+	outFile << "           , , , ITERATIONS:        ," << jfgIterations << ",       ,   ,    , ,             ,   ,       ,   ,    , , , MAX LAYERS:      ," << streamerNoTransMaxLayers << ",       ,   ,    , ,             ,   ,       ,   ,    , , , MAX LAYERS:      ," << streamerTransMaxLayers << ", \n";
 	outFile << "MAX SEG LEN, , , TIME(microsecs)    ,                       ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(microsecs)  ,                                  ,       ,   ,    , , NUM SEGMENTS,   ,       ,   ,    , , , TIME(microsecs)  ,                                ,            ,   ,    , , NUM SEGMENTS, \n";
 	outFile << "           , , , MIN                , Q1                    , MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN              , Q1                               , MEDIAN, Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, , , MIN              , Q1                             , MEDIAN     , Q3, MAX, , MIN         , Q1, MEDIAN, Q3, MAX, \n";
 	
