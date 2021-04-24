@@ -104,6 +104,11 @@ void TestState::Gui()
 			currentTest = TestTypes::ELECTRIFIER_BY_GEN_TYPE;
 			testCv.notify_all();
 		}
+		if (ImGui::Button("Renderer Building"))
+		{
+			currentTest = TestTypes::RENDERER_BUILDING;
+			testCv.notify_all();
+		}
 	}
 
 	ImGui::End();
@@ -225,6 +230,9 @@ void TestState::ThreadFunction()
 			break;
 		case(TestTypes::ELECTRIFIER_BY_GEN_TYPE):
 			TestElectrifierByGenType();
+			break;
+		case(TestTypes::RENDERER_BUILDING):
+			TestRendererBuilding();
 			break;
 		}
 
@@ -672,7 +680,7 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 			timer.Stop();
 			
 			streamerWithCullTimeSamples.push_back(timer.GetDurationMicroseconds());
-			streamerWithCullNumSegmentsSamples.push_back(timer.GetDurationMicroseconds());
+			streamerWithCullNumSegmentsSamples.push_back(pipelineMgr->GetSegments()->size());
 		}
 
 		SortVector(&jitterforkTimeSamples);
@@ -699,4 +707,147 @@ void TestState::TestElectrifierByGenType(std::string fileName)
 			outFile << Min(streamerWithCullNumSegmentsSamples) << ", " << Q1(streamerWithCullNumSegmentsSamples) << ", " << Median(streamerWithCullNumSegmentsSamples) << ", " << Q3(streamerWithCullNumSegmentsSamples) << ", " << Max(streamerWithCullNumSegmentsSamples) << ", ";
 		outFile << '\n';
 	}
+}
+
+void TestState::TestRendererBuilding(std::string fileName)
+{
+	std::ofstream outFile(FilePath(fileName).c_str());
+	InitOfstream(&outFile);
+
+	std::vector<float> noRenderBuildingStreamerSamples;
+	std::vector<float> noRenderBuildingJitterForkSamples;
+	std::vector<float> withRenderBuildingStreamerSamples;
+	std::vector<float> withRenderBuildingJitterForkSamples;
+
+	for (size_t i = 0; i < iterationsPerTest; i++)
+	{
+		// Gui info:
+		{
+			UL lock(infoMutex);
+			currentTestInfo.clear();
+
+			currentTestInfo.push_back("TEST 1 of 4");			
+			{
+				SS ss;
+				ss << "ITERATION: " << (i + 1) << " of " << iterationsPerTest;
+				currentTestInfo.push_back(ss.str());
+			}
+
+			// Test may have been cancelled in GUI
+			if (!testRunning)
+			{
+				return;
+			}
+		}
+
+		// 1. No renderer building, Streamer:
+		pipelineMgr->SetRendererBuildingActive(false);
+		pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::STREAMER);
+		timer.Start();
+			pipelineMgr->RunProcess();
+		timer.Stop();
+		noRenderBuildingStreamerSamples.push_back(timer.GetDurationMicroseconds());
+	}
+
+	for (size_t i = 0; i < iterationsPerTest; i++)
+	{
+		// Gui info:
+		{
+			UL lock(infoMutex);
+			currentTestInfo.clear();
+
+			currentTestInfo.push_back("TEST 2 of 4");
+			{
+				SS ss;
+				ss << "ITERATION: " << (i + 1) << " of " << iterationsPerTest;
+				currentTestInfo.push_back(ss.str());
+			}
+
+			// Test may have been cancelled in GUI
+			if (!testRunning)
+			{
+				return;
+			}
+		}
+		// 2. No renderer building, Jitter+Fork:
+		pipelineMgr->SetRendererBuildingActive(false);
+		pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::JITTER_FORK);
+		timer.Start();
+			pipelineMgr->RunProcess();
+		timer.Stop();
+		noRenderBuildingJitterForkSamples.push_back(timer.GetDurationMicroseconds());
+	}
+
+	for (size_t i = 0; i < iterationsPerTest; i++)
+	{
+		// Gui info:
+		{
+			UL lock(infoMutex);
+			currentTestInfo.clear();
+
+			currentTestInfo.push_back("TEST 3 of 4");
+			{
+				SS ss;
+				ss << "ITERATION: " << (i + 1) << " of " << iterationsPerTest;
+				currentTestInfo.push_back(ss.str());
+			}
+
+			// Test may have been cancelled in GUI
+			if (!testRunning)
+			{
+				return;
+			}
+		}
+		//3. With renderer building, Streamer:
+		pipelineMgr->SetRendererBuildingActive(true);
+		pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::STREAMER);
+		timer.Start();
+			pipelineMgr->RunProcess();
+		timer.Stop();
+		withRenderBuildingStreamerSamples.push_back(timer.GetDurationMicroseconds());
+	}
+
+	for (size_t i = 0; i < iterationsPerTest; i++)
+	{
+		// Gui info:
+		{
+			UL lock(infoMutex);
+			currentTestInfo.clear();
+
+			currentTestInfo.push_back("TEST 4 of 4");
+			{
+				SS ss;
+				ss << "ITERATION: " << (i + 1) << " of " << iterationsPerTest;
+				currentTestInfo.push_back(ss.str());
+			}
+
+			// Test may have been cancelled in GUI
+			if (!testRunning)
+			{
+				return;
+			}
+		}
+		//4. With renderer building, Jitter+Fork:
+		pipelineMgr->SetRendererBuildingActive(true);
+		pipelineMgr->SetGeometryGeneratorType(GeometryGeneratorTypes::JITTER_FORK);
+		timer.Start();
+			pipelineMgr->RunProcess();
+		timer.Stop();
+		withRenderBuildingJitterForkSamples.push_back(timer.GetDurationMicroseconds());
+	}
+
+	SortVector(&noRenderBuildingStreamerSamples);
+	SortVector(&noRenderBuildingJitterForkSamples);
+	SortVector(&withRenderBuildingStreamerSamples);
+	SortVector(&withRenderBuildingJitterForkSamples);
+
+	outFile << "                         , MEDIAN TIME (microseconds), \n";
+	outFile << "WITHOUT RENDERER BUILDING, \n";
+	outFile << "STREAMER:                , " << Median(noRenderBuildingStreamerSamples) << ", \n";
+	outFile << "JITTER+FORK:             , " << Median(noRenderBuildingJitterForkSamples) << ", \n";
+	outFile << "WITH RENDERER BUILDING   , \n";
+	outFile << "STREAMER:                , " << Median(withRenderBuildingStreamerSamples) << ", \n";
+	outFile << "JITTER+FORK:             , " << Median(withRenderBuildingJitterForkSamples) << ", \n";
+
+	outFile << ", \n";
 }

@@ -1,0 +1,11 @@
+DEBUG, 
+ITS PER TEST: 10
+
+                         , MEDIAN TIME (microseconds), 
+WITHOUT RENDERER BUILDING, 
+STREAMER:                , 7594, 
+JITTER+FORK:             , 499, 
+WITH RENDERER BUILDING   , 
+STREAMER:                , 208360, 
+JITTER+FORK:             , 14278, 
+, 

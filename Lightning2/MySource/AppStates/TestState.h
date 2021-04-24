@@ -15,7 +15,8 @@ enum TestTypes
 {
 	STREAMER_VS_JITTERFORK,
 	STREAMER_LAYERS,
-	ELECTRIFIER_BY_GEN_TYPE
+	ELECTRIFIER_BY_GEN_TYPE,
+	RENDERER_BUILDING
 };
 
 class TestState : public BaseState
@@ -48,6 +49,8 @@ private:
 	void TestStreamerLayers(std::string fileName = "streamerLayers.csv");
 
 	void TestElectrifierByGenType(std::string fileName = "electrifier.csv");
+
+	void TestRendererBuilding(std::string fileName = "rendererBuilding.csv");
 
 	template<class T>
 	inline constexpr void SortVector(std::vector<T>* samples)
