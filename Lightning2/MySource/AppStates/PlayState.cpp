@@ -199,76 +199,6 @@ void PlayState::Gui()
 // PRIVATE:
 ////
 
-void PlayState::HandleInput()
-{
-	static MyInputUtil inputUtil(input);
-
-	if (inputUtil.IsKeyPressedNow('R'))
-	{
-		pipelineMgr->RunProcess();
-		if (debugCsv)
-		{
-			DebugWriteCsv(pipelineMgr->GetSegments());
-		}
-	}
-	if (inputUtil.IsKeyPressedNow('C'))
-	{
-		pipelineMgr->Clear();
-	}
-	if (inputUtil.IsKeyPressedNow('N'))
-	{
-		animatingNow = !animatingNow;
-	}
-
-	if (inputUtil.IsKeyPressedNow('M'))
-	{
-		renderMode = renderMode == "animated" ? "static" : "animated";
-		LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
-		lightningRenderer->SetRenderMode(RENDER_MODE_OPTIONS.at(renderMode));
-	}
-
-	if (inputUtil.IsKeyPressedNow('I'))
-	{
-		LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
-		lightningRenderer->InitAnimation();
-	}
-
-	if (inputUtil.IsKeyPressedNow('Z'))
-	{
-		zappy = !zappy;
-	}
-
-	// Abandoning these for now, they conflict with camera controls
-	/*PipelineMgrSettings* settings = pipelineMgr->GetSettings();
-
-	if (inputUtil.IsKeyPressedNow('T'))
-	{
-		pipelineMgr->SetDiameterThinnerActive(
-			!(settings->IsDiameterThinnerActive())
-		);
-	}
-	if (inputUtil.IsKeyPressedNow('W'))
-	{
-		pipelineMgr->SetWholeTransformerActive(
-			!(settings->IsWholeTransformerActive())
-		);
-	}
-	if (inputUtil.IsKeyPressedNow('B'))
-	{
-		pipelineMgr->SetBranchifierActive(
-			!(settings->IsBranchifierActive())
-		);
-	}
-	if (inputUtil.IsKeyPressedNow('E'))
-	{
-		pipelineMgr->SetElectifierActive(
-			!(settings->IsElectrifierActive())
-		);
-	}*/
-
-	inputUtil.EndFrame();
-}
-
 void PlayState::GuiSettings()
 {
 	ImGui::Begin("PLAY STATE SETTINGS");
@@ -291,9 +221,9 @@ void PlayState::GuiSettings()
 
 	ImGui::Checkbox("A[N]imating now", &animatingNow);
 
-	ImGui::Checkbox("[Z]APPY", &zappy);
+	ImGui::Checkbox("Frequent update [Z]ap", &frequentUpdateZap);
 
-	if (zappy)
+	if (frequentUpdateZap)
 	{
 		static float currentTime = 0.f;
 		static float period = 0.5f;
@@ -784,10 +714,89 @@ void PlayState::GuiInfo()
 	if (pipelineMgr->WasRecursCapHit())
 	{
 		ImGui::Text("**************************");
-		ImGui::Text("WARNING: Recursive cap hit by the following stages:");
+		ImGui::Text("WARNING: Recursive cap was hit by the following stages:");
 		ImGui::Text(pipelineMgr->WhichStagesHitRecursCap().c_str());
 		ImGui::Text("**************************");
 	}
 
+	//Hint about frequently updating zap:
+	if (frequentUpdateZap && lightningRenderer->GetRenderMode() == LightningRenderModes::ANIMATED)
+	{
+		ImGui::Text("**************************");
+		ImGui::Text("HINT: Frequently updating [Z]ap works");
+		ImGui::Text("best with render[M]ode set to static");
+		ImGui::Text("**************************");
+	}
+
 	ImGui::End();
+}
+
+void PlayState::HandleInput()
+{
+	static MyInputUtil inputUtil(input);
+
+	if (inputUtil.IsKeyPressedNow('R'))
+	{
+		pipelineMgr->RunProcess();
+		if (debugCsv)
+		{
+			DebugWriteCsv(pipelineMgr->GetSegments());
+		}
+	}
+	if (inputUtil.IsKeyPressedNow('C'))
+	{
+		pipelineMgr->Clear();
+	}
+	if (inputUtil.IsKeyPressedNow('N'))
+	{
+		animatingNow = !animatingNow;
+	}
+
+	if (inputUtil.IsKeyPressedNow('M'))
+	{
+		renderMode = renderMode == "animated" ? "static" : "animated";
+		LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
+		lightningRenderer->SetRenderMode(RENDER_MODE_OPTIONS.at(renderMode));
+	}
+
+	if (inputUtil.IsKeyPressedNow('I'))
+	{
+		LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
+		lightningRenderer->InitAnimation();
+	}
+
+	if (inputUtil.IsKeyPressedNow('Z'))
+	{
+		frequentUpdateZap = !frequentUpdateZap;
+	}
+
+	// Abandoning these for now, they conflict with camera controls
+	/*PipelineMgrSettings* settings = pipelineMgr->GetSettings();
+
+	if (inputUtil.IsKeyPressedNow('T'))
+	{
+		pipelineMgr->SetDiameterThinnerActive(
+			!(settings->IsDiameterThinnerActive())
+		);
+	}
+	if (inputUtil.IsKeyPressedNow('W'))
+	{
+		pipelineMgr->SetWholeTransformerActive(
+			!(settings->IsWholeTransformerActive())
+		);
+	}
+	if (inputUtil.IsKeyPressedNow('B'))
+	{
+		pipelineMgr->SetBranchifierActive(
+			!(settings->IsBranchifierActive())
+		);
+	}
+	if (inputUtil.IsKeyPressedNow('E'))
+	{
+		pipelineMgr->SetElectifierActive(
+			!(settings->IsElectrifierActive())
+		);
+	}*/
+
+	inputUtil.EndFrame();
 }

@@ -401,7 +401,4 @@
       <Filter>Resource Files\CapsuleShaders</Filter>
     </FxCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-  </ItemGroup>
 </Project>

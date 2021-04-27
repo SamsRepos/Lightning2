@@ -40,6 +40,6 @@ private:
 
 	bool debugCsv = false;
 	bool animatingNow = true;
-	bool zappy = false;
+	bool frequentUpdateZap = false;
 	std::string renderMode = DEFAULT_RENDER_MODE;
 };
