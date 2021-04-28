@@ -160,9 +160,25 @@ void PlayState::Update(float _dt)
 
 	HandleInput();
 	
-	if (animatingNow)
+	if (updatingAnimation)
 	{
 		pipelineMgr->UpdateAnimation(_dt);
+	}
+
+	if (freqentRefreshZap)
+	{
+		static float currentTime = 0.f;
+
+		currentTime += dt;
+		if (currentTime >= frequentRefreshRate)
+		{
+			currentTime = 0.f;
+			pipelineMgr->RunProcess();
+			if (debugCsv)
+			{
+				DebugWriteCsv(pipelineMgr->GetSegments());
+			}
+		}
 	}
 		
 }
@@ -201,6 +217,9 @@ void PlayState::Gui()
 
 void PlayState::GuiSettings()
 {
+	PipelineMgrSettings* settings = pipelineMgr->GetSettings();
+	LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
+
 	ImGui::Begin("PLAY STATE SETTINGS");
 
 	ImGui::Checkbox("Write debug CSV", &debugCsv);
@@ -214,39 +233,23 @@ void PlayState::GuiSettings()
 		}
 	}
 
-	if (ImGui::Button("[C]lear segments"))
+	ImGui::Checkbox("Frequently refreshing [Z]ap", &freqentRefreshZap);
+
+	if (freqentRefreshZap)
 	{
-		pipelineMgr->Clear();
+		ImGui::SliderFloat("refresh rate", &frequentRefreshRate, 0.01f, .5f);
 	}
-
-	ImGui::Checkbox("A[N]imating now", &animatingNow);
-
-	ImGui::Checkbox("Frequent update [Z]ap", &frequentUpdateZap);
-
-	if (frequentUpdateZap)
-	{
-		static float currentTime = 0.f;
-		static float period = 0.5f;
-		ImGui::SliderFloat("period", &period, 0.01f, .5f);
-
-		currentTime += dt;
-		if (currentTime >= period)
-		{
-			currentTime = 0.f;
-			pipelineMgr->RunProcess();
-			if (debugCsv)
-			{
-				DebugWriteCsv(pipelineMgr->GetSegments());
-			}
-		}
-	}
-
-	PipelineMgrSettings* settings = pipelineMgr->GetSettings();
-	LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
 
 	if (ImGui::Button("[I]nit Animation"))
 	{
 		lightningRenderer->InitAnimation();
+	}
+
+	ImGui::Checkbox("[U]pdating animation", &updatingAnimation);
+	
+	if (ImGui::Button("[C]lear segments"))
+	{
+		pipelineMgr->Clear();
 	}
 
 	// Pipeline stages:
@@ -720,10 +723,10 @@ void PlayState::GuiInfo()
 	}
 
 	//Hint about frequently updating zap:
-	if (frequentUpdateZap && lightningRenderer->GetRenderMode() == LightningRenderModes::ANIMATED)
+	if (freqentRefreshZap  && lightningRenderer->GetRenderMode() == LightningRenderModes::ANIMATED)
 	{
 		ImGui::Text("**************************");
-		ImGui::Text("HINT: Frequently updating [Z]ap works");
+		ImGui::Text("HINT: Frequently refreshing [Z]ap works");
 		ImGui::Text("best with render[M]ode set to static");
 		ImGui::Text("**************************");
 	}
@@ -747,9 +750,9 @@ void PlayState::HandleInput()
 	{
 		pipelineMgr->Clear();
 	}
-	if (inputUtil.IsKeyPressedNow('N'))
+	if (inputUtil.IsKeyPressedNow('U'))
 	{
-		animatingNow = !animatingNow;
+		updatingAnimation = !updatingAnimation;
 	}
 
 	if (inputUtil.IsKeyPressedNow('M'))
@@ -767,7 +770,7 @@ void PlayState::HandleInput()
 
 	if (inputUtil.IsKeyPressedNow('Z'))
 	{
-		frequentUpdateZap = !frequentUpdateZap;
+		freqentRefreshZap = !freqentRefreshZap;
 	}
 
 	// Abandoning these for now, they conflict with camera controls

@@ -39,7 +39,8 @@ private:
 	XMMATRIX planeMatrix;	
 
 	bool debugCsv = false;
-	bool animatingNow = true;
-	bool frequentUpdateZap = false;
+	bool updatingAnimation = true;
+	bool freqentRefreshZap = false;
+	float frequentRefreshRate = .5f;
 	std::string renderMode = DEFAULT_RENDER_MODE;
 };
