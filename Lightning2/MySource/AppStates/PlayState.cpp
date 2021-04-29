@@ -553,7 +553,7 @@ void PlayState::GuiSettings()
 		static std::string backgroundColour = DEFAULT_BACKGROUND_COLOUR;
 		static std::string blurColour = DEFAULT_BLUR_COLOUR;
 		static std::string lineColour = DEFAULT_LINE_COLOUR;
-		static std::string cylinderColour = DEFAULT_CAPSULE_COLOUR;
+		static std::string capsuleColour = DEFAULT_CAPSULE_COLOUR;
 
 		if (ImGui::CollapsingHeader("Set Colour Parameters"))
 		{
@@ -562,7 +562,7 @@ void PlayState::GuiSettings()
 			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Background Colour", &backgroundColour);
 			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Blur Colour", &blurColour);
 			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Line Colour", &lineColour);
-			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Cylinder Colour", &cylinderColour);
+			changeNow = GuiListBox(changeNow, COLOUR_OPTIONS, "Capsule Colour", &capsuleColour);
 
 			if (changeNow)
 			{
@@ -570,7 +570,7 @@ void PlayState::GuiSettings()
 					COLOUR_OPTIONS.at(backgroundColour),
 					COLOUR_OPTIONS.at(blurColour),
 					COLOUR_OPTIONS.at(lineColour),
-					COLOUR_OPTIONS.at(cylinderColour)
+					COLOUR_OPTIONS.at(capsuleColour)
 				);
 			}
 		}
