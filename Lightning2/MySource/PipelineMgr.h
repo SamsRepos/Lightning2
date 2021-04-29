@@ -98,13 +98,15 @@ public:
 
 	//graphics:
 	void UpdateAnimation(float dt);
-
+		
 	void RenderOutput(
 		Camera* camera,
 		const XMMATRIX& worldMatrix,
 		const XMMATRIX& viewMatrix,
 		const XMMATRIX& projMatrix
 	);
+
+	inline void RebuildRendering() { BuildRendering(); };
 
 	void Clear();
 
@@ -114,6 +116,8 @@ public:
 
 private:
 	void InitProcess();
+	
+	void BuildRendering();
 
 	//Settings:
 	PipelineMgrSettings* settings;

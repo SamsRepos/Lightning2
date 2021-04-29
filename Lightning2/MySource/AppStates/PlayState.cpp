@@ -252,6 +252,11 @@ void PlayState::GuiSettings()
 		pipelineMgr->Clear();
 	}
 
+	if (ImGui::Button("Re[B]uild rendering components"))
+	{
+		pipelineMgr->RebuildRendering();
+	}
+
 	// Pipeline stages:
 	{
 
@@ -773,6 +778,10 @@ void PlayState::HandleInput()
 		freqentRefreshZap = !freqentRefreshZap;
 	}
 
+	if (inputUtil.IsKeyPressedNow('B'))
+	{
+		pipelineMgr->RebuildRendering();
+	}
 	// Abandoning these for now, they conflict with camera controls
 	/*PipelineMgrSettings* settings = pipelineMgr->GetSettings();
 

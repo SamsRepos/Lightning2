@@ -178,8 +178,7 @@ void PipelineMgr::RunProcess()
 	// Building Meshes:
 	if (settings->IsRendererBuildingActive())
 	{
-		lightningRenderer->Build(segments);
-		lightningRenderer->InitAnimation();
+		BuildRendering();
 	}
 }
 
@@ -271,4 +270,10 @@ std::string PipelineMgr::WhichStagesHitRecursCap()
 void PipelineMgr::InitProcess()
 {
 	Clear();	
+}
+
+void PipelineMgr::BuildRendering()
+{
+	lightningRenderer->Build(segments);
+	lightningRenderer->InitAnimation();
 }
