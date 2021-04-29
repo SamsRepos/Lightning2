@@ -222,7 +222,7 @@ void PlayState::GuiSettings()
 
 	ImGui::Begin("PLAY STATE SETTINGS");
 
-	ImGui::Checkbox("Write debug CSV", &debugCsv);
+	ImGui::Checkbox("Write debug csv", &debugCsv);
 
 	if (ImGui::Button("[R]un process"))
 	{
@@ -247,15 +247,15 @@ void PlayState::GuiSettings()
 
 	ImGui::Checkbox("[U]pdating animation", &updatingAnimation);
 	
-	if (ImGui::Button("[C]lear segments"))
-	{
-		pipelineMgr->Clear();
-	}
-
 	if (ImGui::Button("Re[B]uild rendering components"))
 	{
 		pipelineMgr->RebuildRendering();
 	}
+
+	if (ImGui::Button("[C]lear segments"))
+	{
+		pipelineMgr->Clear();
+	}		
 
 	// Pipeline stages:
 	{
@@ -751,20 +751,10 @@ void PlayState::HandleInput()
 			DebugWriteCsv(pipelineMgr->GetSegments());
 		}
 	}
-	if (inputUtil.IsKeyPressedNow('C'))
-	{
-		pipelineMgr->Clear();
-	}
-	if (inputUtil.IsKeyPressedNow('U'))
-	{
-		updatingAnimation = !updatingAnimation;
-	}
 
-	if (inputUtil.IsKeyPressedNow('M'))
+	if (inputUtil.IsKeyPressedNow('Z'))
 	{
-		renderMode = renderMode == "animated" ? "static" : "animated";
-		LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
-		lightningRenderer->SetRenderMode(RENDER_MODE_OPTIONS.at(renderMode));
+		freqentRefreshZap = !freqentRefreshZap;
 	}
 
 	if (inputUtil.IsKeyPressedNow('I'))
@@ -773,42 +763,27 @@ void PlayState::HandleInput()
 		lightningRenderer->InitAnimation();
 	}
 
-	if (inputUtil.IsKeyPressedNow('Z'))
+	if (inputUtil.IsKeyPressedNow('U'))
 	{
-		freqentRefreshZap = !freqentRefreshZap;
+		updatingAnimation = !updatingAnimation;
+	}
+
+	if (inputUtil.IsKeyPressedNow('C'))
+	{
+		pipelineMgr->Clear();
 	}
 
 	if (inputUtil.IsKeyPressedNow('B'))
 	{
 		pipelineMgr->RebuildRendering();
 	}
-	// Abandoning these for now, they conflict with camera controls
-	/*PipelineMgrSettings* settings = pipelineMgr->GetSettings();
 
-	if (inputUtil.IsKeyPressedNow('T'))
+	if (inputUtil.IsKeyPressedNow('M'))
 	{
-		pipelineMgr->SetDiameterThinnerActive(
-			!(settings->IsDiameterThinnerActive())
-		);
+		renderMode = renderMode == "animated" ? "static" : "animated";
+		LightningRenderer* lightningRenderer = pipelineMgr->GetLightningRenderer();
+		lightningRenderer->SetRenderMode(RENDER_MODE_OPTIONS.at(renderMode));
 	}
-	if (inputUtil.IsKeyPressedNow('W'))
-	{
-		pipelineMgr->SetWholeTransformerActive(
-			!(settings->IsWholeTransformerActive())
-		);
-	}
-	if (inputUtil.IsKeyPressedNow('B'))
-	{
-		pipelineMgr->SetBranchifierActive(
-			!(settings->IsBranchifierActive())
-		);
-	}
-	if (inputUtil.IsKeyPressedNow('E'))
-	{
-		pipelineMgr->SetElectifierActive(
-			!(settings->IsElectrifierActive())
-		);
-	}*/
 
 	inputUtil.EndFrame();
 }
